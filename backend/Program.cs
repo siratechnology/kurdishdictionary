@@ -21,7 +21,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// HTTPS handled by Cloudflare — no redirect needed on origin
 app.MapControllers();
 
 var summaries = new[]
