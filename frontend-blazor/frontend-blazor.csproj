@@ -13,4 +13,14 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
+  <Target Name="NpmInstall" BeforeTargets="BuildTailwind"
+          Condition="!Exists('$(MSBuildProjectDirectory)/node_modules')">
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <Target Name="BuildTailwind" BeforeTargets="Build">
+    <MakeDir Directories="$(MSBuildProjectDirectory)/wwwroot/css" />
+    <Exec Command="npm run build:css" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
 </Project>

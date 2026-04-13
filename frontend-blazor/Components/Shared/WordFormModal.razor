@@ -1,0 +1,278 @@
+@inject WordService WordSvc
+
+@if (IsVisible)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50" @onclick="OnClose"></div>
+
+        <!-- Modal -->
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 class="text-lg font-bold text-gray-900">
+                    @(EditingWord is null ? "زیادکردنی وشەی نوێ" : "دەستکاریکردنی وشە")
+                </h2>
+                <button @onclick="OnClose" class="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+            </div>
+
+            <!-- Body -->
+            <div class="overflow-y-auto flex-1 px-6 py-5 space-y-5">
+
+                <!-- Kurdish Word -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">وشەی کوردی <span class="text-red-500">*</span></label>
+                    <input @bind="Kurdish" @bind:event="oninput"
+                           dir="rtl"
+                           placeholder="وشەکە بنووسە..."
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 @(string.IsNullOrWhiteSpace(Kurdish) && _submitted ? "border-red-400" : "")" />
+                    @if (string.IsNullOrWhiteSpace(Kurdish) && _submitted)
+                    {
+                        <p class="text-red-500 text-xs mt-1">وشەی کوردی پێویستە.</p>
+                    }
+                </div>
+
+                <!-- Meaning -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">مانای وشەکە</label>
+                    <textarea @bind="Meaning" @bind:event="oninput"
+                              dir="rtl" rows="3"
+                              placeholder="مانای وشەکە بە کوردی بنووسە..."
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+                </div>
+
+                <!-- Category -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">بەش / Category</label>
+                    <div class="flex gap-2">
+                        <input @bind="Category" @bind:event="oninput"
+                               list="category-list"
+                               placeholder="بەشێک هەڵبژێرە یان بنووسە..."
+                               class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <datalist id="category-list">
+                            @foreach (var c in Categories)
+                            {
+                                <option value="@c" />
+                            }
+                        </datalist>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">تێبینی / Description</label>
+                    <textarea @bind="Description" @bind:event="oninput"
+                              rows="2"
+                              placeholder="Short extra note..."
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+                </div>
+
+                <!-- Related Words -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">وشە پەیوەندیدارەکان</label>
+
+                    @if (RelatedWords.Any())
+                    {
+                        <ul class="mb-3 space-y-2">
+                            @foreach (var rw in RelatedWords)
+                            {
+                                <li class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm">
+                                    <span>
+                                        <span class="font-medium text-gray-800" dir="rtl">@rw.TargetKurdish</span>
+                                        <span class="mx-2 text-gray-300">·</span>
+                                        <span class="@RelationColor(rw.RelationType) text-xs font-semibold px-2 py-0.5 rounded-full">@rw.RelationType</span>
+                                    </span>
+                                    <button @onclick="() => RemoveRelated(rw)" class="text-red-400 hover:text-red-600 text-base leading-none">✕</button>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                    <!-- Add related word -->
+                    <div class="border border-dashed border-gray-300 rounded-xl p-3 space-y-2">
+                        <p class="text-xs text-gray-400 font-medium uppercase tracking-wide">زیادکردنی وشەی پەیوەندیدار</p>
+                        <div class="flex gap-2">
+                            <div class="relative flex-1">
+                                <input value="@_relSearch" @oninput="OnRelSearchInput"
+                                       dir="rtl"
+                                       placeholder="وشە بگەڕێ..."
+                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                                @if (_relResults.Any())
+                                {
+                                    <ul class="absolute z-10 top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto">
+                                        @foreach (var w in _relResults)
+                                        {
+                                            <li @onclick="() => SelectRelWord(w)"
+                                                class="px-3 py-2 text-sm hover:bg-indigo-50 cursor-pointer flex justify-between">
+                                                <span dir="rtl" class="font-medium">@w.Kurdish</span>
+                                                @if (!string.IsNullOrEmpty(w.Meaning))
+                                                {
+                                                    <span class="text-gray-400 text-xs truncate max-w-[120px]" dir="rtl">@w.Meaning</span>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                            <select @bind="_relType"
+                                    class="border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="synonym">Synonym</option>
+                                <option value="antonym">Antonym</option>
+                                <option value="related">Related</option>
+                                <option value="example">Example</option>
+                            </select>
+                        </div>
+                        @if (_selectedRelWord is not null)
+                        {
+                            <div class="flex items-center justify-between bg-indigo-50 rounded-lg px-3 py-2 text-sm">
+                                <span dir="rtl" class="font-medium text-indigo-700">@_selectedRelWord.Kurdish</span>
+                                <button @onclick="AddRelated"
+                                        class="bg-indigo-600 text-white text-xs px-3 py-1 rounded-full hover:bg-indigo-700">
+                                    + زیادبکە
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+                <button @onclick="OnClose"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">
+                    پاشگەزبوونەوە
+                </button>
+                <button @onclick="HandleSave" disabled="@_saving"
+                        class="px-5 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2">
+                    @if (_saving)
+                    {
+                        <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    }
+                    پاشکەوتکردن
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public WordDto? EditingWord { get; set; }
+    [Parameter] public List<string> Categories { get; set; } = new();
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnSaved { get; set; }
+
+    string Kurdish = "";
+    string Meaning = "";
+    string Category = "";
+    string Description = "";
+    List<RelatedWordDto> RelatedWords = new();
+
+    string _relSearch = "";
+    string _relType = "synonym";
+    List<WordDto> _relResults = new();
+    WordDto? _selectedRelWord;
+    bool _saving;
+    bool _submitted;
+
+    protected override void OnParametersSet()
+    {
+        if (EditingWord is not null)
+        {
+            Kurdish = EditingWord.Kurdish;
+            Meaning = EditingWord.Meaning ?? "";
+            Category = EditingWord.Category ?? "";
+            Description = EditingWord.Description ?? "";
+            RelatedWords = EditingWord.RelatedWords.ToList();
+        }
+        else
+        {
+            Kurdish = Meaning = Category = Description = "";
+            RelatedWords = new();
+        }
+        _submitted = false;
+        _relSearch = "";
+        _relResults = new();
+        _selectedRelWord = null;
+    }
+
+    async Task OnRelSearchInput(ChangeEventArgs e)
+    {
+        _relSearch = e.Value?.ToString() ?? "";
+        _selectedRelWord = null;
+        if (_relSearch.Length < 1) { _relResults = new(); return; }
+        var result = await WordSvc.GetWordsAsync(search: _relSearch, pageSize: 8);
+        _relResults = result?.Items ?? new();
+    }
+
+    void SelectRelWord(WordDto w)
+    {
+        _selectedRelWord = w;
+        _relSearch = w.Kurdish;
+        _relResults = new();
+    }
+
+    void AddRelated()
+    {
+        if (_selectedRelWord is null) return;
+        if (RelatedWords.Any(r => r.TargetWordId == _selectedRelWord.Id)) return;
+        RelatedWords.Add(new RelatedWordDto
+        {
+            TargetWordId = _selectedRelWord.Id,
+            TargetKurdish = _selectedRelWord.Kurdish,
+            RelationType = _relType
+        });
+        _selectedRelWord = null;
+        _relSearch = "";
+    }
+
+    void RemoveRelated(RelatedWordDto rw) => RelatedWords.Remove(rw);
+
+    async Task HandleSave()
+    {
+        _submitted = true;
+        if (string.IsNullOrWhiteSpace(Kurdish)) return;
+
+        _saving = true;
+        var relDtos = RelatedWords.Select(r => new CreateRelatedWordDto
+        {
+            TargetWordId = r.TargetWordId,
+            RelationType = r.RelationType
+        }).ToList();
+
+        if (EditingWord is null)
+        {
+            await WordSvc.CreateWordAsync(new CreateWordDto
+            {
+                Kurdish = Kurdish.Trim(),
+                Meaning = string.IsNullOrWhiteSpace(Meaning) ? null : Meaning.Trim(),
+                Category = string.IsNullOrWhiteSpace(Category) ? null : Category.Trim(),
+                Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
+                RelatedWords = relDtos
+            });
+        }
+        else
+        {
+            await WordSvc.UpdateWordAsync(EditingWord.Id, new UpdateWordDto
+            {
+                Kurdish = Kurdish.Trim(),
+                Meaning = string.IsNullOrWhiteSpace(Meaning) ? null : Meaning.Trim(),
+                Category = string.IsNullOrWhiteSpace(Category) ? null : Category.Trim(),
+                Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
+                RelatedWords = relDtos
+            });
+        }
+
+        _saving = false;
+        await OnSaved.InvokeAsync();
+    }
+
+    string RelationColor(string type) => type switch
+    {
+        "synonym" => "bg-green-100 text-green-700",
+        "antonym" => "bg-red-100 text-red-700",
+        "example" => "bg-blue-100 text-blue-700",
+        _ => "bg-gray-100 text-gray-600"
+    };
+}

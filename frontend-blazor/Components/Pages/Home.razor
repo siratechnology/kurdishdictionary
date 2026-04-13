@@ -1,7 +1,271 @@
-﻿@page "/"
+@page "/"
+@rendermode InteractiveServer
+@inject WordService WordSvc
 
-<PageTitle>Home</PageTitle>
+<PageTitle>فەرھەنگی کوردی</PageTitle>
 
-<h1>Hello, world!</h1>
+<!-- Top bar -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">وشەکان</h1>
+        <p class="text-sm text-gray-400">@_totalCount وشە تۆمارکراوە</p>
+    </div>
+    <button @onclick="OpenAdd"
+            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-xl shadow-sm transition-colors text-sm">
+        <span class="text-lg leading-none">+</span> وشەی نوێ
+    </button>
+</div>
 
-Welcome to your new app.
+<!-- Search + Filter -->
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-6 flex flex-col sm:flex-row gap-3">
+    <input value="@_search" @oninput="OnSearchInput"
+           placeholder="🔍  گەڕان..."
+           dir="rtl"
+           class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+    <select @bind="_selectedCategory" @bind:after="LoadWords"
+            class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white">
+        <option value="">هەموو بەشەکان</option>
+        @foreach (var cat in _categories)
+        {
+            <option value="@cat">@cat</option>
+        }
+    </select>
+</div>
+
+<!-- Category pills -->
+@if (_categories.Any())
+{
+    <div class="flex flex-wrap gap-2 mb-6">
+        <button @onclick='() => SetCategory("")'
+                class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == "" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200")">
+            هەموو
+        </button>
+        @foreach (var cat in _categories)
+        {
+            <button @onclick="() => SetCategory(cat)"
+                    class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == cat ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200")">
+                @cat
+            </button>
+        }
+    </div>
+}
+
+<!-- Loading -->
+@if (_loading)
+{
+    <div class="flex justify-center items-center py-20">
+        <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+}
+else if (!_words.Any())
+{
+    <div class="text-center py-20 text-gray-400">
+        <p class="text-5xl mb-4">📖</p>
+        <p class="text-lg font-medium">هیچ وشەیەک نەدۆزرایەوە</p>
+        <p class="text-sm mt-1">وشەی نوێ زیاد بکە</p>
+    </div>
+}
+else
+{
+    <!-- Word grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        @foreach (var word in _words)
+        {
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col gap-3">
+
+                <!-- Word header -->
+                <div class="flex items-start justify-between gap-2">
+                    <span class="text-2xl font-bold text-gray-900 leading-tight" dir="rtl">@word.Kurdish</span>
+                    @if (!string.IsNullOrEmpty(word.Category))
+                    {
+                        <span class="shrink-0 text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full">
+                            @word.Category
+                        </span>
+                    }
+                </div>
+
+                <!-- Meaning -->
+                @if (!string.IsNullOrEmpty(word.Meaning))
+                {
+                    <p class="text-gray-600 text-sm leading-relaxed border-l-4 border-indigo-200 pl-3" dir="rtl">
+                        @word.Meaning
+                    </p>
+                }
+
+                <!-- Description -->
+                @if (!string.IsNullOrEmpty(word.Description))
+                {
+                    <p class="text-gray-400 text-xs">@word.Description</p>
+                }
+
+                <!-- Related words -->
+                @if (word.RelatedWords.Any())
+                {
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                        @foreach (var rw in word.RelatedWords)
+                        {
+                            <span class="text-xs px-2 py-0.5 rounded-full font-medium @RelationColor(rw.RelationType)" title="@rw.RelationType">
+                                @rw.TargetKurdish
+                            </span>
+                        }
+                    </div>
+                }
+
+                <!-- Actions -->
+                <div class="flex gap-2 pt-1 mt-auto border-t border-gray-50">
+                    <button @onclick="() => OpenEdit(word)"
+                            class="flex-1 text-xs font-medium text-indigo-600 hover:bg-indigo-50 py-1.5 rounded-lg transition-colors">
+                        ✏️ دەستکاری
+                    </button>
+                    <button @onclick="() => ConfirmDelete(word)"
+                            class="flex-1 text-xs font-medium text-red-500 hover:bg-red-50 py-1.5 rounded-lg transition-colors">
+                        🗑 سڕینەوە
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (_totalPages > 1)
+    {
+        <div class="flex justify-center items-center gap-2">
+            <button @onclick="PrevPage" disabled="@(_currentPage == 1)"
+                    class="px-4 py-2 text-sm rounded-lg border border-gray-200 disabled:opacity-40 hover:bg-gray-50">
+                ← پێشتر
+            </button>
+            <span class="text-sm text-gray-500">@_currentPage / @_totalPages</span>
+            <button @onclick="NextPage" disabled="@(_currentPage == _totalPages)"
+                    class="px-4 py-2 text-sm rounded-lg border border-gray-200 disabled:opacity-40 hover:bg-gray-50">
+                دواتر →
+            </button>
+        </div>
+    }
+}
+
+<!-- Add/Edit Modal -->
+<WordFormModal IsVisible="_showModal"
+               EditingWord="_editingWord"
+               Categories="_categories"
+               OnClose="CloseModal"
+               OnSaved="OnSaved" />
+
+<!-- Delete confirmation -->
+@if (_deletingWord is not null)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/50" @onclick="CancelDelete"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm text-center">
+            <p class="text-4xl mb-3">🗑</p>
+            <h3 class="text-lg font-bold text-gray-900 mb-1">دڵنیای؟</h3>
+            <p class="text-gray-500 text-sm mb-5">
+                وشەی <strong dir="rtl">"@_deletingWord.Kurdish"</strong> دەسڕێتەوە و ناتوانرێت بگەڕێندرێتەوە.
+            </p>
+            <div class="flex gap-3">
+                <button @onclick="CancelDelete"
+                        class="flex-1 px-4 py-2 text-sm font-medium bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200">
+                    پاشگەز
+                </button>
+                <button @onclick="ExecuteDelete" disabled="@_deleting"
+                        class="flex-1 px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50">
+                    @if (_deleting) { <span>...</span> } else { <span>سڕینەوە</span> }
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    List<WordDto> _words = new();
+    List<string> _categories = new();
+    int _totalCount;
+    int _totalPages;
+    int _currentPage = 1;
+    const int PageSize = 18;
+
+    string _search = "";
+    string _selectedCategory = "";
+    bool _loading = true;
+
+    bool _showModal;
+    WordDto? _editingWord;
+
+    WordDto? _deletingWord;
+    bool _deleting;
+
+    CancellationTokenSource? _searchCts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.WhenAll(LoadWords(), LoadCategories());
+    }
+
+    async Task LoadWords()
+    {
+        _loading = true;
+        var result = await WordSvc.GetWordsAsync(_currentPage, PageSize, _search, _selectedCategory);
+        _words = result?.Items ?? new();
+        _totalCount = result?.TotalCount ?? 0;
+        _totalPages = result?.TotalPages ?? 1;
+        _loading = false;
+    }
+
+    async Task LoadCategories() =>
+        _categories = await WordSvc.GetCategoriesAsync();
+
+    async Task OnSearchInput(ChangeEventArgs e)
+    {
+        _search = e.Value?.ToString() ?? "";
+        _searchCts?.Cancel();
+        _searchCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(350, _searchCts.Token);
+            _currentPage = 1;
+            await LoadWords();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    async Task SetCategory(string cat)
+    {
+        _selectedCategory = cat;
+        _currentPage = 1;
+        await LoadWords();
+    }
+
+    async Task PrevPage() { if (_currentPage > 1) { _currentPage--; await LoadWords(); } }
+    async Task NextPage() { if (_currentPage < _totalPages) { _currentPage++; await LoadWords(); } }
+
+    void OpenAdd() { _editingWord = null; _showModal = true; }
+    void OpenEdit(WordDto w) { _editingWord = w; _showModal = true; }
+    void CloseModal() => _showModal = false;
+
+    async Task OnSaved()
+    {
+        _showModal = false;
+        _currentPage = 1;
+        await Task.WhenAll(LoadWords(), LoadCategories());
+    }
+
+    void ConfirmDelete(WordDto w) => _deletingWord = w;
+    void CancelDelete() => _deletingWord = null;
+
+    async Task ExecuteDelete()
+    {
+        if (_deletingWord is null) return;
+        _deleting = true;
+        await WordSvc.DeleteWordAsync(_deletingWord.Id);
+        _deletingWord = null;
+        _deleting = false;
+        await Task.WhenAll(LoadWords(), LoadCategories());
+    }
+
+    string RelationColor(string type) => type switch
+    {
+        "synonym" => "bg-green-100 text-green-700",
+        "antonym" => "bg-red-100 text-red-700",
+        "example" => "bg-blue-100 text-blue-700",
+        _ => "bg-gray-100 text-gray-600"
+    };
+}

@@ -1,23 +1,27 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<div class="min-h-screen bg-gray-50 flex flex-col">
+    <nav class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2">
+                <span class="text-2xl">📖</span>
+                <div>
+                    <span class="font-bold text-gray-900 text-lg leading-none block">فەرھەنگی کوردی</span>
+                    <span class="text-xs text-gray-400 leading-none">Kurdish Dictionary</span>
+                </div>
+            </a>
         </div>
+    </nav>
 
-        <article class="content px-4">
-            @Body
-        </article>
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @Body
     </main>
 </div>
 
-<div id="blazor-error-ui" data-nosnippet>
+<div id="blazor-error-ui"
+     class="hidden fixed bottom-4 right-4 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg text-sm z-50"
+     data-nosnippet>
     An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+    <a href="." class="underline ml-2">Reload</a>
+    <span class="dismiss ml-2 cursor-pointer">✕</span>
 </div>

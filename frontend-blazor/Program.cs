@@ -1,10 +1,16 @@
 using frontend_blazor.Components;
+using frontend_blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var apiUrl = builder.Configuration["ApiUrl"] ?? "http://localhost:6000";
+builder.Services.AddHttpClient<WordService>(client =>
+{
+    client.BaseAddress = new Uri(apiUrl);
+});
 
 var app = builder.Build();
 

@@ -15,5 +15,8 @@
 **/dist/
 **/build/
 
+# Tailwind compiled output (generated on build)
+frontend-blazor/wwwroot/css/app.css
+
 # Logs
 *.log
