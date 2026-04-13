@@ -14,11 +14,12 @@
   </PropertyGroup>
 
   <Target Name="NpmInstall" BeforeTargets="BuildTailwind"
-          Condition="!Exists('$(MSBuildProjectDirectory)/node_modules')">
+          Condition="'$(SkipNpmBuild)' != 'true' AND !Exists('$(MSBuildProjectDirectory)/node_modules')">
     <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
-  <Target Name="BuildTailwind" BeforeTargets="Build">
+  <Target Name="BuildTailwind" BeforeTargets="Build"
+          Condition="'$(SkipNpmBuild)' != 'true'">
     <MakeDir Directories="$(MSBuildProjectDirectory)/wwwroot/css" />
     <Exec Command="npm run build:css" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
