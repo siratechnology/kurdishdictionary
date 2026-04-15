@@ -25,7 +25,13 @@ public class WordsController : ControllerBase
         [FromQuery] string? search = null,
         [FromQuery] string? category = null)
     {
-        var query = _db.Words.AsNoTracking().AsQueryable();
+        // Use only the lowest-ID entry per unique Kurdish name to skip seeded duplicates
+        var minIds = _db.Words.AsNoTracking()
+            .GroupBy(w => w.Kurdish)
+            .Select(g => g.Min(w => w.Id));
+
+        var query = _db.Words.AsNoTracking()
+            .Where(w => minIds.Contains(w.Id));
 
         if (!string.IsNullOrWhiteSpace(search))
             query = query.Where(w => w.Kurdish.Contains(search));
@@ -39,8 +45,6 @@ public class WordsController : ControllerBase
             .OrderBy(w => w.Kurdish)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Include(w => w.OutgoingRelations).ThenInclude(r => r.TargetWord)
-            .Include(w => w.IncomingRelations).ThenInclude(r => r.Word)
             .ToListAsync();
 
         return Ok(new PagedResultDto<WordDto>

@@ -1,13 +1,30 @@
 @import "tailwindcss";
 
+/* ── NRT Kurdish font ─────────────────────────────────────────────── */
+@font-face {
+  font-family: 'NRT';
+  src: url('/fonts/NRT-Reg.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Force light mode always */
 :root {
   color-scheme: light;
-  --background: #f9fafb;
-  --foreground: #111827;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --font-main: 'NRT', system-ui, -apple-system, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-main);
+}
+
+/* Kurdish / RTL text always uses NRT */
+[dir="rtl"],
+.kurdish {
+  font-family: 'NRT', system-ui, sans-serif;
 }

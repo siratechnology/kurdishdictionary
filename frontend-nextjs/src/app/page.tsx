@@ -1,28 +1,35 @@
 import FlowPage from "@/components/FlowPage";
 
-async function getFirstWord() {
-  try {
-    const listRes = await fetch(
-      `${process.env.API_URL}/api/words?page=1&pageSize=1`,
-      { cache: "no-store" }
-    );
-    if (!listRes.ok) return null;
-    const list = await listRes.json();
-    const first = list.items?.[0];
-    if (!first) return null;
+export interface WordBasic {
+  id: number;
+  kurdish: string;
+  meaning?: string;
+  category?: string;
+}
 
-    const wordRes = await fetch(
-      `${process.env.API_URL}/api/words/${first.id}`,
+// Only fetch the lightweight list — details load progressively on the client
+async function getWordList(): Promise<WordBasic[]> {
+  try {
+    const res = await fetch(
+      `${process.env.API_URL}/api/words?page=1&pageSize=9`,
       { cache: "no-store" }
     );
-    if (!wordRes.ok) return null;
-    return wordRes.json();
+    if (!res.ok) return [];
+    const data = await res.json();
+    const items: WordBasic[] = data.items ?? [];
+    // Deduplicate by id in case API returns repeats
+    const seen = new Set<number>();
+    return items.filter((w) => {
+      if (seen.has(w.id)) return false;
+      seen.add(w.id);
+      return true;
+    });
   } catch {
-    return null;
+    return [];
   }
 }
 
 export default async function HomePage() {
-  const initialWord = await getFirstWord();
-  return <FlowPage initialWord={initialWord} />;
+  const initialList = await getWordList();
+  return <FlowPage initialList={initialList} />;
 }
