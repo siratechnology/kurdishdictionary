@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260415102604_addeddata2")]
-    partial class addeddata2
+    [Migration("20260415150255_builddb")]
+    partial class builddb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48148,7 +48148,7 @@ namespace backend.Migrations
                         {
                             Id = 10000,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4551),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4283),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنج",
                             Importance = 1,
                             Kurdish = "برنج",
@@ -48158,7 +48158,7 @@ namespace backend.Migrations
                         {
                             Id = 10001,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4553),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4286),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کباب",
                             Importance = 1,
                             Kurdish = "کباب",
@@ -48168,7 +48168,7 @@ namespace backend.Migrations
                         {
                             Id = 10002,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4555),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4287),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆڵمە",
                             Importance = 1,
                             Kurdish = "دۆڵمە",
@@ -48178,7 +48178,7 @@ namespace backend.Migrations
                         {
                             Id = 10003,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4556),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4288),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسکێنە",
                             Importance = 1,
                             Kurdish = "نیسکێنە",
@@ -48188,7 +48188,7 @@ namespace backend.Migrations
                         {
                             Id = 10004,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4557),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4290),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترخێنە",
                             Importance = 1,
                             Kurdish = "ترخێنە",
@@ -48198,7 +48198,7 @@ namespace backend.Migrations
                         {
                             Id = 10005,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4559),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4291),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربا",
                             Importance = 1,
                             Kurdish = "شۆربا",
@@ -48208,7 +48208,7 @@ namespace backend.Migrations
                         {
                             Id = 10006,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4560),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4293),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشک",
                             Importance = 1,
                             Kurdish = "مریشک",
@@ -48218,7 +48218,7 @@ namespace backend.Migrations
                         {
                             Id = 10007,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4561),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4294),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشت",
                             Importance = 1,
                             Kurdish = "گۆشت",
@@ -48228,7 +48228,7 @@ namespace backend.Migrations
                         {
                             Id = 10008,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4562),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4295),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست",
                             Importance = 1,
                             Kurdish = "ماست",
@@ -48238,7 +48238,7 @@ namespace backend.Migrations
                         {
                             Id = 10009,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4564),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4296),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەنیر",
                             Importance = 1,
                             Kurdish = "پەنیر",
@@ -48248,7 +48248,7 @@ namespace backend.Migrations
                         {
                             Id = 10010,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4565),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4297),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرە",
                             Importance = 1,
                             Kurdish = "کەرە",
@@ -48258,7 +48258,7 @@ namespace backend.Migrations
                         {
                             Id = 10011,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4566),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4299),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیماغ",
                             Importance = 1,
                             Kurdish = "قەیماغ",
@@ -48268,7 +48268,7 @@ namespace backend.Migrations
                         {
                             Id = 10012,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4567),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4300),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنگوین",
                             Importance = 1,
                             Kurdish = "هەنگوین",
@@ -48278,7 +48278,7 @@ namespace backend.Migrations
                         {
                             Id = 10013,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4568),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4300),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مورەبا",
                             Importance = 1,
                             Kurdish = "مورەبا",
@@ -48288,7 +48288,7 @@ namespace backend.Migrations
                         {
                             Id = 10014,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4609),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4301),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هێلکە",
                             Importance = 1,
                             Kurdish = "هێلکە",
@@ -48298,7 +48298,7 @@ namespace backend.Migrations
                         {
                             Id = 10015,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4611),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4302),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نانی تیرێ",
                             Importance = 1,
                             Kurdish = "نانی تیرێ",
@@ -48308,7 +48308,7 @@ namespace backend.Migrations
                         {
                             Id = 10016,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4612),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4304),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەموون",
                             Importance = 1,
                             Kurdish = "سەموون",
@@ -48318,7 +48318,7 @@ namespace backend.Migrations
                         {
                             Id = 10017,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4613),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4305),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولێرە",
                             Importance = 1,
                             Kurdish = "کولێرە",
@@ -48328,7 +48328,7 @@ namespace backend.Migrations
                         {
                             Id = 10018,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4615),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4306),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەلانە",
                             Importance = 1,
                             Kurdish = "کەلانە",
@@ -48338,7 +48338,7 @@ namespace backend.Migrations
                         {
                             Id = 10019,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4616),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4307),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شلکێنە",
                             Importance = 1,
                             Kurdish = "شلکێنە",
@@ -48348,7 +48348,7 @@ namespace backend.Migrations
                         {
                             Id = 10020,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4617),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4309),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سێو",
                             Importance = 1,
                             Kurdish = "سێو",
@@ -48358,7 +48358,7 @@ namespace backend.Migrations
                         {
                             Id = 10021,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4618),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4310),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مۆز",
                             Importance = 1,
                             Kurdish = "مۆز",
@@ -48368,7 +48368,7 @@ namespace backend.Migrations
                         {
                             Id = 10022,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4619),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4341),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پرتەقاڵ",
                             Importance = 1,
                             Kurdish = "پرتەقاڵ",
@@ -48378,7 +48378,7 @@ namespace backend.Migrations
                         {
                             Id = 10023,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4621),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4343),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنار",
                             Importance = 1,
                             Kurdish = "هەنار",
@@ -48388,7 +48388,7 @@ namespace backend.Migrations
                         {
                             Id = 10024,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4622),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4344),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترێ",
                             Importance = 1,
                             Kurdish = "ترێ",
@@ -48398,7 +48398,7 @@ namespace backend.Migrations
                         {
                             Id = 10025,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4623),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4345),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیر",
                             Importance = 1,
                             Kurdish = "هەنجیر",
@@ -48408,7 +48408,7 @@ namespace backend.Migrations
                         {
                             Id = 10026,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4624),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4346),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی",
                             Importance = 1,
                             Kurdish = "قەیسی",
@@ -48418,7 +48418,7 @@ namespace backend.Migrations
                         {
                             Id = 10027,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4625),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4348),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شووتی",
                             Importance = 1,
                             Kurdish = "شووتی",
@@ -48428,7 +48428,7 @@ namespace backend.Migrations
                         {
                             Id = 10028,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4626),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4348),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کاڵەک",
                             Importance = 1,
                             Kurdish = "کاڵەک",
@@ -48438,7 +48438,7 @@ namespace backend.Migrations
                         {
                             Id = 10029,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4627),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4349),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گێلاس",
                             Importance = 1,
                             Kurdish = "گێلاس",
@@ -48448,7 +48448,7 @@ namespace backend.Migrations
                         {
                             Id = 10030,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4628),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4350),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەماتە",
                             Importance = 1,
                             Kurdish = "تەماتە",
@@ -48458,7 +48458,7 @@ namespace backend.Migrations
                         {
                             Id = 10031,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4629),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4351),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەیار",
                             Importance = 1,
                             Kurdish = "خەیار",
@@ -48468,7 +48468,7 @@ namespace backend.Migrations
                         {
                             Id = 10032,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4630),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4352),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیاز",
                             Importance = 1,
                             Kurdish = "پیاز",
@@ -48478,7 +48478,7 @@ namespace backend.Migrations
                         {
                             Id = 10033,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4632),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4354),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیر",
                             Importance = 1,
                             Kurdish = "سیر",
@@ -48488,7 +48488,7 @@ namespace backend.Migrations
                         {
                             Id = 10034,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4633),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4355),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بیبەر",
                             Importance = 1,
                             Kurdish = "بیبەر",
@@ -48498,7 +48498,7 @@ namespace backend.Migrations
                         {
                             Id = 10035,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4634),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4356),
                             Description = "ئەم وشەیە پەیوەستە بە لقی باینجان",
                             Importance = 1,
                             Kurdish = "باینجان",
@@ -48508,7 +48508,7 @@ namespace backend.Migrations
                         {
                             Id = 10036,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4635),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4357),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولەکە",
                             Importance = 1,
                             Kurdish = "کولەکە",
@@ -48518,7 +48518,7 @@ namespace backend.Migrations
                         {
                             Id = 10037,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4672),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4358),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەتاتە",
                             Importance = 1,
                             Kurdish = "پەتاتە",
@@ -48528,7 +48528,7 @@ namespace backend.Migrations
                         {
                             Id = 10038,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4673),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4359),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەوزە",
                             Importance = 1,
                             Kurdish = "سەوزە",
@@ -48538,7 +48538,7 @@ namespace backend.Migrations
                         {
                             Id = 10039,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4674),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4360),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرەوز",
                             Importance = 1,
                             Kurdish = "کەرەوز",
@@ -48548,7 +48548,7 @@ namespace backend.Migrations
                         {
                             Id = 10040,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4676),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4361),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەنجەڵ",
                             Importance = 1,
                             Kurdish = "مەنجەڵ",
@@ -48558,7 +48558,7 @@ namespace backend.Migrations
                         {
                             Id = 10041,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4677),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4362),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاپ",
                             Importance = 1,
                             Kurdish = "قاپ",
@@ -48568,7 +48568,7 @@ namespace backend.Migrations
                         {
                             Id = 10042,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4678),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4363),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوچک",
                             Importance = 1,
                             Kurdish = "کەوچک",
@@ -48578,7 +48578,7 @@ namespace backend.Migrations
                         {
                             Id = 10043,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4679),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4364),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەتاڵ",
                             Importance = 1,
                             Kurdish = "چەتاڵ",
@@ -48588,7 +48588,7 @@ namespace backend.Migrations
                         {
                             Id = 10044,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4680),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4365),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەقۆ",
                             Importance = 1,
                             Kurdish = "چەقۆ",
@@ -48598,7 +48598,7 @@ namespace backend.Migrations
                         {
                             Id = 10045,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4681),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4366),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەرداغ",
                             Importance = 1,
                             Kurdish = "پەرداغ",
@@ -48608,7 +48608,7 @@ namespace backend.Migrations
                         {
                             Id = 10046,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4682),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4391),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆلکە",
                             Importance = 1,
                             Kurdish = "دۆلکە",
@@ -48618,7 +48618,7 @@ namespace backend.Migrations
                         {
                             Id = 10047,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4683),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4392),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سفرە",
                             Importance = 1,
                             Kurdish = "سفرە",
@@ -48628,7 +48628,7 @@ namespace backend.Migrations
                         {
                             Id = 10048,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4684),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4393),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەباغ",
                             Importance = 1,
                             Kurdish = "تەباغ",
@@ -48638,7 +48638,7 @@ namespace backend.Migrations
                         {
                             Id = 10049,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4685),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4394),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فڕن",
                             Importance = 1,
                             Kurdish = "فڕن",
@@ -48648,7 +48648,7 @@ namespace backend.Migrations
                         {
                             Id = 10050,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4686),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4395),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەلاجە",
                             Importance = 1,
                             Kurdish = "سەلاجە",
@@ -48658,7 +48658,7 @@ namespace backend.Migrations
                         {
                             Id = 10051,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4687),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4396),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەڵاتە",
                             Importance = 1,
                             Kurdish = "خەڵاتە",
@@ -48668,7 +48668,7 @@ namespace backend.Migrations
                         {
                             Id = 10052,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4688),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4397),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هاوەن",
                             Importance = 1,
                             Kurdish = "هاوەن",
@@ -48678,7 +48678,7 @@ namespace backend.Migrations
                         {
                             Id = 10053,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4689),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4398),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەبەتە",
                             Importance = 1,
                             Kurdish = "سەبەتە",
@@ -48688,7 +48688,7 @@ namespace backend.Migrations
                         {
                             Id = 10054,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4690),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4399),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سینای",
                             Importance = 1,
                             Kurdish = "سینای",
@@ -48698,7 +48698,7 @@ namespace backend.Migrations
                         {
                             Id = 10055,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4691),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4400),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فنجان",
                             Importance = 1,
                             Kurdish = "فنجان",
@@ -48708,7 +48708,7 @@ namespace backend.Migrations
                         {
                             Id = 10056,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4692),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4401),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قۆری",
                             Importance = 1,
                             Kurdish = "قۆری",
@@ -48718,7 +48718,7 @@ namespace backend.Migrations
                         {
                             Id = 10057,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4693),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4402),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەماوەر",
                             Importance = 1,
                             Kurdish = "سەماوەر",
@@ -48728,7 +48728,7 @@ namespace backend.Migrations
                         {
                             Id = 10058,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4694),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4403),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چای",
                             Importance = 1,
                             Kurdish = "چای",
@@ -48738,7 +48738,7 @@ namespace backend.Migrations
                         {
                             Id = 10059,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4695),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4404),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاوە",
                             Importance = 1,
                             Kurdish = "قاوە",
@@ -48748,7 +48748,7 @@ namespace backend.Migrations
                         {
                             Id = 10060,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4696),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4405),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەکر",
                             Importance = 1,
                             Kurdish = "شەکر",
@@ -48758,7 +48758,7 @@ namespace backend.Migrations
                         {
                             Id = 10061,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4697),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4406),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خوێ",
                             Importance = 1,
                             Kurdish = "خوێ",
@@ -48768,7 +48768,7 @@ namespace backend.Migrations
                         {
                             Id = 10062,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4698),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4406),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سماق",
                             Importance = 1,
                             Kurdish = "سماق",
@@ -48778,7 +48778,7 @@ namespace backend.Migrations
                         {
                             Id = 10063,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4723),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4408),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەردەچەوە",
                             Importance = 1,
                             Kurdish = "زەردەچەوە",
@@ -48788,7 +48788,7 @@ namespace backend.Migrations
                         {
                             Id = 10064,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4724),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4409),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دارچین",
                             Importance = 1,
                             Kurdish = "دارچین",
@@ -48798,7 +48798,7 @@ namespace backend.Migrations
                         {
                             Id = 10065,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4726),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4411),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێخەک",
                             Importance = 1,
                             Kurdish = "مێخەک",
@@ -48808,7 +48808,7 @@ namespace backend.Migrations
                         {
                             Id = 10066,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4727),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4412),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەیت",
                             Importance = 1,
                             Kurdish = "زەیت",
@@ -48818,7 +48818,7 @@ namespace backend.Migrations
                         {
                             Id = 10067,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4728),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4413),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی تەماتە",
                             Importance = 1,
                             Kurdish = "دۆشاوی تەماتە",
@@ -48828,7 +48828,7 @@ namespace backend.Migrations
                         {
                             Id = 10068,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4729),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4438),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی لیمۆ",
                             Importance = 1,
                             Kurdish = "ئاوی لیمۆ",
@@ -48838,7 +48838,7 @@ namespace backend.Migrations
                         {
                             Id = 10069,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4730),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4440),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرکە",
                             Importance = 1,
                             Kurdish = "سیرکە",
@@ -48848,7 +48848,7 @@ namespace backend.Migrations
                         {
                             Id = 10070,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4731),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4441),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێز",
                             Importance = 1,
                             Kurdish = "گوێز",
@@ -48858,7 +48858,7 @@ namespace backend.Migrations
                         {
                             Id = 10071,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4732),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4442),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بایەم",
                             Importance = 1,
                             Kurdish = "بایەم",
@@ -48868,7 +48868,7 @@ namespace backend.Migrations
                         {
                             Id = 10072,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4733),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4443),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فستق",
                             Importance = 1,
                             Kurdish = "فستق",
@@ -48878,7 +48878,7 @@ namespace backend.Migrations
                         {
                             Id = 10073,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4734),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4444),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بندق",
                             Importance = 1,
                             Kurdish = "بندق",
@@ -48888,7 +48888,7 @@ namespace backend.Migrations
                         {
                             Id = 10074,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4735),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4445),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێوژ",
                             Importance = 1,
                             Kurdish = "مێوژ",
@@ -48898,7 +48898,7 @@ namespace backend.Migrations
                         {
                             Id = 10075,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4736),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4447),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ناووکەوڕەقە",
                             Importance = 1,
                             Kurdish = "ناووکەوڕەقە",
@@ -48908,7 +48908,7 @@ namespace backend.Migrations
                         {
                             Id = 10076,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4737),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4448),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خورما",
                             Importance = 1,
                             Kurdish = "خورما",
@@ -48918,7 +48918,7 @@ namespace backend.Migrations
                         {
                             Id = 10077,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4738),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4449),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەنمی کوتراو",
                             Importance = 1,
                             Kurdish = "گەنمی کوتراو",
@@ -48928,7 +48928,7 @@ namespace backend.Migrations
                         {
                             Id = 10078,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4739),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4450),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆک",
                             Importance = 1,
                             Kurdish = "نۆک",
@@ -48938,7 +48938,7 @@ namespace backend.Migrations
                         {
                             Id = 10079,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4740),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4450),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسک",
                             Importance = 1,
                             Kurdish = "نیسک",
@@ -48948,7 +48948,7 @@ namespace backend.Migrations
                         {
                             Id = 10080,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4741),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4451),
                             Description = "ئەم وشەیە پەیوەستە بە لقی یاپراخ",
                             Importance = 1,
                             Kurdish = "یاپراخ",
@@ -48958,7 +48958,7 @@ namespace backend.Migrations
                         {
                             Id = 10081,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4742),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4452),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کووپە",
                             Importance = 1,
                             Kurdish = "کووپە",
@@ -48968,7 +48968,7 @@ namespace backend.Migrations
                         {
                             Id = 10082,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4743),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4453),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەوژەن",
                             Importance = 1,
                             Kurdish = "جەوژەن",
@@ -48978,7 +48978,7 @@ namespace backend.Migrations
                         {
                             Id = 10083,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4744),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4454),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتەبڕاو",
                             Importance = 1,
                             Kurdish = "گۆشتەبڕاو",
@@ -48988,7 +48988,7 @@ namespace backend.Migrations
                         {
                             Id = 10084,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4745),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4455),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قوراو",
                             Importance = 1,
                             Kurdish = "قوراو",
@@ -48998,7 +48998,7 @@ namespace backend.Migrations
                         {
                             Id = 10085,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4772),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4456),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرەمۆز",
                             Importance = 1,
                             Kurdish = "سیرەمۆز",
@@ -49008,7 +49008,7 @@ namespace backend.Migrations
                         {
                             Id = 10086,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4773),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4457),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆ",
                             Importance = 1,
                             Kurdish = "دۆ",
@@ -49018,7 +49018,7 @@ namespace backend.Migrations
                         {
                             Id = 10087,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4774),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4458),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەربەت",
                             Importance = 1,
                             Kurdish = "شەربەت",
@@ -49028,7 +49028,7 @@ namespace backend.Migrations
                         {
                             Id = 10088,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4775),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4459),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیر",
                             Importance = 1,
                             Kurdish = "شیر",
@@ -49038,7 +49038,7 @@ namespace backend.Migrations
                         {
                             Id = 10089,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4776),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4460),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاو",
                             Importance = 1,
                             Kurdish = "دۆشاو",
@@ -49048,7 +49048,7 @@ namespace backend.Migrations
                         {
                             Id = 10090,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4777),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4461),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەحین",
                             Importance = 1,
                             Kurdish = "تەحین",
@@ -49058,7 +49058,7 @@ namespace backend.Migrations
                         {
                             Id = 10091,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4778),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4462),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پاقڵاوە",
                             Importance = 1,
                             Kurdish = "پاقڵاوە",
@@ -49068,7 +49068,7 @@ namespace backend.Migrations
                         {
                             Id = 10092,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4779),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4463),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لوقمەقازی",
                             Importance = 1,
                             Kurdish = "لوقمەقازی",
@@ -49078,7 +49078,7 @@ namespace backend.Migrations
                         {
                             Id = 10093,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4780),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4464),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بامیە",
                             Importance = 1,
                             Kurdish = "بامیە",
@@ -49088,7 +49088,7 @@ namespace backend.Migrations
                         {
                             Id = 10094,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4781),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4488),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتە",
                             Importance = 1,
                             Kurdish = "کفتە",
@@ -49098,7 +49098,7 @@ namespace backend.Migrations
                         {
                             Id = 10095,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4782),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4489),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتە",
                             Importance = 1,
                             Kurdish = "شفتە",
@@ -49108,7 +49108,7 @@ namespace backend.Migrations
                         {
                             Id = 10096,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4783),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4491),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیشکەباب",
                             Importance = 1,
                             Kurdish = "شیشکەباب",
@@ -49118,7 +49118,7 @@ namespace backend.Migrations
                         {
                             Id = 10097,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4784),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4492),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پڵاو",
                             Importance = 1,
                             Kurdish = "پڵاو",
@@ -49128,7 +49128,7 @@ namespace backend.Migrations
                         {
                             Id = 10098,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4785),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4493),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ساوەر",
                             Importance = 1,
                             Kurdish = "ساوەر",
@@ -49138,7 +49138,7 @@ namespace backend.Migrations
                         {
                             Id = 10099,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4785),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4494),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەلەم",
                             Importance = 1,
                             Kurdish = "شەلەم",
@@ -49148,7 +49148,7 @@ namespace backend.Migrations
                         {
                             Id = 10100,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4786),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4495),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیزا",
                             Importance = 1,
                             Kurdish = "پیزا",
@@ -49158,7 +49158,7 @@ namespace backend.Migrations
                         {
                             Id = 10101,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4787),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4496),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بەرگر",
                             Importance = 1,
                             Kurdish = "بەرگر",
@@ -49168,7 +49168,7 @@ namespace backend.Migrations
                         {
                             Id = 10102,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4788),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4497),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فینگەر",
                             Importance = 1,
                             Kurdish = "فینگەر",
@@ -49178,7 +49178,7 @@ namespace backend.Migrations
                         {
                             Id = 10103,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4789),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4498),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سایندویچ",
                             Importance = 1,
                             Kurdish = "سایندویچ",
@@ -49188,7 +49188,7 @@ namespace backend.Migrations
                         {
                             Id = 10104,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4790),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4498),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فەلافل",
                             Importance = 1,
                             Kurdish = "فەلافل",
@@ -49198,7 +49198,7 @@ namespace backend.Migrations
                         {
                             Id = 10105,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4791),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4499),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەس",
                             Importance = 1,
                             Kurdish = "گەس",
@@ -49208,7 +49208,7 @@ namespace backend.Migrations
                         {
                             Id = 10106,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4792),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4500),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مایۆنێز",
                             Importance = 1,
                             Kurdish = "مایۆنێز",
@@ -49218,7 +49218,7 @@ namespace backend.Migrations
                         {
                             Id = 10107,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4793),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4501),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەتچەپ",
                             Importance = 1,
                             Kurdish = "کەتچەپ",
@@ -49228,7 +49228,7 @@ namespace backend.Migrations
                         {
                             Id = 10108,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4794),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4502),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەردەل",
                             Importance = 1,
                             Kurdish = "خەردەل",
@@ -49238,7 +49238,7 @@ namespace backend.Migrations
                         {
                             Id = 10109,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4795),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4503),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتە",
                             Importance = 1,
                             Kurdish = "زەڵاتە",
@@ -49248,7 +49248,7 @@ namespace backend.Migrations
                         {
                             Id = 10110,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4796),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4504),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سپێناخ",
                             Importance = 1,
                             Kurdish = "سپێناخ",
@@ -49258,7 +49258,7 @@ namespace backend.Migrations
                         {
                             Id = 10111,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4823),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4505),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەعدەنوس",
                             Importance = 1,
                             Kurdish = "مەعدەنوس",
@@ -49268,7 +49268,7 @@ namespace backend.Migrations
                         {
                             Id = 10112,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4824),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4506),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوەر",
                             Importance = 1,
                             Kurdish = "کەوەر",
@@ -49278,7 +49278,7 @@ namespace backend.Migrations
                         {
                             Id = 10113,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4825),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4507),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەرۆزی",
                             Importance = 1,
                             Kurdish = "تەرۆزی",
@@ -49288,7 +49288,7 @@ namespace backend.Migrations
                         {
                             Id = 10114,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4826),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4508),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سڵق",
                             Importance = 1,
                             Kurdish = "سڵق",
@@ -49298,7 +49298,7 @@ namespace backend.Migrations
                         {
                             Id = 10115,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4827),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4509),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ڕێواس",
                             Importance = 1,
                             Kurdish = "ڕێواس",
@@ -49308,7 +49308,7 @@ namespace backend.Migrations
                         {
                             Id = 10116,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4828),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4510),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قارچک",
                             Importance = 1,
                             Kurdish = "قارچک",
@@ -49318,7 +49318,7 @@ namespace backend.Migrations
                         {
                             Id = 10117,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4828),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4510),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کوندەر",
                             Importance = 1,
                             Kurdish = "کوندەر",
@@ -49328,7 +49328,7 @@ namespace backend.Migrations
                         {
                             Id = 10118,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4829),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4512),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لازانیا",
                             Importance = 1,
                             Kurdish = "لازانیا",
@@ -49338,7 +49338,7 @@ namespace backend.Migrations
                         {
                             Id = 10119,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4830),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4512),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماکەرۆنی",
                             Importance = 1,
                             Kurdish = "ماکەرۆنی",
@@ -49348,7 +49348,7 @@ namespace backend.Migrations
                         {
                             Id = 10120,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4831),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4536),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆدڵز",
                             Importance = 1,
                             Kurdish = "نۆدڵز",
@@ -49358,7 +49358,7 @@ namespace backend.Migrations
                         {
                             Id = 10121,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4832),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4537),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاش",
                             Importance = 1,
                             Kurdish = "ئاش",
@@ -49368,7 +49368,7 @@ namespace backend.Migrations
                         {
                             Id = 10122,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4833),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4539),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شێلم",
                             Importance = 1,
                             Kurdish = "شێلم",
@@ -49378,7 +49378,7 @@ namespace backend.Migrations
                         {
                             Id = 10123,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4834),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4540),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماش",
                             Importance = 1,
                             Kurdish = "ماش",
@@ -49388,7 +49388,7 @@ namespace backend.Migrations
                         {
                             Id = 10124,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4835),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4541),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لۆبیا",
                             Importance = 1,
                             Kurdish = "لۆبیا",
@@ -49398,7 +49398,7 @@ namespace backend.Migrations
                         {
                             Id = 10125,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4836),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4542),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆکی ڕەش",
                             Importance = 1,
                             Kurdish = "نۆکی ڕەش",
@@ -49408,7 +49408,7 @@ namespace backend.Migrations
                         {
                             Id = 10126,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4837),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4543),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بڕوێش",
                             Importance = 1,
                             Kurdish = "بڕوێش",
@@ -49418,7 +49418,7 @@ namespace backend.Migrations
                         {
                             Id = 10127,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4838),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4544),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێزاو",
                             Importance = 1,
                             Kurdish = "گوێزاو",
@@ -49428,7 +49428,7 @@ namespace backend.Migrations
                         {
                             Id = 10128,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4839),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4545),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی میوە",
                             Importance = 1,
                             Kurdish = "ئاوی میوە",
@@ -49438,7 +49438,7 @@ namespace backend.Migrations
                         {
                             Id = 10129,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4841),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4547),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی هەنار",
                             Importance = 1,
                             Kurdish = "دۆشاوی هەنار",
@@ -49448,7 +49448,7 @@ namespace backend.Migrations
                         {
                             Id = 10130,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4866),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4548),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی برنج",
                             Importance = 1,
                             Kurdish = "کفتەی برنج",
@@ -49458,7 +49458,7 @@ namespace backend.Migrations
                         {
                             Id = 10131,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4867),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4549),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی ساوەر",
                             Importance = 1,
                             Kurdish = "کفتەی ساوەر",
@@ -49468,7 +49468,7 @@ namespace backend.Migrations
                         {
                             Id = 10132,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4869),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4550),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتەی مریشک",
                             Importance = 1,
                             Kurdish = "شفتەی مریشک",
@@ -49478,7 +49478,7 @@ namespace backend.Migrations
                         {
                             Id = 10133,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4870),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4551),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی تەڕ",
                             Importance = 1,
                             Kurdish = "قەیسی تەڕ",
@@ -49488,7 +49488,7 @@ namespace backend.Migrations
                         {
                             Id = 10134,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4871),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4552),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیری تەڕ",
                             Importance = 1,
                             Kurdish = "هەنجیری تەڕ",
@@ -49498,7 +49498,7 @@ namespace backend.Migrations
                         {
                             Id = 10135,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4872),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4553),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زالۆکە",
                             Importance = 1,
                             Kurdish = "زالۆکە",
@@ -49508,7 +49508,7 @@ namespace backend.Migrations
                         {
                             Id = 10136,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4873),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4554),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بابا غەنوج",
                             Importance = 1,
                             Kurdish = "بابا غەنوج",
@@ -49518,7 +49518,7 @@ namespace backend.Migrations
                         {
                             Id = 10137,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4874),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4555),
                             Description = "ئەم وشەیە پەیوەستە بە لقی حومس",
                             Importance = 1,
                             Kurdish = "حومس",
@@ -49528,7 +49528,7 @@ namespace backend.Migrations
                         {
                             Id = 10138,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4875),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4556),
                             Description = "ئەم وشەیە پەیوەستە بە لقی موتەبەل",
                             Importance = 1,
                             Kurdish = "موتەبەل",
@@ -49538,7 +49538,7 @@ namespace backend.Migrations
                         {
                             Id = 10139,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4876),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4579),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فتووش",
                             Importance = 1,
                             Kurdish = "فتووش",
@@ -49548,7 +49548,7 @@ namespace backend.Migrations
                         {
                             Id = 10140,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4877),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4580),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەبولە",
                             Importance = 1,
                             Kurdish = "تەبولە",
@@ -49558,7 +49558,7 @@ namespace backend.Migrations
                         {
                             Id = 10141,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4878),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4581),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی وەرزی",
                             Importance = 1,
                             Kurdish = "زەڵاتەی وەرزی",
@@ -49568,7 +49568,7 @@ namespace backend.Migrations
                         {
                             Id = 10142,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4880),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4582),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی پەتاتە",
                             Importance = 1,
                             Kurdish = "زەڵاتەی پەتاتە",
@@ -49578,7 +49578,7 @@ namespace backend.Migrations
                         {
                             Id = 10143,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4881),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4583),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و خەیار",
                             Importance = 1,
                             Kurdish = "ماست و خەیار",
@@ -49588,7 +49588,7 @@ namespace backend.Migrations
                         {
                             Id = 10144,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4882),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4584),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و موسیر",
                             Importance = 1,
                             Kurdish = "ماست و موسیر",
@@ -49598,7 +49598,7 @@ namespace backend.Migrations
                         {
                             Id = 10145,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4883),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4585),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆخیوا",
                             Importance = 1,
                             Kurdish = "دۆخیوا",
@@ -49608,7 +49608,7 @@ namespace backend.Migrations
                         {
                             Id = 10146,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4884),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4586),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گیپە",
                             Importance = 1,
                             Kurdish = "گیپە",
@@ -49618,7 +49618,7 @@ namespace backend.Migrations
                         {
                             Id = 10147,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4884),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4587),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەروپێ",
                             Importance = 1,
                             Kurdish = "سەروپێ",
@@ -49628,7 +49628,7 @@ namespace backend.Migrations
                         {
                             Id = 10148,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4886),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4588),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەل",
                             Importance = 1,
                             Kurdish = "قەل",
@@ -49638,7 +49638,7 @@ namespace backend.Migrations
                         {
                             Id = 10149,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4887),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4589),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشکی برژاو",
                             Importance = 1,
                             Kurdish = "مریشکی برژاو",
@@ -49648,7 +49648,7 @@ namespace backend.Migrations
                         {
                             Id = 10150,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4887),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4590),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی",
                             Importance = 1,
                             Kurdish = "ماسی",
@@ -49658,7 +49658,7 @@ namespace backend.Migrations
                         {
                             Id = 10151,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4889),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4591),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی مەسگوف",
                             Importance = 1,
                             Kurdish = "ماسی مەسگوف",
@@ -49668,7 +49668,7 @@ namespace backend.Migrations
                         {
                             Id = 10152,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4890),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4592),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی بەرخ",
                             Importance = 1,
                             Kurdish = "گۆشتی بەرخ",
@@ -49678,7 +49678,7 @@ namespace backend.Migrations
                         {
                             Id = 10153,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4890),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4593),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی مانگا",
                             Importance = 1,
                             Kurdish = "گۆشتی مانگا",
@@ -49688,7 +49688,7 @@ namespace backend.Migrations
                         {
                             Id = 10154,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4891),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4594),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەلیە",
                             Importance = 1,
                             Kurdish = "قەلیە",
@@ -49698,7 +49698,7 @@ namespace backend.Migrations
                         {
                             Id = 10155,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4916),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4595),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای نیسک",
                             Importance = 1,
                             Kurdish = "شۆربای نیسک",
@@ -49708,7 +49708,7 @@ namespace backend.Migrations
                         {
                             Id = 10156,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4918),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4596),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای جۆ",
                             Importance = 1,
                             Kurdish = "شۆربای جۆ",
@@ -49718,7 +49718,7 @@ namespace backend.Migrations
                         {
                             Id = 10157,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4919),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4597),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای سەوزە",
                             Importance = 1,
                             Kurdish = "شۆربای سەوزە",
@@ -49728,7 +49728,7 @@ namespace backend.Migrations
                         {
                             Id = 10158,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4920),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4598),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی کوردی",
                             Importance = 1,
                             Kurdish = "برنجی کوردی",
@@ -49738,7 +49738,7 @@ namespace backend.Migrations
                         {
                             Id = 10159,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4921),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4599),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی بسمەتی",
                             Importance = 1,
                             Kurdish = "برنجی بسمەتی",
@@ -49748,7 +49748,7 @@ namespace backend.Migrations
                         {
                             Id = 10160,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4922),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4600),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی ڕەش",
                             Importance = 1,
                             Kurdish = "برنجی ڕەش",
@@ -49758,7 +49758,7 @@ namespace backend.Migrations
                         {
                             Id = 10161,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4923),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4601),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی سادە",
                             Importance = 1,
                             Kurdish = "کێکی سادە",
@@ -49768,7 +49768,7 @@ namespace backend.Migrations
                         {
                             Id = 10162,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4924),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4601),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی شوکولاتە",
                             Importance = 1,
                             Kurdish = "کێکی شوکولاتە",
@@ -49778,7 +49778,7 @@ namespace backend.Migrations
                         {
                             Id = 10163,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4925),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4617),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پسکیتی چای",
                             Importance = 1,
                             Kurdish = "پسکیتی چای",
@@ -49788,7 +49788,7 @@ namespace backend.Migrations
                         {
                             Id = 10164,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4926),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4619),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی وشککراو",
                             Importance = 1,
                             Kurdish = "قەیسی وشککراو",
@@ -49798,7 +49798,7 @@ namespace backend.Migrations
                         {
                             Id = 10165,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4926),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4620),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەمر هیندی",
                             Importance = 1,
                             Kurdish = "تەمر هیندی",
@@ -49808,7 +49808,7 @@ namespace backend.Migrations
                         {
                             Id = 10166,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4927),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4621),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەمەرەدین",
                             Importance = 1,
                             Kurdish = "قەمەرەدین",
@@ -49818,7 +49818,7 @@ namespace backend.Migrations
                         {
                             Id = 10167,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4928),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4623),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەلی",
                             Importance = 1,
                             Kurdish = "جەلی",
@@ -49828,7 +49828,7 @@ namespace backend.Migrations
                         {
                             Id = 10168,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4929),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4624),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەهەلەبی",
                             Importance = 1,
                             Kurdish = "مەهەلەبی",
@@ -49838,7 +49838,7 @@ namespace backend.Migrations
                         {
                             Id = 10169,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4930),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4625),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنج",
                             Importance = 1,
                             Kurdish = "برنج",
@@ -49848,7 +49848,7 @@ namespace backend.Migrations
                         {
                             Id = 10170,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4931),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4626),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کباب",
                             Importance = 1,
                             Kurdish = "کباب",
@@ -49858,7 +49858,7 @@ namespace backend.Migrations
                         {
                             Id = 10171,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4932),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4627),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆڵمە",
                             Importance = 1,
                             Kurdish = "دۆڵمە",
@@ -49868,7 +49868,7 @@ namespace backend.Migrations
                         {
                             Id = 10172,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4933),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4628),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسکێنە",
                             Importance = 1,
                             Kurdish = "نیسکێنە",
@@ -49878,7 +49878,7 @@ namespace backend.Migrations
                         {
                             Id = 10173,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4934),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4629),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترخێنە",
                             Importance = 1,
                             Kurdish = "ترخێنە",
@@ -49888,7 +49888,7 @@ namespace backend.Migrations
                         {
                             Id = 10174,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4935),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4630),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربا",
                             Importance = 1,
                             Kurdish = "شۆربا",
@@ -49898,7 +49898,7 @@ namespace backend.Migrations
                         {
                             Id = 10175,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4936),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4631),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشک",
                             Importance = 1,
                             Kurdish = "مریشک",
@@ -49908,7 +49908,7 @@ namespace backend.Migrations
                         {
                             Id = 10176,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4937),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4632),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشت",
                             Importance = 1,
                             Kurdish = "گۆشت",
@@ -49918,7 +49918,7 @@ namespace backend.Migrations
                         {
                             Id = 10177,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4938),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4632),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست",
                             Importance = 1,
                             Kurdish = "ماست",
@@ -49928,7 +49928,7 @@ namespace backend.Migrations
                         {
                             Id = 10178,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4938),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4633),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەنیر",
                             Importance = 1,
                             Kurdish = "پەنیر",
@@ -49938,7 +49938,7 @@ namespace backend.Migrations
                         {
                             Id = 10179,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4939),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4634),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرە",
                             Importance = 1,
                             Kurdish = "کەرە",
@@ -49948,7 +49948,7 @@ namespace backend.Migrations
                         {
                             Id = 10180,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4955),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4635),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیماغ",
                             Importance = 1,
                             Kurdish = "قەیماغ",
@@ -49958,7 +49958,7 @@ namespace backend.Migrations
                         {
                             Id = 10181,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4956),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4636),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنگوین",
                             Importance = 1,
                             Kurdish = "هەنگوین",
@@ -49968,7 +49968,7 @@ namespace backend.Migrations
                         {
                             Id = 10182,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4957),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4637),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مورەبا",
                             Importance = 1,
                             Kurdish = "مورەبا",
@@ -49978,7 +49978,7 @@ namespace backend.Migrations
                         {
                             Id = 10183,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4958),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4638),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هێلکە",
                             Importance = 1,
                             Kurdish = "هێلکە",
@@ -49988,7 +49988,7 @@ namespace backend.Migrations
                         {
                             Id = 10184,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4959),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4639),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نانی تیرێ",
                             Importance = 1,
                             Kurdish = "نانی تیرێ",
@@ -49998,7 +49998,7 @@ namespace backend.Migrations
                         {
                             Id = 10185,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4960),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4640),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەموون",
                             Importance = 1,
                             Kurdish = "سەموون",
@@ -50008,7 +50008,7 @@ namespace backend.Migrations
                         {
                             Id = 10186,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4961),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4641),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولێرە",
                             Importance = 1,
                             Kurdish = "کولێرە",
@@ -50018,7 +50018,7 @@ namespace backend.Migrations
                         {
                             Id = 10187,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4962),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4642),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەلانە",
                             Importance = 1,
                             Kurdish = "کەلانە",
@@ -50028,7 +50028,7 @@ namespace backend.Migrations
                         {
                             Id = 10188,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4963),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4672),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شلکێنە",
                             Importance = 1,
                             Kurdish = "شلکێنە",
@@ -50038,7 +50038,7 @@ namespace backend.Migrations
                         {
                             Id = 10189,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4964),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4673),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سێو",
                             Importance = 1,
                             Kurdish = "سێو",
@@ -50048,7 +50048,7 @@ namespace backend.Migrations
                         {
                             Id = 10190,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4965),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4674),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مۆز",
                             Importance = 1,
                             Kurdish = "مۆز",
@@ -50058,7 +50058,7 @@ namespace backend.Migrations
                         {
                             Id = 10191,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4966),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4676),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پرتەقاڵ",
                             Importance = 1,
                             Kurdish = "پرتەقاڵ",
@@ -50068,7 +50068,7 @@ namespace backend.Migrations
                         {
                             Id = 10192,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4967),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4677),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنار",
                             Importance = 1,
                             Kurdish = "هەنار",
@@ -50078,7 +50078,7 @@ namespace backend.Migrations
                         {
                             Id = 10193,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4968),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4678),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترێ",
                             Importance = 1,
                             Kurdish = "ترێ",
@@ -50088,7 +50088,7 @@ namespace backend.Migrations
                         {
                             Id = 10194,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4969),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4679),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیر",
                             Importance = 1,
                             Kurdish = "هەنجیر",
@@ -50098,7 +50098,7 @@ namespace backend.Migrations
                         {
                             Id = 10195,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4971),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4680),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی",
                             Importance = 1,
                             Kurdish = "قەیسی",
@@ -50108,7 +50108,7 @@ namespace backend.Migrations
                         {
                             Id = 10196,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4971),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4681),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شووتی",
                             Importance = 1,
                             Kurdish = "شووتی",
@@ -50118,7 +50118,7 @@ namespace backend.Migrations
                         {
                             Id = 10197,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4972),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4682),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کاڵەک",
                             Importance = 1,
                             Kurdish = "کاڵەک",
@@ -50128,7 +50128,7 @@ namespace backend.Migrations
                         {
                             Id = 10198,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4973),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4683),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گێلاس",
                             Importance = 1,
                             Kurdish = "گێلاس",
@@ -50138,7 +50138,7 @@ namespace backend.Migrations
                         {
                             Id = 10199,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4974),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4684),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەماتە",
                             Importance = 1,
                             Kurdish = "تەماتە",
@@ -50148,7 +50148,7 @@ namespace backend.Migrations
                         {
                             Id = 10200,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4975),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4684),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەیار",
                             Importance = 1,
                             Kurdish = "خەیار",
@@ -50158,7 +50158,7 @@ namespace backend.Migrations
                         {
                             Id = 10201,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4976),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4685),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیاز",
                             Importance = 1,
                             Kurdish = "پیاز",
@@ -50168,7 +50168,7 @@ namespace backend.Migrations
                         {
                             Id = 10202,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4977),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4686),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیر",
                             Importance = 1,
                             Kurdish = "سیر",
@@ -50178,7 +50178,7 @@ namespace backend.Migrations
                         {
                             Id = 10203,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4978),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4687),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بیبەر",
                             Importance = 1,
                             Kurdish = "بیبەر",
@@ -50188,7 +50188,7 @@ namespace backend.Migrations
                         {
                             Id = 10204,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(4979),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4688),
                             Description = "ئەم وشەیە پەیوەستە بە لقی باینجان",
                             Importance = 1,
                             Kurdish = "باینجان",
@@ -50198,7 +50198,7 @@ namespace backend.Migrations
                         {
                             Id = 10205,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5012),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4689),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولەکە",
                             Importance = 1,
                             Kurdish = "کولەکە",
@@ -50208,7 +50208,7 @@ namespace backend.Migrations
                         {
                             Id = 10206,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5013),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4690),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەتاتە",
                             Importance = 1,
                             Kurdish = "پەتاتە",
@@ -50218,7 +50218,7 @@ namespace backend.Migrations
                         {
                             Id = 10207,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5014),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4691),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەوزە",
                             Importance = 1,
                             Kurdish = "سەوزە",
@@ -50228,7 +50228,7 @@ namespace backend.Migrations
                         {
                             Id = 10208,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5015),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4692),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرەوز",
                             Importance = 1,
                             Kurdish = "کەرەوز",
@@ -50238,7 +50238,7 @@ namespace backend.Migrations
                         {
                             Id = 10209,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5016),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4693),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەنجەڵ",
                             Importance = 1,
                             Kurdish = "مەنجەڵ",
@@ -50248,7 +50248,7 @@ namespace backend.Migrations
                         {
                             Id = 10210,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5017),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4694),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاپ",
                             Importance = 1,
                             Kurdish = "قاپ",
@@ -50258,7 +50258,7 @@ namespace backend.Migrations
                         {
                             Id = 10211,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5018),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4695),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوچک",
                             Importance = 1,
                             Kurdish = "کەوچک",
@@ -50268,7 +50268,7 @@ namespace backend.Migrations
                         {
                             Id = 10212,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5020),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4696),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەتاڵ",
                             Importance = 1,
                             Kurdish = "چەتاڵ",
@@ -50278,7 +50278,7 @@ namespace backend.Migrations
                         {
                             Id = 10213,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5020),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4697),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەقۆ",
                             Importance = 1,
                             Kurdish = "چەقۆ",
@@ -50288,7 +50288,7 @@ namespace backend.Migrations
                         {
                             Id = 10214,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5021),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4728),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەرداغ",
                             Importance = 1,
                             Kurdish = "پەرداغ",
@@ -50298,7 +50298,7 @@ namespace backend.Migrations
                         {
                             Id = 10215,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5022),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4729),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆلکە",
                             Importance = 1,
                             Kurdish = "دۆلکە",
@@ -50308,7 +50308,7 @@ namespace backend.Migrations
                         {
                             Id = 10216,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5023),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4730),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سفرە",
                             Importance = 1,
                             Kurdish = "سفرە",
@@ -50318,7 +50318,7 @@ namespace backend.Migrations
                         {
                             Id = 10217,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5024),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4731),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەباغ",
                             Importance = 1,
                             Kurdish = "تەباغ",
@@ -50328,7 +50328,7 @@ namespace backend.Migrations
                         {
                             Id = 10218,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5025),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4732),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فڕن",
                             Importance = 1,
                             Kurdish = "فڕن",
@@ -50338,7 +50338,7 @@ namespace backend.Migrations
                         {
                             Id = 10219,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5026),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4733),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەلاجە",
                             Importance = 1,
                             Kurdish = "سەلاجە",
@@ -50348,7 +50348,7 @@ namespace backend.Migrations
                         {
                             Id = 10220,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5027),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4734),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەڵاتە",
                             Importance = 1,
                             Kurdish = "خەڵاتە",
@@ -50358,7 +50358,7 @@ namespace backend.Migrations
                         {
                             Id = 10221,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5028),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4735),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هاوەن",
                             Importance = 1,
                             Kurdish = "هاوەن",
@@ -50368,7 +50368,7 @@ namespace backend.Migrations
                         {
                             Id = 10222,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5029),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4736),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەبەتە",
                             Importance = 1,
                             Kurdish = "سەبەتە",
@@ -50378,7 +50378,7 @@ namespace backend.Migrations
                         {
                             Id = 10223,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5030),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4737),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سینای",
                             Importance = 1,
                             Kurdish = "سینای",
@@ -50388,7 +50388,7 @@ namespace backend.Migrations
                         {
                             Id = 10224,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5031),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4738),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فنجان",
                             Importance = 1,
                             Kurdish = "فنجان",
@@ -50398,7 +50398,7 @@ namespace backend.Migrations
                         {
                             Id = 10225,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5032),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4739),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قۆری",
                             Importance = 1,
                             Kurdish = "قۆری",
@@ -50408,7 +50408,7 @@ namespace backend.Migrations
                         {
                             Id = 10226,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5033),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4740),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەماوەر",
                             Importance = 1,
                             Kurdish = "سەماوەر",
@@ -50418,7 +50418,7 @@ namespace backend.Migrations
                         {
                             Id = 10227,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5034),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4741),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چای",
                             Importance = 1,
                             Kurdish = "چای",
@@ -50428,7 +50428,7 @@ namespace backend.Migrations
                         {
                             Id = 10228,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5035),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4742),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاوە",
                             Importance = 1,
                             Kurdish = "قاوە",
@@ -50438,7 +50438,7 @@ namespace backend.Migrations
                         {
                             Id = 10229,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5035),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4743),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەکر",
                             Importance = 1,
                             Kurdish = "شەکر",
@@ -50448,7 +50448,7 @@ namespace backend.Migrations
                         {
                             Id = 10230,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5036),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4744),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خوێ",
                             Importance = 1,
                             Kurdish = "خوێ",
@@ -50458,7 +50458,7 @@ namespace backend.Migrations
                         {
                             Id = 10231,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5073),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4745),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سماق",
                             Importance = 1,
                             Kurdish = "سماق",
@@ -50468,7 +50468,7 @@ namespace backend.Migrations
                         {
                             Id = 10232,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5075),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4746),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەردەچەوە",
                             Importance = 1,
                             Kurdish = "زەردەچەوە",
@@ -50478,7 +50478,7 @@ namespace backend.Migrations
                         {
                             Id = 10233,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5076),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4747),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دارچین",
                             Importance = 1,
                             Kurdish = "دارچین",
@@ -50488,7 +50488,7 @@ namespace backend.Migrations
                         {
                             Id = 10234,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5076),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4747),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێخەک",
                             Importance = 1,
                             Kurdish = "مێخەک",
@@ -50498,7 +50498,7 @@ namespace backend.Migrations
                         {
                             Id = 10235,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5077),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4748),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەیت",
                             Importance = 1,
                             Kurdish = "زەیت",
@@ -50508,7 +50508,7 @@ namespace backend.Migrations
                         {
                             Id = 10236,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5078),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4749),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی تەماتە",
                             Importance = 1,
                             Kurdish = "دۆشاوی تەماتە",
@@ -50518,7 +50518,7 @@ namespace backend.Migrations
                         {
                             Id = 10237,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5079),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4750),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی لیمۆ",
                             Importance = 1,
                             Kurdish = "ئاوی لیمۆ",
@@ -50528,7 +50528,7 @@ namespace backend.Migrations
                         {
                             Id = 10238,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5080),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4751),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرکە",
                             Importance = 1,
                             Kurdish = "سیرکە",
@@ -50538,7 +50538,7 @@ namespace backend.Migrations
                         {
                             Id = 10239,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5081),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4752),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێز",
                             Importance = 1,
                             Kurdish = "گوێز",
@@ -50548,7 +50548,7 @@ namespace backend.Migrations
                         {
                             Id = 10240,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5082),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4776),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بایەم",
                             Importance = 1,
                             Kurdish = "بایەم",
@@ -50558,7 +50558,7 @@ namespace backend.Migrations
                         {
                             Id = 10241,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5083),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4777),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فستق",
                             Importance = 1,
                             Kurdish = "فستق",
@@ -50568,7 +50568,7 @@ namespace backend.Migrations
                         {
                             Id = 10242,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5084),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4778),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بندق",
                             Importance = 1,
                             Kurdish = "بندق",
@@ -50578,7 +50578,7 @@ namespace backend.Migrations
                         {
                             Id = 10243,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5085),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4779),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێوژ",
                             Importance = 1,
                             Kurdish = "مێوژ",
@@ -50588,7 +50588,7 @@ namespace backend.Migrations
                         {
                             Id = 10244,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5086),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4780),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ناووکەوڕەقە",
                             Importance = 1,
                             Kurdish = "ناووکەوڕەقە",
@@ -50598,7 +50598,7 @@ namespace backend.Migrations
                         {
                             Id = 10245,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5087),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4781),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خورما",
                             Importance = 1,
                             Kurdish = "خورما",
@@ -50608,7 +50608,7 @@ namespace backend.Migrations
                         {
                             Id = 10246,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5088),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4782),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەنمی کوتراو",
                             Importance = 1,
                             Kurdish = "گەنمی کوتراو",
@@ -50618,7 +50618,7 @@ namespace backend.Migrations
                         {
                             Id = 10247,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5089),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4783),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆک",
                             Importance = 1,
                             Kurdish = "نۆک",
@@ -50628,7 +50628,7 @@ namespace backend.Migrations
                         {
                             Id = 10248,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5090),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4784),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسک",
                             Importance = 1,
                             Kurdish = "نیسک",
@@ -50638,7 +50638,7 @@ namespace backend.Migrations
                         {
                             Id = 10249,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5091),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4785),
                             Description = "ئەم وشەیە پەیوەستە بە لقی یاپراخ",
                             Importance = 1,
                             Kurdish = "یاپراخ",
@@ -50648,7 +50648,7 @@ namespace backend.Migrations
                         {
                             Id = 10250,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5092),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4786),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کووپە",
                             Importance = 1,
                             Kurdish = "کووپە",
@@ -50658,7 +50658,7 @@ namespace backend.Migrations
                         {
                             Id = 10251,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5093),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4787),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەوژەن",
                             Importance = 1,
                             Kurdish = "جەوژەن",
@@ -50668,7 +50668,7 @@ namespace backend.Migrations
                         {
                             Id = 10252,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5094),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4788),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتەبڕاو",
                             Importance = 1,
                             Kurdish = "گۆشتەبڕاو",
@@ -50678,7 +50678,7 @@ namespace backend.Migrations
                         {
                             Id = 10253,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5095),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4789),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قوراو",
                             Importance = 1,
                             Kurdish = "قوراو",
@@ -50688,7 +50688,7 @@ namespace backend.Migrations
                         {
                             Id = 10254,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5096),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4790),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرەمۆز",
                             Importance = 1,
                             Kurdish = "سیرەمۆز",
@@ -50698,7 +50698,7 @@ namespace backend.Migrations
                         {
                             Id = 10255,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5097),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4791),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆ",
                             Importance = 1,
                             Kurdish = "دۆ",
@@ -50708,7 +50708,7 @@ namespace backend.Migrations
                         {
                             Id = 10256,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5123),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4792),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەربەت",
                             Importance = 1,
                             Kurdish = "شەربەت",
@@ -50718,7 +50718,7 @@ namespace backend.Migrations
                         {
                             Id = 10257,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5125),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4816),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیر",
                             Importance = 1,
                             Kurdish = "شیر",
@@ -50728,7 +50728,7 @@ namespace backend.Migrations
                         {
                             Id = 10258,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5126),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4817),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاو",
                             Importance = 1,
                             Kurdish = "دۆشاو",
@@ -50738,7 +50738,7 @@ namespace backend.Migrations
                         {
                             Id = 10259,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5127),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4819),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەحین",
                             Importance = 1,
                             Kurdish = "تەحین",
@@ -50748,7 +50748,7 @@ namespace backend.Migrations
                         {
                             Id = 10260,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5129),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4820),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پاقڵاوە",
                             Importance = 1,
                             Kurdish = "پاقڵاوە",
@@ -50758,7 +50758,7 @@ namespace backend.Migrations
                         {
                             Id = 10261,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5130),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4821),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لوقمەقازی",
                             Importance = 1,
                             Kurdish = "لوقمەقازی",
@@ -50768,7 +50768,7 @@ namespace backend.Migrations
                         {
                             Id = 10262,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5130),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4822),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بامیە",
                             Importance = 1,
                             Kurdish = "بامیە",
@@ -50778,7 +50778,7 @@ namespace backend.Migrations
                         {
                             Id = 10263,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5132),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4823),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتە",
                             Importance = 1,
                             Kurdish = "کفتە",
@@ -50788,7 +50788,7 @@ namespace backend.Migrations
                         {
                             Id = 10264,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5133),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4825),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتە",
                             Importance = 1,
                             Kurdish = "شفتە",
@@ -50798,7 +50798,7 @@ namespace backend.Migrations
                         {
                             Id = 10265,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5134),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4825),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیشکەباب",
                             Importance = 1,
                             Kurdish = "شیشکەباب",
@@ -50808,7 +50808,7 @@ namespace backend.Migrations
                         {
                             Id = 10266,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5134),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4826),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پڵاو",
                             Importance = 1,
                             Kurdish = "پڵاو",
@@ -50818,7 +50818,7 @@ namespace backend.Migrations
                         {
                             Id = 10267,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5135),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4827),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ساوەر",
                             Importance = 1,
                             Kurdish = "ساوەر",
@@ -50828,7 +50828,7 @@ namespace backend.Migrations
                         {
                             Id = 10268,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5136),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4828),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەلەم",
                             Importance = 1,
                             Kurdish = "شەلەم",
@@ -50838,7 +50838,7 @@ namespace backend.Migrations
                         {
                             Id = 10269,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5162),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4829),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیزا",
                             Importance = 1,
                             Kurdish = "پیزا",
@@ -50848,7 +50848,7 @@ namespace backend.Migrations
                         {
                             Id = 10270,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5164),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4830),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بەرگر",
                             Importance = 1,
                             Kurdish = "بەرگر",
@@ -50858,7 +50858,7 @@ namespace backend.Migrations
                         {
                             Id = 10271,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5165),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4831),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فینگەر",
                             Importance = 1,
                             Kurdish = "فینگەر",
@@ -50868,7 +50868,7 @@ namespace backend.Migrations
                         {
                             Id = 10272,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5166),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4832),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سایندویچ",
                             Importance = 1,
                             Kurdish = "سایندویچ",
@@ -50878,7 +50878,7 @@ namespace backend.Migrations
                         {
                             Id = 10273,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5167),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4833),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فەلافل",
                             Importance = 1,
                             Kurdish = "فەلافل",
@@ -50888,7 +50888,7 @@ namespace backend.Migrations
                         {
                             Id = 10274,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5168),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4834),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەس",
                             Importance = 1,
                             Kurdish = "گەس",
@@ -50898,7 +50898,7 @@ namespace backend.Migrations
                         {
                             Id = 10275,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5169),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4835),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مایۆنێز",
                             Importance = 1,
                             Kurdish = "مایۆنێز",
@@ -50908,7 +50908,7 @@ namespace backend.Migrations
                         {
                             Id = 10276,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5170),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4836),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەتچەپ",
                             Importance = 1,
                             Kurdish = "کەتچەپ",
@@ -50918,7 +50918,7 @@ namespace backend.Migrations
                         {
                             Id = 10277,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5171),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4836),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەردەل",
                             Importance = 1,
                             Kurdish = "خەردەل",
@@ -50928,7 +50928,7 @@ namespace backend.Migrations
                         {
                             Id = 10278,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5172),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4862),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتە",
                             Importance = 1,
                             Kurdish = "زەڵاتە",
@@ -50938,7 +50938,7 @@ namespace backend.Migrations
                         {
                             Id = 10279,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5173),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4863),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سپێناخ",
                             Importance = 1,
                             Kurdish = "سپێناخ",
@@ -50948,7 +50948,7 @@ namespace backend.Migrations
                         {
                             Id = 10280,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5174),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4864),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەعدەنوس",
                             Importance = 1,
                             Kurdish = "مەعدەنوس",
@@ -50958,7 +50958,7 @@ namespace backend.Migrations
                         {
                             Id = 10281,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5175),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4865),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوەر",
                             Importance = 1,
                             Kurdish = "کەوەر",
@@ -50968,7 +50968,7 @@ namespace backend.Migrations
                         {
                             Id = 10282,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5175),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4866),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەرۆزی",
                             Importance = 1,
                             Kurdish = "تەرۆزی",
@@ -50978,7 +50978,7 @@ namespace backend.Migrations
                         {
                             Id = 10283,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5176),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4867),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سڵق",
                             Importance = 1,
                             Kurdish = "سڵق",
@@ -50988,7 +50988,7 @@ namespace backend.Migrations
                         {
                             Id = 10284,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5178),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4868),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ڕێواس",
                             Importance = 1,
                             Kurdish = "ڕێواس",
@@ -50998,7 +50998,7 @@ namespace backend.Migrations
                         {
                             Id = 10285,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5178),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4868),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قارچک",
                             Importance = 1,
                             Kurdish = "قارچک",
@@ -51008,7 +51008,7 @@ namespace backend.Migrations
                         {
                             Id = 10286,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5179),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4869),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کوندەر",
                             Importance = 1,
                             Kurdish = "کوندەر",
@@ -51018,7 +51018,7 @@ namespace backend.Migrations
                         {
                             Id = 10287,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5180),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4870),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لازانیا",
                             Importance = 1,
                             Kurdish = "لازانیا",
@@ -51028,7 +51028,7 @@ namespace backend.Migrations
                         {
                             Id = 10288,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5181),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4871),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماکەرۆنی",
                             Importance = 1,
                             Kurdish = "ماکەرۆنی",
@@ -51038,7 +51038,7 @@ namespace backend.Migrations
                         {
                             Id = 10289,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5182),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4872),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆدڵز",
                             Importance = 1,
                             Kurdish = "نۆدڵز",
@@ -51048,7 +51048,7 @@ namespace backend.Migrations
                         {
                             Id = 10290,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5183),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4873),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاش",
                             Importance = 1,
                             Kurdish = "ئاش",
@@ -51058,7 +51058,7 @@ namespace backend.Migrations
                         {
                             Id = 10291,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5184),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4874),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شێلم",
                             Importance = 1,
                             Kurdish = "شێلم",
@@ -51068,7 +51068,7 @@ namespace backend.Migrations
                         {
                             Id = 10292,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5185),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4875),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماش",
                             Importance = 1,
                             Kurdish = "ماش",
@@ -51078,7 +51078,7 @@ namespace backend.Migrations
                         {
                             Id = 10293,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5186),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4876),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لۆبیا",
                             Importance = 1,
                             Kurdish = "لۆبیا",
@@ -51088,7 +51088,7 @@ namespace backend.Migrations
                         {
                             Id = 10294,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5187),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4877),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆکی ڕەش",
                             Importance = 1,
                             Kurdish = "نۆکی ڕەش",
@@ -51098,7 +51098,7 @@ namespace backend.Migrations
                         {
                             Id = 10295,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5214),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4877),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بڕوێش",
                             Importance = 1,
                             Kurdish = "بڕوێش",
@@ -51108,7 +51108,7 @@ namespace backend.Migrations
                         {
                             Id = 10296,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5215),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4878),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێزاو",
                             Importance = 1,
                             Kurdish = "گوێزاو",
@@ -51118,7 +51118,7 @@ namespace backend.Migrations
                         {
                             Id = 10297,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5216),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4879),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی میوە",
                             Importance = 1,
                             Kurdish = "ئاوی میوە",
@@ -51128,7 +51128,7 @@ namespace backend.Migrations
                         {
                             Id = 10298,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5217),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4880),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی هەنار",
                             Importance = 1,
                             Kurdish = "دۆشاوی هەنار",
@@ -51138,7 +51138,7 @@ namespace backend.Migrations
                         {
                             Id = 10299,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5218),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4881),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی برنج",
                             Importance = 1,
                             Kurdish = "کفتەی برنج",
@@ -51148,7 +51148,7 @@ namespace backend.Migrations
                         {
                             Id = 10300,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5219),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4882),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی ساوەر",
                             Importance = 1,
                             Kurdish = "کفتەی ساوەر",
@@ -51158,7 +51158,7 @@ namespace backend.Migrations
                         {
                             Id = 10301,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5220),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4883),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتەی مریشک",
                             Importance = 1,
                             Kurdish = "شفتەی مریشک",
@@ -51168,7 +51168,7 @@ namespace backend.Migrations
                         {
                             Id = 10302,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5221),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4884),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی تەڕ",
                             Importance = 1,
                             Kurdish = "قەیسی تەڕ",
@@ -51178,7 +51178,7 @@ namespace backend.Migrations
                         {
                             Id = 10303,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5222),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4908),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیری تەڕ",
                             Importance = 1,
                             Kurdish = "هەنجیری تەڕ",
@@ -51188,7 +51188,7 @@ namespace backend.Migrations
                         {
                             Id = 10304,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5223),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4909),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زالۆکە",
                             Importance = 1,
                             Kurdish = "زالۆکە",
@@ -51198,7 +51198,7 @@ namespace backend.Migrations
                         {
                             Id = 10305,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5224),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4911),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بابا غەنوج",
                             Importance = 1,
                             Kurdish = "بابا غەنوج",
@@ -51208,7 +51208,7 @@ namespace backend.Migrations
                         {
                             Id = 10306,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5225),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4912),
                             Description = "ئەم وشەیە پەیوەستە بە لقی حومس",
                             Importance = 1,
                             Kurdish = "حومس",
@@ -51218,7 +51218,7 @@ namespace backend.Migrations
                         {
                             Id = 10307,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5226),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4913),
                             Description = "ئەم وشەیە پەیوەستە بە لقی موتەبەل",
                             Importance = 1,
                             Kurdish = "موتەبەل",
@@ -51228,7 +51228,7 @@ namespace backend.Migrations
                         {
                             Id = 10308,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5227),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4914),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فتووش",
                             Importance = 1,
                             Kurdish = "فتووش",
@@ -51238,7 +51238,7 @@ namespace backend.Migrations
                         {
                             Id = 10309,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5228),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4915),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەبولە",
                             Importance = 1,
                             Kurdish = "تەبولە",
@@ -51248,7 +51248,7 @@ namespace backend.Migrations
                         {
                             Id = 10310,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5229),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4916),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی وەرزی",
                             Importance = 1,
                             Kurdish = "زەڵاتەی وەرزی",
@@ -51258,7 +51258,7 @@ namespace backend.Migrations
                         {
                             Id = 10311,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5230),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4917),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی پەتاتە",
                             Importance = 1,
                             Kurdish = "زەڵاتەی پەتاتە",
@@ -51268,7 +51268,7 @@ namespace backend.Migrations
                         {
                             Id = 10312,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5231),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4918),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و خەیار",
                             Importance = 1,
                             Kurdish = "ماست و خەیار",
@@ -51278,7 +51278,7 @@ namespace backend.Migrations
                         {
                             Id = 10313,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5232),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4918),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و موسیر",
                             Importance = 1,
                             Kurdish = "ماست و موسیر",
@@ -51288,7 +51288,7 @@ namespace backend.Migrations
                         {
                             Id = 10314,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5233),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4919),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆخیوا",
                             Importance = 1,
                             Kurdish = "دۆخیوا",
@@ -51298,7 +51298,7 @@ namespace backend.Migrations
                         {
                             Id = 10315,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5234),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4920),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گیپە",
                             Importance = 1,
                             Kurdish = "گیپە",
@@ -51308,7 +51308,7 @@ namespace backend.Migrations
                         {
                             Id = 10316,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5235),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4921),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەروپێ",
                             Importance = 1,
                             Kurdish = "سەروپێ",
@@ -51318,7 +51318,7 @@ namespace backend.Migrations
                         {
                             Id = 10317,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5236),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4922),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەل",
                             Importance = 1,
                             Kurdish = "قەل",
@@ -51328,7 +51328,7 @@ namespace backend.Migrations
                         {
                             Id = 10318,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5237),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4923),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشکی برژاو",
                             Importance = 1,
                             Kurdish = "مریشکی برژاو",
@@ -51338,7 +51338,7 @@ namespace backend.Migrations
                         {
                             Id = 10319,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5238),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4924),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی",
                             Importance = 1,
                             Kurdish = "ماسی",
@@ -51348,7 +51348,7 @@ namespace backend.Migrations
                         {
                             Id = 10320,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5262),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4925),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی مەسگوف",
                             Importance = 1,
                             Kurdish = "ماسی مەسگوف",
@@ -51358,7 +51358,7 @@ namespace backend.Migrations
                         {
                             Id = 10321,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5263),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4926),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی بەرخ",
                             Importance = 1,
                             Kurdish = "گۆشتی بەرخ",
@@ -51368,7 +51368,7 @@ namespace backend.Migrations
                         {
                             Id = 10322,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5265),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4927),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی مانگا",
                             Importance = 1,
                             Kurdish = "گۆشتی مانگا",
@@ -51378,7 +51378,7 @@ namespace backend.Migrations
                         {
                             Id = 10323,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5266),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4928),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەلیە",
                             Importance = 1,
                             Kurdish = "قەلیە",
@@ -51388,7 +51388,7 @@ namespace backend.Migrations
                         {
                             Id = 10324,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5267),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4929),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای نیسک",
                             Importance = 1,
                             Kurdish = "شۆربای نیسک",
@@ -51398,7 +51398,7 @@ namespace backend.Migrations
                         {
                             Id = 10325,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5268),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4930),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای جۆ",
                             Importance = 1,
                             Kurdish = "شۆربای جۆ",
@@ -51408,7 +51408,7 @@ namespace backend.Migrations
                         {
                             Id = 10326,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5269),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4931),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای سەوزە",
                             Importance = 1,
                             Kurdish = "شۆربای سەوزە",
@@ -51418,7 +51418,7 @@ namespace backend.Migrations
                         {
                             Id = 10327,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5270),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4932),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی کوردی",
                             Importance = 1,
                             Kurdish = "برنجی کوردی",
@@ -51428,7 +51428,7 @@ namespace backend.Migrations
                         {
                             Id = 10328,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5271),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4956),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی بسمەتی",
                             Importance = 1,
                             Kurdish = "برنجی بسمەتی",
@@ -51438,7 +51438,7 @@ namespace backend.Migrations
                         {
                             Id = 10329,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5272),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4957),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی ڕەش",
                             Importance = 1,
                             Kurdish = "برنجی ڕەش",
@@ -51448,7 +51448,7 @@ namespace backend.Migrations
                         {
                             Id = 10330,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5272),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4958),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی سادە",
                             Importance = 1,
                             Kurdish = "کێکی سادە",
@@ -51458,7 +51458,7 @@ namespace backend.Migrations
                         {
                             Id = 10331,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5273),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4959),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی شوکولاتە",
                             Importance = 1,
                             Kurdish = "کێکی شوکولاتە",
@@ -51468,7 +51468,7 @@ namespace backend.Migrations
                         {
                             Id = 10332,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5274),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4960),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پسکیتی چای",
                             Importance = 1,
                             Kurdish = "پسکیتی چای",
@@ -51478,7 +51478,7 @@ namespace backend.Migrations
                         {
                             Id = 10333,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5275),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4961),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی وشککراو",
                             Importance = 1,
                             Kurdish = "قەیسی وشککراو",
@@ -51488,7 +51488,7 @@ namespace backend.Migrations
                         {
                             Id = 10334,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5276),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4962),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەمر هیندی",
                             Importance = 1,
                             Kurdish = "تەمر هیندی",
@@ -51498,7 +51498,7 @@ namespace backend.Migrations
                         {
                             Id = 10335,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5277),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4963),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەمەرەدین",
                             Importance = 1,
                             Kurdish = "قەمەرەدین",
@@ -51508,7 +51508,7 @@ namespace backend.Migrations
                         {
                             Id = 10336,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5278),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4964),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەلی",
                             Importance = 1,
                             Kurdish = "جەلی",
@@ -51518,7 +51518,7 @@ namespace backend.Migrations
                         {
                             Id = 10337,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5279),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4965),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەهەلەبی",
                             Importance = 1,
                             Kurdish = "مەهەلەبی",
@@ -51528,7 +51528,7 @@ namespace backend.Migrations
                         {
                             Id = 10338,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5280),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4966),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنج",
                             Importance = 1,
                             Kurdish = "برنج",
@@ -51538,7 +51538,7 @@ namespace backend.Migrations
                         {
                             Id = 10339,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5281),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4968),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کباب",
                             Importance = 1,
                             Kurdish = "کباب",
@@ -51548,7 +51548,7 @@ namespace backend.Migrations
                         {
                             Id = 10340,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5282),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4968),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆڵمە",
                             Importance = 1,
                             Kurdish = "دۆڵمە",
@@ -51558,7 +51558,7 @@ namespace backend.Migrations
                         {
                             Id = 10341,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5283),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4969),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسکێنە",
                             Importance = 1,
                             Kurdish = "نیسکێنە",
@@ -51568,7 +51568,7 @@ namespace backend.Migrations
                         {
                             Id = 10342,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5284),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4970),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترخێنە",
                             Importance = 1,
                             Kurdish = "ترخێنە",
@@ -51578,7 +51578,7 @@ namespace backend.Migrations
                         {
                             Id = 10343,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5284),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4971),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربا",
                             Importance = 1,
                             Kurdish = "شۆربا",
@@ -51588,7 +51588,7 @@ namespace backend.Migrations
                         {
                             Id = 10344,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5285),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4972),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشک",
                             Importance = 1,
                             Kurdish = "مریشک",
@@ -51598,7 +51598,7 @@ namespace backend.Migrations
                         {
                             Id = 10345,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5312),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4973),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشت",
                             Importance = 1,
                             Kurdish = "گۆشت",
@@ -51608,7 +51608,7 @@ namespace backend.Migrations
                         {
                             Id = 10346,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5313),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4974),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست",
                             Importance = 1,
                             Kurdish = "ماست",
@@ -51618,7 +51618,7 @@ namespace backend.Migrations
                         {
                             Id = 10347,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5314),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4975),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەنیر",
                             Importance = 1,
                             Kurdish = "پەنیر",
@@ -51628,7 +51628,7 @@ namespace backend.Migrations
                         {
                             Id = 10348,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5315),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4976),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرە",
                             Importance = 1,
                             Kurdish = "کەرە",
@@ -51638,7 +51638,7 @@ namespace backend.Migrations
                         {
                             Id = 10349,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5316),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4977),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیماغ",
                             Importance = 1,
                             Kurdish = "قەیماغ",
@@ -51648,7 +51648,7 @@ namespace backend.Migrations
                         {
                             Id = 10350,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5317),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4978),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنگوین",
                             Importance = 1,
                             Kurdish = "هەنگوین",
@@ -51658,7 +51658,7 @@ namespace backend.Migrations
                         {
                             Id = 10351,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5318),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4979),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مورەبا",
                             Importance = 1,
                             Kurdish = "مورەبا",
@@ -51668,7 +51668,7 @@ namespace backend.Migrations
                         {
                             Id = 10352,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5319),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4979),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هێلکە",
                             Importance = 1,
                             Kurdish = "هێلکە",
@@ -51678,7 +51678,7 @@ namespace backend.Migrations
                         {
                             Id = 10353,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5320),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4980),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نانی تیرێ",
                             Importance = 1,
                             Kurdish = "نانی تیرێ",
@@ -51688,7 +51688,7 @@ namespace backend.Migrations
                         {
                             Id = 10354,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5321),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4995),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەموون",
                             Importance = 1,
                             Kurdish = "سەموون",
@@ -51698,7 +51698,7 @@ namespace backend.Migrations
                         {
                             Id = 10355,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5322),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4996),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولێرە",
                             Importance = 1,
                             Kurdish = "کولێرە",
@@ -51708,7 +51708,7 @@ namespace backend.Migrations
                         {
                             Id = 10356,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5323),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4997),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەلانە",
                             Importance = 1,
                             Kurdish = "کەلانە",
@@ -51718,7 +51718,7 @@ namespace backend.Migrations
                         {
                             Id = 10357,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5324),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4998),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شلکێنە",
                             Importance = 1,
                             Kurdish = "شلکێنە",
@@ -51728,7 +51728,7 @@ namespace backend.Migrations
                         {
                             Id = 10358,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5325),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(4999),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سێو",
                             Importance = 1,
                             Kurdish = "سێو",
@@ -51738,7 +51738,7 @@ namespace backend.Migrations
                         {
                             Id = 10359,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5326),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5000),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مۆز",
                             Importance = 1,
                             Kurdish = "مۆز",
@@ -51748,7 +51748,7 @@ namespace backend.Migrations
                         {
                             Id = 10360,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5327),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5001),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پرتەقاڵ",
                             Importance = 1,
                             Kurdish = "پرتەقاڵ",
@@ -51758,7 +51758,7 @@ namespace backend.Migrations
                         {
                             Id = 10361,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5328),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5002),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنار",
                             Importance = 1,
                             Kurdish = "هەنار",
@@ -51768,7 +51768,7 @@ namespace backend.Migrations
                         {
                             Id = 10362,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5329),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5003),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترێ",
                             Importance = 1,
                             Kurdish = "ترێ",
@@ -51778,7 +51778,7 @@ namespace backend.Migrations
                         {
                             Id = 10363,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5330),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5004),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیر",
                             Importance = 1,
                             Kurdish = "هەنجیر",
@@ -51788,7 +51788,7 @@ namespace backend.Migrations
                         {
                             Id = 10364,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5331),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5005),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی",
                             Importance = 1,
                             Kurdish = "قەیسی",
@@ -51798,7 +51798,7 @@ namespace backend.Migrations
                         {
                             Id = 10365,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5331),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5006),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شووتی",
                             Importance = 1,
                             Kurdish = "شووتی",
@@ -51808,7 +51808,7 @@ namespace backend.Migrations
                         {
                             Id = 10366,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5332),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5007),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کاڵەک",
                             Importance = 1,
                             Kurdish = "کاڵەک",
@@ -51818,7 +51818,7 @@ namespace backend.Migrations
                         {
                             Id = 10367,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5333),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5008),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گێلاس",
                             Importance = 1,
                             Kurdish = "گێلاس",
@@ -51828,7 +51828,7 @@ namespace backend.Migrations
                         {
                             Id = 10368,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5334),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5009),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەماتە",
                             Importance = 1,
                             Kurdish = "تەماتە",
@@ -51838,7 +51838,7 @@ namespace backend.Migrations
                         {
                             Id = 10369,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5335),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5010),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەیار",
                             Importance = 1,
                             Kurdish = "خەیار",
@@ -51848,7 +51848,7 @@ namespace backend.Migrations
                         {
                             Id = 10370,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5336),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5011),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیاز",
                             Importance = 1,
                             Kurdish = "پیاز",
@@ -51858,7 +51858,7 @@ namespace backend.Migrations
                         {
                             Id = 10371,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5356),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5012),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیر",
                             Importance = 1,
                             Kurdish = "سیر",
@@ -51868,7 +51868,7 @@ namespace backend.Migrations
                         {
                             Id = 10372,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5357),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5012),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بیبەر",
                             Importance = 1,
                             Kurdish = "بیبەر",
@@ -51878,7 +51878,7 @@ namespace backend.Migrations
                         {
                             Id = 10373,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5358),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5013),
                             Description = "ئەم وشەیە پەیوەستە بە لقی باینجان",
                             Importance = 1,
                             Kurdish = "باینجان",
@@ -51888,7 +51888,7 @@ namespace backend.Migrations
                         {
                             Id = 10374,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5359),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5014),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولەکە",
                             Importance = 1,
                             Kurdish = "کولەکە",
@@ -51898,7 +51898,7 @@ namespace backend.Migrations
                         {
                             Id = 10375,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5360),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5015),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەتاتە",
                             Importance = 1,
                             Kurdish = "پەتاتە",
@@ -51908,7 +51908,7 @@ namespace backend.Migrations
                         {
                             Id = 10376,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5361),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5016),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەوزە",
                             Importance = 1,
                             Kurdish = "سەوزە",
@@ -51918,7 +51918,7 @@ namespace backend.Migrations
                         {
                             Id = 10377,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5362),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5017),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرەوز",
                             Importance = 1,
                             Kurdish = "کەرەوز",
@@ -51928,7 +51928,7 @@ namespace backend.Migrations
                         {
                             Id = 10378,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5363),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5018),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەنجەڵ",
                             Importance = 1,
                             Kurdish = "مەنجەڵ",
@@ -51938,7 +51938,7 @@ namespace backend.Migrations
                         {
                             Id = 10379,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5364),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5046),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاپ",
                             Importance = 1,
                             Kurdish = "قاپ",
@@ -51948,7 +51948,7 @@ namespace backend.Migrations
                         {
                             Id = 10380,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5365),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5047),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوچک",
                             Importance = 1,
                             Kurdish = "کەوچک",
@@ -51958,7 +51958,7 @@ namespace backend.Migrations
                         {
                             Id = 10381,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5366),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5048),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەتاڵ",
                             Importance = 1,
                             Kurdish = "چەتاڵ",
@@ -51968,7 +51968,7 @@ namespace backend.Migrations
                         {
                             Id = 10382,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5367),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5049),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەقۆ",
                             Importance = 1,
                             Kurdish = "چەقۆ",
@@ -51978,7 +51978,7 @@ namespace backend.Migrations
                         {
                             Id = 10383,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5368),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5050),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەرداغ",
                             Importance = 1,
                             Kurdish = "پەرداغ",
@@ -51988,7 +51988,7 @@ namespace backend.Migrations
                         {
                             Id = 10384,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5369),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5051),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆلکە",
                             Importance = 1,
                             Kurdish = "دۆلکە",
@@ -51998,7 +51998,7 @@ namespace backend.Migrations
                         {
                             Id = 10385,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5369),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5052),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سفرە",
                             Importance = 1,
                             Kurdish = "سفرە",
@@ -52008,7 +52008,7 @@ namespace backend.Migrations
                         {
                             Id = 10386,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5370),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5053),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەباغ",
                             Importance = 1,
                             Kurdish = "تەباغ",
@@ -52018,7 +52018,7 @@ namespace backend.Migrations
                         {
                             Id = 10387,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5371),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5054),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فڕن",
                             Importance = 1,
                             Kurdish = "فڕن",
@@ -52028,7 +52028,7 @@ namespace backend.Migrations
                         {
                             Id = 10388,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5372),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5055),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەلاجە",
                             Importance = 1,
                             Kurdish = "سەلاجە",
@@ -52038,7 +52038,7 @@ namespace backend.Migrations
                         {
                             Id = 10389,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5373),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5056),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەڵاتە",
                             Importance = 1,
                             Kurdish = "خەڵاتە",
@@ -52048,7 +52048,7 @@ namespace backend.Migrations
                         {
                             Id = 10390,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5374),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5057),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هاوەن",
                             Importance = 1,
                             Kurdish = "هاوەن",
@@ -52058,7 +52058,7 @@ namespace backend.Migrations
                         {
                             Id = 10391,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5375),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5058),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەبەتە",
                             Importance = 1,
                             Kurdish = "سەبەتە",
@@ -52068,7 +52068,7 @@ namespace backend.Migrations
                         {
                             Id = 10392,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5376),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5059),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سینای",
                             Importance = 1,
                             Kurdish = "سینای",
@@ -52078,7 +52078,7 @@ namespace backend.Migrations
                         {
                             Id = 10393,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5377),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5060),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فنجان",
                             Importance = 1,
                             Kurdish = "فنجان",
@@ -52088,7 +52088,7 @@ namespace backend.Migrations
                         {
                             Id = 10394,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5378),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5060),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قۆری",
                             Importance = 1,
                             Kurdish = "قۆری",
@@ -52098,7 +52098,7 @@ namespace backend.Migrations
                         {
                             Id = 10395,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5379),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5061),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەماوەر",
                             Importance = 1,
                             Kurdish = "سەماوەر",
@@ -52108,7 +52108,7 @@ namespace backend.Migrations
                         {
                             Id = 10396,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5409),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5062),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چای",
                             Importance = 1,
                             Kurdish = "چای",
@@ -52118,7 +52118,7 @@ namespace backend.Migrations
                         {
                             Id = 10397,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5410),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5063),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاوە",
                             Importance = 1,
                             Kurdish = "قاوە",
@@ -52128,7 +52128,7 @@ namespace backend.Migrations
                         {
                             Id = 10398,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5411),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5064),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەکر",
                             Importance = 1,
                             Kurdish = "شەکر",
@@ -52138,7 +52138,7 @@ namespace backend.Migrations
                         {
                             Id = 10399,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5412),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5065),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خوێ",
                             Importance = 1,
                             Kurdish = "خوێ",
@@ -52148,7 +52148,7 @@ namespace backend.Migrations
                         {
                             Id = 10400,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5413),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5066),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سماق",
                             Importance = 1,
                             Kurdish = "سماق",
@@ -52158,7 +52158,7 @@ namespace backend.Migrations
                         {
                             Id = 10401,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5414),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5067),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەردەچەوە",
                             Importance = 1,
                             Kurdish = "زەردەچەوە",
@@ -52168,7 +52168,7 @@ namespace backend.Migrations
                         {
                             Id = 10402,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5415),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5068),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دارچین",
                             Importance = 1,
                             Kurdish = "دارچین",
@@ -52178,7 +52178,7 @@ namespace backend.Migrations
                         {
                             Id = 10403,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5416),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5069),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێخەک",
                             Importance = 1,
                             Kurdish = "مێخەک",
@@ -52188,7 +52188,7 @@ namespace backend.Migrations
                         {
                             Id = 10404,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5417),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5070),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەیت",
                             Importance = 1,
                             Kurdish = "زەیت",
@@ -52198,7 +52198,7 @@ namespace backend.Migrations
                         {
                             Id = 10405,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5418),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5102),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی تەماتە",
                             Importance = 1,
                             Kurdish = "دۆشاوی تەماتە",
@@ -52208,7 +52208,7 @@ namespace backend.Migrations
                         {
                             Id = 10406,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5419),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5103),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی لیمۆ",
                             Importance = 1,
                             Kurdish = "ئاوی لیمۆ",
@@ -52218,7 +52218,7 @@ namespace backend.Migrations
                         {
                             Id = 10407,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5420),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5105),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرکە",
                             Importance = 1,
                             Kurdish = "سیرکە",
@@ -52228,7 +52228,7 @@ namespace backend.Migrations
                         {
                             Id = 10408,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5421),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5106),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێز",
                             Importance = 1,
                             Kurdish = "گوێز",
@@ -52238,7 +52238,7 @@ namespace backend.Migrations
                         {
                             Id = 10409,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5422),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5107),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بایەم",
                             Importance = 1,
                             Kurdish = "بایەم",
@@ -52248,7 +52248,7 @@ namespace backend.Migrations
                         {
                             Id = 10410,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5423),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5108),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فستق",
                             Importance = 1,
                             Kurdish = "فستق",
@@ -52258,7 +52258,7 @@ namespace backend.Migrations
                         {
                             Id = 10411,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5424),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5109),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بندق",
                             Importance = 1,
                             Kurdish = "بندق",
@@ -52268,7 +52268,7 @@ namespace backend.Migrations
                         {
                             Id = 10412,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5425),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5110),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێوژ",
                             Importance = 1,
                             Kurdish = "مێوژ",
@@ -52278,7 +52278,7 @@ namespace backend.Migrations
                         {
                             Id = 10413,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5426),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5111),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ناووکەوڕەقە",
                             Importance = 1,
                             Kurdish = "ناووکەوڕەقە",
@@ -52288,7 +52288,7 @@ namespace backend.Migrations
                         {
                             Id = 10414,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5427),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5112),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خورما",
                             Importance = 1,
                             Kurdish = "خورما",
@@ -52298,7 +52298,7 @@ namespace backend.Migrations
                         {
                             Id = 10415,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5428),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5113),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەنمی کوتراو",
                             Importance = 1,
                             Kurdish = "گەنمی کوتراو",
@@ -52308,7 +52308,7 @@ namespace backend.Migrations
                         {
                             Id = 10416,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5429),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5114),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆک",
                             Importance = 1,
                             Kurdish = "نۆک",
@@ -52318,7 +52318,7 @@ namespace backend.Migrations
                         {
                             Id = 10417,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5430),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5115),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسک",
                             Importance = 1,
                             Kurdish = "نیسک",
@@ -52328,7 +52328,7 @@ namespace backend.Migrations
                         {
                             Id = 10418,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5431),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5116),
                             Description = "ئەم وشەیە پەیوەستە بە لقی یاپراخ",
                             Importance = 1,
                             Kurdish = "یاپراخ",
@@ -52338,7 +52338,7 @@ namespace backend.Migrations
                         {
                             Id = 10419,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5432),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5117),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کووپە",
                             Importance = 1,
                             Kurdish = "کووپە",
@@ -52348,7 +52348,7 @@ namespace backend.Migrations
                         {
                             Id = 10420,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5433),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5117),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەوژەن",
                             Importance = 1,
                             Kurdish = "جەوژەن",
@@ -52358,7 +52358,7 @@ namespace backend.Migrations
                         {
                             Id = 10421,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5470),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5118),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتەبڕاو",
                             Importance = 1,
                             Kurdish = "گۆشتەبڕاو",
@@ -52368,7 +52368,7 @@ namespace backend.Migrations
                         {
                             Id = 10422,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5472),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5119),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قوراو",
                             Importance = 1,
                             Kurdish = "قوراو",
@@ -52378,7 +52378,7 @@ namespace backend.Migrations
                         {
                             Id = 10423,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5473),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5120),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرەمۆز",
                             Importance = 1,
                             Kurdish = "سیرەمۆز",
@@ -52388,7 +52388,7 @@ namespace backend.Migrations
                         {
                             Id = 10424,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5474),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5121),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆ",
                             Importance = 1,
                             Kurdish = "دۆ",
@@ -52398,7 +52398,7 @@ namespace backend.Migrations
                         {
                             Id = 10425,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5475),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5122),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەربەت",
                             Importance = 1,
                             Kurdish = "شەربەت",
@@ -52408,7 +52408,7 @@ namespace backend.Migrations
                         {
                             Id = 10426,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5476),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5123),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیر",
                             Importance = 1,
                             Kurdish = "شیر",
@@ -52418,7 +52418,7 @@ namespace backend.Migrations
                         {
                             Id = 10427,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5477),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5124),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاو",
                             Importance = 1,
                             Kurdish = "دۆشاو",
@@ -52428,7 +52428,7 @@ namespace backend.Migrations
                         {
                             Id = 10428,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5478),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5125),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەحین",
                             Importance = 1,
                             Kurdish = "تەحین",
@@ -52438,7 +52438,7 @@ namespace backend.Migrations
                         {
                             Id = 10429,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5478),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5126),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پاقڵاوە",
                             Importance = 1,
                             Kurdish = "پاقڵاوە",
@@ -52448,7 +52448,7 @@ namespace backend.Migrations
                         {
                             Id = 10430,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5480),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5158),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لوقمەقازی",
                             Importance = 1,
                             Kurdish = "لوقمەقازی",
@@ -52458,7 +52458,7 @@ namespace backend.Migrations
                         {
                             Id = 10431,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5481),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5160),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بامیە",
                             Importance = 1,
                             Kurdish = "بامیە",
@@ -52468,7 +52468,7 @@ namespace backend.Migrations
                         {
                             Id = 10432,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5482),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5162),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتە",
                             Importance = 1,
                             Kurdish = "کفتە",
@@ -52478,7 +52478,7 @@ namespace backend.Migrations
                         {
                             Id = 10433,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5482),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5163),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتە",
                             Importance = 1,
                             Kurdish = "شفتە",
@@ -52488,7 +52488,7 @@ namespace backend.Migrations
                         {
                             Id = 10434,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5483),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5164),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیشکەباب",
                             Importance = 1,
                             Kurdish = "شیشکەباب",
@@ -52498,7 +52498,7 @@ namespace backend.Migrations
                         {
                             Id = 10435,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5484),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5166),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پڵاو",
                             Importance = 1,
                             Kurdish = "پڵاو",
@@ -52508,7 +52508,7 @@ namespace backend.Migrations
                         {
                             Id = 10436,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5485),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5167),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ساوەر",
                             Importance = 1,
                             Kurdish = "ساوەر",
@@ -52518,7 +52518,7 @@ namespace backend.Migrations
                         {
                             Id = 10437,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5486),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5169),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەلەم",
                             Importance = 1,
                             Kurdish = "شەلەم",
@@ -52528,7 +52528,7 @@ namespace backend.Migrations
                         {
                             Id = 10438,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5487),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5171),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیزا",
                             Importance = 1,
                             Kurdish = "پیزا",
@@ -52538,7 +52538,7 @@ namespace backend.Migrations
                         {
                             Id = 10439,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5488),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5172),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بەرگر",
                             Importance = 1,
                             Kurdish = "بەرگر",
@@ -52548,7 +52548,7 @@ namespace backend.Migrations
                         {
                             Id = 10440,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5489),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5173),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فینگەر",
                             Importance = 1,
                             Kurdish = "فینگەر",
@@ -52558,7 +52558,7 @@ namespace backend.Migrations
                         {
                             Id = 10441,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5490),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5175),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سایندویچ",
                             Importance = 1,
                             Kurdish = "سایندویچ",
@@ -52568,7 +52568,7 @@ namespace backend.Migrations
                         {
                             Id = 10442,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5491),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5176),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فەلافل",
                             Importance = 1,
                             Kurdish = "فەلافل",
@@ -52578,7 +52578,7 @@ namespace backend.Migrations
                         {
                             Id = 10443,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5492),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5177),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەس",
                             Importance = 1,
                             Kurdish = "گەس",
@@ -52588,7 +52588,7 @@ namespace backend.Migrations
                         {
                             Id = 10444,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5493),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5179),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مایۆنێز",
                             Importance = 1,
                             Kurdish = "مایۆنێز",
@@ -52598,7 +52598,7 @@ namespace backend.Migrations
                         {
                             Id = 10445,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5494),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5180),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەتچەپ",
                             Importance = 1,
                             Kurdish = "کەتچەپ",
@@ -52608,7 +52608,7 @@ namespace backend.Migrations
                         {
                             Id = 10446,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5495),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5181),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەردەل",
                             Importance = 1,
                             Kurdish = "خەردەل",
@@ -52618,7 +52618,7 @@ namespace backend.Migrations
                         {
                             Id = 10447,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5521),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5182),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتە",
                             Importance = 1,
                             Kurdish = "زەڵاتە",
@@ -52628,7 +52628,7 @@ namespace backend.Migrations
                         {
                             Id = 10448,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5522),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5183),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سپێناخ",
                             Importance = 1,
                             Kurdish = "سپێناخ",
@@ -52638,7 +52638,7 @@ namespace backend.Migrations
                         {
                             Id = 10449,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5524),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5185),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەعدەنوس",
                             Importance = 1,
                             Kurdish = "مەعدەنوس",
@@ -52648,7 +52648,7 @@ namespace backend.Migrations
                         {
                             Id = 10450,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5524),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5186),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوەر",
                             Importance = 1,
                             Kurdish = "کەوەر",
@@ -52658,7 +52658,7 @@ namespace backend.Migrations
                         {
                             Id = 10451,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5525),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5187),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەرۆزی",
                             Importance = 1,
                             Kurdish = "تەرۆزی",
@@ -52668,7 +52668,7 @@ namespace backend.Migrations
                         {
                             Id = 10452,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5526),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5188),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سڵق",
                             Importance = 1,
                             Kurdish = "سڵق",
@@ -52678,7 +52678,7 @@ namespace backend.Migrations
                         {
                             Id = 10453,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5527),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5189),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ڕێواس",
                             Importance = 1,
                             Kurdish = "ڕێواس",
@@ -52688,7 +52688,7 @@ namespace backend.Migrations
                         {
                             Id = 10454,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5528),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5190),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قارچک",
                             Importance = 1,
                             Kurdish = "قارچک",
@@ -52698,7 +52698,7 @@ namespace backend.Migrations
                         {
                             Id = 10455,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5529),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5191),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کوندەر",
                             Importance = 1,
                             Kurdish = "کوندەر",
@@ -52708,7 +52708,7 @@ namespace backend.Migrations
                         {
                             Id = 10456,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5530),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5224),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لازانیا",
                             Importance = 1,
                             Kurdish = "لازانیا",
@@ -52718,7 +52718,7 @@ namespace backend.Migrations
                         {
                             Id = 10457,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5531),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5225),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماکەرۆنی",
                             Importance = 1,
                             Kurdish = "ماکەرۆنی",
@@ -52728,7 +52728,7 @@ namespace backend.Migrations
                         {
                             Id = 10458,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5532),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5227),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆدڵز",
                             Importance = 1,
                             Kurdish = "نۆدڵز",
@@ -52738,7 +52738,7 @@ namespace backend.Migrations
                         {
                             Id = 10459,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5533),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5228),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاش",
                             Importance = 1,
                             Kurdish = "ئاش",
@@ -52748,7 +52748,7 @@ namespace backend.Migrations
                         {
                             Id = 10460,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5534),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5230),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شێلم",
                             Importance = 1,
                             Kurdish = "شێلم",
@@ -52758,7 +52758,7 @@ namespace backend.Migrations
                         {
                             Id = 10461,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5535),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5231),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماش",
                             Importance = 1,
                             Kurdish = "ماش",
@@ -52768,7 +52768,7 @@ namespace backend.Migrations
                         {
                             Id = 10462,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5536),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5233),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لۆبیا",
                             Importance = 1,
                             Kurdish = "لۆبیا",
@@ -52778,7 +52778,7 @@ namespace backend.Migrations
                         {
                             Id = 10463,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5537),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5234),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆکی ڕەش",
                             Importance = 1,
                             Kurdish = "نۆکی ڕەش",
@@ -52788,7 +52788,7 @@ namespace backend.Migrations
                         {
                             Id = 10464,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5538),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5236),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بڕوێش",
                             Importance = 1,
                             Kurdish = "بڕوێش",
@@ -52798,7 +52798,7 @@ namespace backend.Migrations
                         {
                             Id = 10465,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5539),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5237),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێزاو",
                             Importance = 1,
                             Kurdish = "گوێزاو",
@@ -52808,7 +52808,7 @@ namespace backend.Migrations
                         {
                             Id = 10466,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5540),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5239),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی میوە",
                             Importance = 1,
                             Kurdish = "ئاوی میوە",
@@ -52818,7 +52818,7 @@ namespace backend.Migrations
                         {
                             Id = 10467,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5541),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5240),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی هەنار",
                             Importance = 1,
                             Kurdish = "دۆشاوی هەنار",
@@ -52828,7 +52828,7 @@ namespace backend.Migrations
                         {
                             Id = 10468,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5542),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5242),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی برنج",
                             Importance = 1,
                             Kurdish = "کفتەی برنج",
@@ -52838,7 +52838,7 @@ namespace backend.Migrations
                         {
                             Id = 10469,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5543),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5243),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی ساوەر",
                             Importance = 1,
                             Kurdish = "کفتەی ساوەر",
@@ -52848,7 +52848,7 @@ namespace backend.Migrations
                         {
                             Id = 10470,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5544),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5244),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتەی مریشک",
                             Importance = 1,
                             Kurdish = "شفتەی مریشک",
@@ -52858,7 +52858,7 @@ namespace backend.Migrations
                         {
                             Id = 10471,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5545),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5246),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی تەڕ",
                             Importance = 1,
                             Kurdish = "قەیسی تەڕ",
@@ -52868,7 +52868,7 @@ namespace backend.Migrations
                         {
                             Id = 10472,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5571),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5247),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیری تەڕ",
                             Importance = 1,
                             Kurdish = "هەنجیری تەڕ",
@@ -52878,7 +52878,7 @@ namespace backend.Migrations
                         {
                             Id = 10473,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5572),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5248),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زالۆکە",
                             Importance = 1,
                             Kurdish = "زالۆکە",
@@ -52888,7 +52888,7 @@ namespace backend.Migrations
                         {
                             Id = 10474,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5573),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5250),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بابا غەنوج",
                             Importance = 1,
                             Kurdish = "بابا غەنوج",
@@ -52898,7 +52898,7 @@ namespace backend.Migrations
                         {
                             Id = 10475,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5574),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5251),
                             Description = "ئەم وشەیە پەیوەستە بە لقی حومس",
                             Importance = 1,
                             Kurdish = "حومس",
@@ -52908,7 +52908,7 @@ namespace backend.Migrations
                         {
                             Id = 10476,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5575),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5253),
                             Description = "ئەم وشەیە پەیوەستە بە لقی موتەبەل",
                             Importance = 1,
                             Kurdish = "موتەبەل",
@@ -52918,7 +52918,7 @@ namespace backend.Migrations
                         {
                             Id = 10477,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5576),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5254),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فتووش",
                             Importance = 1,
                             Kurdish = "فتووش",
@@ -52928,7 +52928,7 @@ namespace backend.Migrations
                         {
                             Id = 10478,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5577),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5255),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەبولە",
                             Importance = 1,
                             Kurdish = "تەبولە",
@@ -52938,7 +52938,7 @@ namespace backend.Migrations
                         {
                             Id = 10479,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5578),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5257),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی وەرزی",
                             Importance = 1,
                             Kurdish = "زەڵاتەی وەرزی",
@@ -52948,7 +52948,7 @@ namespace backend.Migrations
                         {
                             Id = 10480,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5579),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5259),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی پەتاتە",
                             Importance = 1,
                             Kurdish = "زەڵاتەی پەتاتە",
@@ -52958,7 +52958,7 @@ namespace backend.Migrations
                         {
                             Id = 10481,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5580),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5293),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و خەیار",
                             Importance = 1,
                             Kurdish = "ماست و خەیار",
@@ -52968,7 +52968,7 @@ namespace backend.Migrations
                         {
                             Id = 10482,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5581),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5295),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و موسیر",
                             Importance = 1,
                             Kurdish = "ماست و موسیر",
@@ -52978,7 +52978,7 @@ namespace backend.Migrations
                         {
                             Id = 10483,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5582),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5296),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆخیوا",
                             Importance = 1,
                             Kurdish = "دۆخیوا",
@@ -52988,7 +52988,7 @@ namespace backend.Migrations
                         {
                             Id = 10484,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5582),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5297),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گیپە",
                             Importance = 1,
                             Kurdish = "گیپە",
@@ -52998,7 +52998,7 @@ namespace backend.Migrations
                         {
                             Id = 10485,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5583),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5298),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەروپێ",
                             Importance = 1,
                             Kurdish = "سەروپێ",
@@ -53008,7 +53008,7 @@ namespace backend.Migrations
                         {
                             Id = 10486,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5584),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5300),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەل",
                             Importance = 1,
                             Kurdish = "قەل",
@@ -53018,7 +53018,7 @@ namespace backend.Migrations
                         {
                             Id = 10487,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5585),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5301),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشکی برژاو",
                             Importance = 1,
                             Kurdish = "مریشکی برژاو",
@@ -53028,7 +53028,7 @@ namespace backend.Migrations
                         {
                             Id = 10488,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5586),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5302),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی",
                             Importance = 1,
                             Kurdish = "ماسی",
@@ -53038,7 +53038,7 @@ namespace backend.Migrations
                         {
                             Id = 10489,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5587),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5304),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی مەسگوف",
                             Importance = 1,
                             Kurdish = "ماسی مەسگوف",
@@ -53048,7 +53048,7 @@ namespace backend.Migrations
                         {
                             Id = 10490,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5589),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5305),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی بەرخ",
                             Importance = 1,
                             Kurdish = "گۆشتی بەرخ",
@@ -53058,7 +53058,7 @@ namespace backend.Migrations
                         {
                             Id = 10491,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5589),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5307),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی مانگا",
                             Importance = 1,
                             Kurdish = "گۆشتی مانگا",
@@ -53068,7 +53068,7 @@ namespace backend.Migrations
                         {
                             Id = 10492,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5590),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5309),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەلیە",
                             Importance = 1,
                             Kurdish = "قەلیە",
@@ -53078,7 +53078,7 @@ namespace backend.Migrations
                         {
                             Id = 10493,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5591),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5310),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای نیسک",
                             Importance = 1,
                             Kurdish = "شۆربای نیسک",
@@ -53088,7 +53088,7 @@ namespace backend.Migrations
                         {
                             Id = 10494,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5592),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5314),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای جۆ",
                             Importance = 1,
                             Kurdish = "شۆربای جۆ",
@@ -53098,7 +53098,7 @@ namespace backend.Migrations
                         {
                             Id = 10495,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5593),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5315),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای سەوزە",
                             Importance = 1,
                             Kurdish = "شۆربای سەوزە",
@@ -53108,7 +53108,7 @@ namespace backend.Migrations
                         {
                             Id = 10496,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5594),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5316),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی کوردی",
                             Importance = 1,
                             Kurdish = "برنجی کوردی",
@@ -53118,7 +53118,7 @@ namespace backend.Migrations
                         {
                             Id = 10497,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5621),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5317),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی بسمەتی",
                             Importance = 1,
                             Kurdish = "برنجی بسمەتی",
@@ -53128,7 +53128,7 @@ namespace backend.Migrations
                         {
                             Id = 10498,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5622),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5318),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی ڕەش",
                             Importance = 1,
                             Kurdish = "برنجی ڕەش",
@@ -53138,7 +53138,7 @@ namespace backend.Migrations
                         {
                             Id = 10499,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5623),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5319),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی سادە",
                             Importance = 1,
                             Kurdish = "کێکی سادە",
@@ -53148,7 +53148,7 @@ namespace backend.Migrations
                         {
                             Id = 10500,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5624),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5320),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی شوکولاتە",
                             Importance = 1,
                             Kurdish = "کێکی شوکولاتە",
@@ -53158,7 +53158,7 @@ namespace backend.Migrations
                         {
                             Id = 10501,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5651),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5349),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پسکیتی چای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پسکیتی چای (10501)",
@@ -53168,7 +53168,7 @@ namespace backend.Migrations
                         {
                             Id = 10502,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5653),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5351),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی وشککراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی وشککراو (10502)",
@@ -53178,7 +53178,7 @@ namespace backend.Migrations
                         {
                             Id = 10503,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5655),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5352),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەمر هیندی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەمر هیندی (10503)",
@@ -53188,7 +53188,7 @@ namespace backend.Migrations
                         {
                             Id = 10504,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5656),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5379),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەمەرەدین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەمەرەدین (10504)",
@@ -53198,7 +53198,7 @@ namespace backend.Migrations
                         {
                             Id = 10505,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5658),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5381),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەلی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی جەلی (10505)",
@@ -53208,7 +53208,7 @@ namespace backend.Migrations
                         {
                             Id = 10506,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5659),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5382),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەهەلەبی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەهەلەبی (10506)",
@@ -53218,7 +53218,7 @@ namespace backend.Migrations
                         {
                             Id = 10507,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5661),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5384),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنج (10507)",
@@ -53228,7 +53228,7 @@ namespace backend.Migrations
                         {
                             Id = 10508,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5662),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5386),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کباب",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کباب (10508)",
@@ -53238,7 +53238,7 @@ namespace backend.Migrations
                         {
                             Id = 10509,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5664),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5388),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆڵمە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆڵمە (10509)",
@@ -53248,7 +53248,7 @@ namespace backend.Migrations
                         {
                             Id = 10510,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5665),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5389),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسکێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نیسکێنە (10510)",
@@ -53258,7 +53258,7 @@ namespace backend.Migrations
                         {
                             Id = 10511,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5667),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5391),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترخێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ترخێنە (10511)",
@@ -53268,7 +53268,7 @@ namespace backend.Migrations
                         {
                             Id = 10512,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5668),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5392),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربا (10512)",
@@ -53278,7 +53278,7 @@ namespace backend.Migrations
                         {
                             Id = 10513,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5699),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5419),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مریشک (10513)",
@@ -53288,7 +53288,7 @@ namespace backend.Migrations
                         {
                             Id = 10514,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5701),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5421),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشت (10514)",
@@ -53298,7 +53298,7 @@ namespace backend.Migrations
                         {
                             Id = 10515,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5703),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5422),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست (10515)",
@@ -53308,7 +53308,7 @@ namespace backend.Migrations
                         {
                             Id = 10516,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5704),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5424),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەنیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەنیر (10516)",
@@ -53318,7 +53318,7 @@ namespace backend.Migrations
                         {
                             Id = 10517,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5732),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5425),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەرە (10517)",
@@ -53328,7 +53328,7 @@ namespace backend.Migrations
                         {
                             Id = 10518,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5734),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5427),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیماغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیماغ (10518)",
@@ -53338,7 +53338,7 @@ namespace backend.Migrations
                         {
                             Id = 10519,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5736),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5428),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنگوین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنگوین (10519)",
@@ -53348,7 +53348,7 @@ namespace backend.Migrations
                         {
                             Id = 10520,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5738),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5430),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مورەبا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مورەبا (10520)",
@@ -53358,7 +53358,7 @@ namespace backend.Migrations
                         {
                             Id = 10521,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5739),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5432),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هێلکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هێلکە (10521)",
@@ -53368,7 +53368,7 @@ namespace backend.Migrations
                         {
                             Id = 10522,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5741),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5433),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نانی تیرێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نانی تیرێ (10522)",
@@ -53378,7 +53378,7 @@ namespace backend.Migrations
                         {
                             Id = 10523,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5742),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5449),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەموون",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەموون (10523)",
@@ -53388,7 +53388,7 @@ namespace backend.Migrations
                         {
                             Id = 10524,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5744),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5450),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولێرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کولێرە (10524)",
@@ -53398,7 +53398,7 @@ namespace backend.Migrations
                         {
                             Id = 10525,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5746),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5452),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەلانە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەلانە (10525)",
@@ -53408,7 +53408,7 @@ namespace backend.Migrations
                         {
                             Id = 10526,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5747),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5454),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شلکێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شلکێنە (10526)",
@@ -53418,7 +53418,7 @@ namespace backend.Migrations
                         {
                             Id = 10527,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5749),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5455),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سێو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سێو (10527)",
@@ -53428,7 +53428,7 @@ namespace backend.Migrations
                         {
                             Id = 10528,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5751),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5457),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مۆز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مۆز (10528)",
@@ -53438,7 +53438,7 @@ namespace backend.Migrations
                         {
                             Id = 10529,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5753),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5459),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پرتەقاڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پرتەقاڵ (10529)",
@@ -53448,7 +53448,7 @@ namespace backend.Migrations
                         {
                             Id = 10530,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5754),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5461),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنار (10530)",
@@ -53458,7 +53458,7 @@ namespace backend.Migrations
                         {
                             Id = 10531,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5756),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5462),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ترێ (10531)",
@@ -53468,7 +53468,7 @@ namespace backend.Migrations
                         {
                             Id = 10532,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5757),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5464),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنجیر (10532)",
@@ -53478,7 +53478,7 @@ namespace backend.Migrations
                         {
                             Id = 10533,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5759),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5465),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی (10533)",
@@ -53488,7 +53488,7 @@ namespace backend.Migrations
                         {
                             Id = 10534,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5760),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5467),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شووتی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شووتی (10534)",
@@ -53498,7 +53498,7 @@ namespace backend.Migrations
                         {
                             Id = 10535,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5777),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5468),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کاڵەک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کاڵەک (10535)",
@@ -53508,7 +53508,7 @@ namespace backend.Migrations
                         {
                             Id = 10536,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5780),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5470),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گێلاس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گێلاس (10536)",
@@ -53518,7 +53518,7 @@ namespace backend.Migrations
                         {
                             Id = 10537,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5781),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5471),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەماتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەماتە (10537)",
@@ -53528,7 +53528,7 @@ namespace backend.Migrations
                         {
                             Id = 10538,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5783),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5473),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەیار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەیار (10538)",
@@ -53538,7 +53538,7 @@ namespace backend.Migrations
                         {
                             Id = 10539,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5784),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5474),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیاز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پیاز (10539)",
@@ -53548,7 +53548,7 @@ namespace backend.Migrations
                         {
                             Id = 10540,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5786),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5475),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیر (10540)",
@@ -53558,7 +53558,7 @@ namespace backend.Migrations
                         {
                             Id = 10541,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5788),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5509),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بیبەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بیبەر (10541)",
@@ -53568,7 +53568,7 @@ namespace backend.Migrations
                         {
                             Id = 10542,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5789),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5511),
                             Description = "ئەم وشەیە پەیوەستە بە لقی باینجان",
                             Importance = 1,
                             Kurdish = "جۆری نایابی باینجان (10542)",
@@ -53578,7 +53578,7 @@ namespace backend.Migrations
                         {
                             Id = 10543,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5791),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5513),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولەکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کولەکە (10543)",
@@ -53588,7 +53588,7 @@ namespace backend.Migrations
                         {
                             Id = 10544,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5792),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5514),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەتاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەتاتە (10544)",
@@ -53598,7 +53598,7 @@ namespace backend.Migrations
                         {
                             Id = 10545,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5794),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5516),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەوزە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەوزە (10545)",
@@ -53608,7 +53608,7 @@ namespace backend.Migrations
                         {
                             Id = 10546,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5795),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5517),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرەوز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەرەوز (10546)",
@@ -53618,7 +53618,7 @@ namespace backend.Migrations
                         {
                             Id = 10547,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5797),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5519),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەنجەڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەنجەڵ (10547)",
@@ -53628,7 +53628,7 @@ namespace backend.Migrations
                         {
                             Id = 10548,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5799),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5521),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاپ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قاپ (10548)",
@@ -53638,7 +53638,7 @@ namespace backend.Migrations
                         {
                             Id = 10549,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5800),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5522),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوچک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەوچک (10549)",
@@ -53648,7 +53648,7 @@ namespace backend.Migrations
                         {
                             Id = 10550,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5801),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5524),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەتاڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چەتاڵ (10550)",
@@ -53658,7 +53658,7 @@ namespace backend.Migrations
                         {
                             Id = 10551,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5803),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5525),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەقۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چەقۆ (10551)",
@@ -53668,7 +53668,7 @@ namespace backend.Migrations
                         {
                             Id = 10552,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5805),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5527),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەرداغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەرداغ (10552)",
@@ -53678,7 +53678,7 @@ namespace backend.Migrations
                         {
                             Id = 10553,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5806),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5528),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆلکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆلکە (10553)",
@@ -53688,7 +53688,7 @@ namespace backend.Migrations
                         {
                             Id = 10554,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5838),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5529),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سفرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سفرە (10554)",
@@ -53698,7 +53698,7 @@ namespace backend.Migrations
                         {
                             Id = 10555,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5840),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5531),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەباغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەباغ (10555)",
@@ -53708,7 +53708,7 @@ namespace backend.Migrations
                         {
                             Id = 10556,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5842),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5532),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فڕن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فڕن (10556)",
@@ -53718,7 +53718,7 @@ namespace backend.Migrations
                         {
                             Id = 10557,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5843),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5534),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەلاجە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەلاجە (10557)",
@@ -53728,7 +53728,7 @@ namespace backend.Migrations
                         {
                             Id = 10558,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5845),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5535),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەڵاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەڵاتە (10558)",
@@ -53738,7 +53738,7 @@ namespace backend.Migrations
                         {
                             Id = 10559,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5846),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5536),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هاوەن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هاوەن (10559)",
@@ -53748,7 +53748,7 @@ namespace backend.Migrations
                         {
                             Id = 10560,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5848),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5570),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەبەتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەبەتە (10560)",
@@ -53758,7 +53758,7 @@ namespace backend.Migrations
                         {
                             Id = 10561,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5849),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5572),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سینای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سینای (10561)",
@@ -53768,7 +53768,7 @@ namespace backend.Migrations
                         {
                             Id = 10562,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5851),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5574),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فنجان",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فنجان (10562)",
@@ -53778,7 +53778,7 @@ namespace backend.Migrations
                         {
                             Id = 10563,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5852),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5575),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قۆری",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قۆری (10563)",
@@ -53788,7 +53788,7 @@ namespace backend.Migrations
                         {
                             Id = 10564,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5854),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5577),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەماوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەماوەر (10564)",
@@ -53798,7 +53798,7 @@ namespace backend.Migrations
                         {
                             Id = 10565,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5855),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5578),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چای (10565)",
@@ -53808,7 +53808,7 @@ namespace backend.Migrations
                         {
                             Id = 10566,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5857),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5580),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قاوە (10566)",
@@ -53818,7 +53818,7 @@ namespace backend.Migrations
                         {
                             Id = 10567,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5858),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5581),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەکر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەکر (10567)",
@@ -53828,7 +53828,7 @@ namespace backend.Migrations
                         {
                             Id = 10568,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5860),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5583),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خوێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خوێ (10568)",
@@ -53838,7 +53838,7 @@ namespace backend.Migrations
                         {
                             Id = 10569,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5861),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5584),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سماق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سماق (10569)",
@@ -53848,7 +53848,7 @@ namespace backend.Migrations
                         {
                             Id = 10570,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5863),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5586),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەردەچەوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەردەچەوە (10570)",
@@ -53858,7 +53858,7 @@ namespace backend.Migrations
                         {
                             Id = 10571,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5864),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5587),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دارچین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دارچین (10571)",
@@ -53868,7 +53868,7 @@ namespace backend.Migrations
                         {
                             Id = 10572,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5866),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5589),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێخەک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مێخەک (10572)",
@@ -53878,7 +53878,7 @@ namespace backend.Migrations
                         {
                             Id = 10573,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5903),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5590),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەیت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەیت (10573)",
@@ -53888,7 +53888,7 @@ namespace backend.Migrations
                         {
                             Id = 10574,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5905),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5591),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی تەماتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاوی تەماتە (10574)",
@@ -53898,7 +53898,7 @@ namespace backend.Migrations
                         {
                             Id = 10575,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5906),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5593),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی لیمۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاوی لیمۆ (10575)",
@@ -53908,7 +53908,7 @@ namespace backend.Migrations
                         {
                             Id = 10576,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5908),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5595),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیرکە (10576)",
@@ -53918,7 +53918,7 @@ namespace backend.Migrations
                         {
                             Id = 10577,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5909),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5596),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گوێز (10577)",
@@ -53928,7 +53928,7 @@ namespace backend.Migrations
                         {
                             Id = 10578,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5911),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5597),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بایەم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بایەم (10578)",
@@ -53938,7 +53938,7 @@ namespace backend.Migrations
                         {
                             Id = 10579,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5912),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5622),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فستق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فستق (10579)",
@@ -53948,7 +53948,7 @@ namespace backend.Migrations
                         {
                             Id = 10580,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5914),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5624),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بندق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بندق (10580)",
@@ -53958,7 +53958,7 @@ namespace backend.Migrations
                         {
                             Id = 10581,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5915),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5625),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێوژ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مێوژ (10581)",
@@ -53968,7 +53968,7 @@ namespace backend.Migrations
                         {
                             Id = 10582,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5917),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5627),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ناووکەوڕەقە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ناووکەوڕەقە (10582)",
@@ -53978,7 +53978,7 @@ namespace backend.Migrations
                         {
                             Id = 10583,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5918),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5629),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خورما",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خورما (10583)",
@@ -53988,7 +53988,7 @@ namespace backend.Migrations
                         {
                             Id = 10584,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5920),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5630),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەنمی کوتراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گەنمی کوتراو (10584)",
@@ -53998,7 +53998,7 @@ namespace backend.Migrations
                         {
                             Id = 10585,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5922),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5632),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆک (10585)",
@@ -54008,7 +54008,7 @@ namespace backend.Migrations
                         {
                             Id = 10586,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5923),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5633),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نیسک (10586)",
@@ -54018,7 +54018,7 @@ namespace backend.Migrations
                         {
                             Id = 10587,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5924),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5635),
                             Description = "ئەم وشەیە پەیوەستە بە لقی یاپراخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی یاپراخ (10587)",
@@ -54028,7 +54028,7 @@ namespace backend.Migrations
                         {
                             Id = 10588,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5926),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5636),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کووپە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کووپە (10588)",
@@ -54038,7 +54038,7 @@ namespace backend.Migrations
                         {
                             Id = 10589,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5927),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5638),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەوژەن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی جەوژەن (10589)",
@@ -54048,7 +54048,7 @@ namespace backend.Migrations
                         {
                             Id = 10590,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5929),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5639),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتەبڕاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتەبڕاو (10590)",
@@ -54058,7 +54058,7 @@ namespace backend.Migrations
                         {
                             Id = 10591,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5930),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5641),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قوراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قوراو (10591)",
@@ -54068,7 +54068,7 @@ namespace backend.Migrations
                         {
                             Id = 10592,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5957),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5643),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرەمۆز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیرەمۆز (10592)",
@@ -54078,7 +54078,7 @@ namespace backend.Migrations
                         {
                             Id = 10593,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5959),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5645),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆ (10593)",
@@ -54088,7 +54088,7 @@ namespace backend.Migrations
                         {
                             Id = 10594,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5961),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5646),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەربەت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەربەت (10594)",
@@ -54098,7 +54098,7 @@ namespace backend.Migrations
                         {
                             Id = 10595,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5962),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5647),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شیر (10595)",
@@ -54108,7 +54108,7 @@ namespace backend.Migrations
                         {
                             Id = 10596,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5964),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5649),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاو (10596)",
@@ -54118,7 +54118,7 @@ namespace backend.Migrations
                         {
                             Id = 10597,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5965),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5650),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەحین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەحین (10597)",
@@ -54128,7 +54128,7 @@ namespace backend.Migrations
                         {
                             Id = 10598,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5966),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5674),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پاقڵاوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پاقڵاوە (10598)",
@@ -54138,7 +54138,7 @@ namespace backend.Migrations
                         {
                             Id = 10599,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5968),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5676),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لوقمەقازی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لوقمەقازی (10599)",
@@ -54148,7 +54148,7 @@ namespace backend.Migrations
                         {
                             Id = 10600,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5969),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5678),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بامیە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بامیە (10600)",
@@ -54158,7 +54158,7 @@ namespace backend.Migrations
                         {
                             Id = 10601,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5971),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5680),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتە (10601)",
@@ -54168,7 +54168,7 @@ namespace backend.Migrations
                         {
                             Id = 10602,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5972),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5681),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شفتە (10602)",
@@ -54178,7 +54178,7 @@ namespace backend.Migrations
                         {
                             Id = 10603,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5974),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5683),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیشکەباب",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شیشکەباب (10603)",
@@ -54188,7 +54188,7 @@ namespace backend.Migrations
                         {
                             Id = 10604,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5975),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5684),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پڵاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پڵاو (10604)",
@@ -54198,7 +54198,7 @@ namespace backend.Migrations
                         {
                             Id = 10605,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5977),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5686),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ساوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ساوەر (10605)",
@@ -54208,7 +54208,7 @@ namespace backend.Migrations
                         {
                             Id = 10606,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5978),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5688),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەلەم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەلەم (10606)",
@@ -54218,7 +54218,7 @@ namespace backend.Migrations
                         {
                             Id = 10607,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5979),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5689),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیزا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پیزا (10607)",
@@ -54228,7 +54228,7 @@ namespace backend.Migrations
                         {
                             Id = 10608,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5981),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5690),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بەرگر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بەرگر (10608)",
@@ -54238,7 +54238,7 @@ namespace backend.Migrations
                         {
                             Id = 10609,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(5982),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5692),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فینگەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فینگەر (10609)",
@@ -54248,7 +54248,7 @@ namespace backend.Migrations
                         {
                             Id = 10610,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6008),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5693),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سایندویچ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سایندویچ (10610)",
@@ -54258,7 +54258,7 @@ namespace backend.Migrations
                         {
                             Id = 10611,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6010),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5695),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فەلافل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فەلافل (10611)",
@@ -54268,7 +54268,7 @@ namespace backend.Migrations
                         {
                             Id = 10612,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6012),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5696),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گەس (10612)",
@@ -54278,7 +54278,7 @@ namespace backend.Migrations
                         {
                             Id = 10613,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6013),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5698),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مایۆنێز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مایۆنێز (10613)",
@@ -54288,7 +54288,7 @@ namespace backend.Migrations
                         {
                             Id = 10614,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6015),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5699),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەتچەپ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەتچەپ (10614)",
@@ -54298,7 +54298,7 @@ namespace backend.Migrations
                         {
                             Id = 10615,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6016),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5701),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەردەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەردەل (10615)",
@@ -54308,7 +54308,7 @@ namespace backend.Migrations
                         {
                             Id = 10616,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6018),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5702),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتە (10616)",
@@ -54318,7 +54318,7 @@ namespace backend.Migrations
                         {
                             Id = 10617,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6019),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5729),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سپێناخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سپێناخ (10617)",
@@ -54328,7 +54328,7 @@ namespace backend.Migrations
                         {
                             Id = 10618,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6021),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5731),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەعدەنوس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەعدەنوس (10618)",
@@ -54338,7 +54338,7 @@ namespace backend.Migrations
                         {
                             Id = 10619,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6022),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5732),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەوەر (10619)",
@@ -54348,7 +54348,7 @@ namespace backend.Migrations
                         {
                             Id = 10620,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6024),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5734),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەرۆزی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەرۆزی (10620)",
@@ -54358,7 +54358,7 @@ namespace backend.Migrations
                         {
                             Id = 10621,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6025),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5736),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سڵق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سڵق (10621)",
@@ -54368,7 +54368,7 @@ namespace backend.Migrations
                         {
                             Id = 10622,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6027),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5738),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ڕێواس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ڕێواس (10622)",
@@ -54378,7 +54378,7 @@ namespace backend.Migrations
                         {
                             Id = 10623,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6028),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5739),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قارچک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قارچک (10623)",
@@ -54388,7 +54388,7 @@ namespace backend.Migrations
                         {
                             Id = 10624,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6030),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5741),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کوندەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کوندەر (10624)",
@@ -54398,7 +54398,7 @@ namespace backend.Migrations
                         {
                             Id = 10625,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6031),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5742),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لازانیا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لازانیا (10625)",
@@ -54408,7 +54408,7 @@ namespace backend.Migrations
                         {
                             Id = 10626,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6033),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5744),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماکەرۆنی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماکەرۆنی (10626)",
@@ -54418,7 +54418,7 @@ namespace backend.Migrations
                         {
                             Id = 10627,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6034),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5745),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆدڵز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆدڵز (10627)",
@@ -54428,7 +54428,7 @@ namespace backend.Migrations
                         {
                             Id = 10628,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6036),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5747),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاش (10628)",
@@ -54438,7 +54438,7 @@ namespace backend.Migrations
                         {
                             Id = 10629,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6062),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5748),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شێلم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شێلم (10629)",
@@ -54448,7 +54448,7 @@ namespace backend.Migrations
                         {
                             Id = 10630,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6064),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5750),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماش (10630)",
@@ -54458,7 +54458,7 @@ namespace backend.Migrations
                         {
                             Id = 10631,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6065),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5751),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لۆبیا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لۆبیا (10631)",
@@ -54468,7 +54468,7 @@ namespace backend.Migrations
                         {
                             Id = 10632,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6067),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5752),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆکی ڕەش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆکی ڕەش (10632)",
@@ -54478,7 +54478,7 @@ namespace backend.Migrations
                         {
                             Id = 10633,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6068),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5754),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بڕوێش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بڕوێش (10633)",
@@ -54488,7 +54488,7 @@ namespace backend.Migrations
                         {
                             Id = 10634,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6070),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5755),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێزاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گوێزاو (10634)",
@@ -54498,7 +54498,7 @@ namespace backend.Migrations
                         {
                             Id = 10635,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6071),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5757),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی میوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاوی میوە (10635)",
@@ -54508,7 +54508,7 @@ namespace backend.Migrations
                         {
                             Id = 10636,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6073),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5782),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی هەنار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاوی هەنار (10636)",
@@ -54518,7 +54518,7 @@ namespace backend.Migrations
                         {
                             Id = 10637,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6075),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5784),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی برنج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتەی برنج (10637)",
@@ -54528,7 +54528,7 @@ namespace backend.Migrations
                         {
                             Id = 10638,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6076),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5785),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی ساوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتەی ساوەر (10638)",
@@ -54538,7 +54538,7 @@ namespace backend.Migrations
                         {
                             Id = 10639,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6078),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5787),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتەی مریشک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شفتەی مریشک (10639)",
@@ -54548,7 +54548,7 @@ namespace backend.Migrations
                         {
                             Id = 10640,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6079),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5788),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی تەڕ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی تەڕ (10640)",
@@ -54558,7 +54558,7 @@ namespace backend.Migrations
                         {
                             Id = 10641,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6081),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5790),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیری تەڕ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنجیری تەڕ (10641)",
@@ -54568,7 +54568,7 @@ namespace backend.Migrations
                         {
                             Id = 10642,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6082),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5791),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زالۆکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زالۆکە (10642)",
@@ -54578,7 +54578,7 @@ namespace backend.Migrations
                         {
                             Id = 10643,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6084),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5793),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بابا غەنوج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بابا غەنوج (10643)",
@@ -54588,7 +54588,7 @@ namespace backend.Migrations
                         {
                             Id = 10644,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6085),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5795),
                             Description = "ئەم وشەیە پەیوەستە بە لقی حومس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی حومس (10644)",
@@ -54598,7 +54598,7 @@ namespace backend.Migrations
                         {
                             Id = 10645,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6087),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5796),
                             Description = "ئەم وشەیە پەیوەستە بە لقی موتەبەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی موتەبەل (10645)",
@@ -54608,7 +54608,7 @@ namespace backend.Migrations
                         {
                             Id = 10646,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6088),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5798),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فتووش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فتووش (10646)",
@@ -54618,7 +54618,7 @@ namespace backend.Migrations
                         {
                             Id = 10647,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6090),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5799),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەبولە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەبولە (10647)",
@@ -54628,7 +54628,7 @@ namespace backend.Migrations
                         {
                             Id = 10648,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6116),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5801),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی وەرزی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتەی وەرزی (10648)",
@@ -54638,7 +54638,7 @@ namespace backend.Migrations
                         {
                             Id = 10649,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6118),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5802),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی پەتاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتەی پەتاتە (10649)",
@@ -54648,7 +54648,7 @@ namespace backend.Migrations
                         {
                             Id = 10650,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6119),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5804),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و خەیار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست و خەیار (10650)",
@@ -54658,7 +54658,7 @@ namespace backend.Migrations
                         {
                             Id = 10651,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6121),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5805),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و موسیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست و موسیر (10651)",
@@ -54668,7 +54668,7 @@ namespace backend.Migrations
                         {
                             Id = 10652,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6123),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5807),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆخیوا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆخیوا (10652)",
@@ -54678,7 +54678,7 @@ namespace backend.Migrations
                         {
                             Id = 10653,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6124),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5808),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گیپە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گیپە (10653)",
@@ -54688,7 +54688,7 @@ namespace backend.Migrations
                         {
                             Id = 10654,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6125),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5834),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەروپێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەروپێ (10654)",
@@ -54698,7 +54698,7 @@ namespace backend.Migrations
                         {
                             Id = 10655,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6127),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5835),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەل (10655)",
@@ -54708,7 +54708,7 @@ namespace backend.Migrations
                         {
                             Id = 10656,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6129),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5837),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشکی برژاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مریشکی برژاو (10656)",
@@ -54718,7 +54718,7 @@ namespace backend.Migrations
                         {
                             Id = 10657,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6131),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5839),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماسی (10657)",
@@ -54728,7 +54728,7 @@ namespace backend.Migrations
                         {
                             Id = 10658,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6132),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5841),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی مەسگوف",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماسی مەسگوف (10658)",
@@ -54738,7 +54738,7 @@ namespace backend.Migrations
                         {
                             Id = 10659,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6133),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5842),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی بەرخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتی بەرخ (10659)",
@@ -54748,7 +54748,7 @@ namespace backend.Migrations
                         {
                             Id = 10660,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6135),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5844),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی مانگا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتی مانگا (10660)",
@@ -54758,7 +54758,7 @@ namespace backend.Migrations
                         {
                             Id = 10661,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6136),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5845),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەلیە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەلیە (10661)",
@@ -54768,7 +54768,7 @@ namespace backend.Migrations
                         {
                             Id = 10662,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6138),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5847),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای نیسک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربای نیسک (10662)",
@@ -54778,7 +54778,7 @@ namespace backend.Migrations
                         {
                             Id = 10663,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6139),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5848),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای جۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربای جۆ (10663)",
@@ -54788,7 +54788,7 @@ namespace backend.Migrations
                         {
                             Id = 10664,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6141),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5850),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای سەوزە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربای سەوزە (10664)",
@@ -54798,7 +54798,7 @@ namespace backend.Migrations
                         {
                             Id = 10665,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6142),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5851),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی کوردی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنجی کوردی (10665)",
@@ -54808,7 +54808,7 @@ namespace backend.Migrations
                         {
                             Id = 10666,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6169),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5852),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی بسمەتی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنجی بسمەتی (10666)",
@@ -54818,7 +54818,7 @@ namespace backend.Migrations
                         {
                             Id = 10667,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6171),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5854),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی ڕەش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنجی ڕەش (10667)",
@@ -54828,7 +54828,7 @@ namespace backend.Migrations
                         {
                             Id = 10668,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6173),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5855),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی سادە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کێکی سادە (10668)",
@@ -54838,7 +54838,7 @@ namespace backend.Migrations
                         {
                             Id = 10669,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6174),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5857),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی شوکولاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کێکی شوکولاتە (10669)",
@@ -54848,7 +54848,7 @@ namespace backend.Migrations
                         {
                             Id = 10670,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6176),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5858),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پسکیتی چای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پسکیتی چای (10670)",
@@ -54858,7 +54858,7 @@ namespace backend.Migrations
                         {
                             Id = 10671,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6177),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5859),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی وشککراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی وشککراو (10671)",
@@ -54868,7 +54868,7 @@ namespace backend.Migrations
                         {
                             Id = 10672,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6179),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5877),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەمر هیندی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەمر هیندی (10672)",
@@ -54878,7 +54878,7 @@ namespace backend.Migrations
                         {
                             Id = 10673,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6180),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5879),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەمەرەدین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەمەرەدین (10673)",
@@ -54888,7 +54888,7 @@ namespace backend.Migrations
                         {
                             Id = 10674,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6182),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5880),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەلی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی جەلی (10674)",
@@ -54898,7 +54898,7 @@ namespace backend.Migrations
                         {
                             Id = 10675,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6184),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5882),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەهەلەبی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەهەلەبی (10675)",
@@ -54908,7 +54908,7 @@ namespace backend.Migrations
                         {
                             Id = 10676,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6185),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5884),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنج (10676)",
@@ -54918,7 +54918,7 @@ namespace backend.Migrations
                         {
                             Id = 10677,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6187),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5885),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کباب",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کباب (10677)",
@@ -54928,7 +54928,7 @@ namespace backend.Migrations
                         {
                             Id = 10678,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6188),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5887),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆڵمە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆڵمە (10678)",
@@ -54938,7 +54938,7 @@ namespace backend.Migrations
                         {
                             Id = 10679,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6190),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5888),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسکێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نیسکێنە (10679)",
@@ -54948,7 +54948,7 @@ namespace backend.Migrations
                         {
                             Id = 10680,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6191),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5890),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترخێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ترخێنە (10680)",
@@ -54958,7 +54958,7 @@ namespace backend.Migrations
                         {
                             Id = 10681,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6193),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5891),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربا (10681)",
@@ -54968,7 +54968,7 @@ namespace backend.Migrations
                         {
                             Id = 10682,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6194),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5893),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مریشک (10682)",
@@ -54978,7 +54978,7 @@ namespace backend.Migrations
                         {
                             Id = 10683,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6195),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5894),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشت (10683)",
@@ -54988,7 +54988,7 @@ namespace backend.Migrations
                         {
                             Id = 10684,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6253),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5896),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست (10684)",
@@ -54998,7 +54998,7 @@ namespace backend.Migrations
                         {
                             Id = 10685,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6255),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5897),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەنیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەنیر (10685)",
@@ -55008,7 +55008,7 @@ namespace backend.Migrations
                         {
                             Id = 10686,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6256),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5898),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەرە (10686)",
@@ -55018,7 +55018,7 @@ namespace backend.Migrations
                         {
                             Id = 10687,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6258),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5900),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیماغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیماغ (10687)",
@@ -55028,7 +55028,7 @@ namespace backend.Migrations
                         {
                             Id = 10688,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6259),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5901),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنگوین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنگوین (10688)",
@@ -55038,7 +55038,7 @@ namespace backend.Migrations
                         {
                             Id = 10689,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6261),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5903),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مورەبا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مورەبا (10689)",
@@ -55048,7 +55048,7 @@ namespace backend.Migrations
                         {
                             Id = 10690,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6262),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5933),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هێلکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هێلکە (10690)",
@@ -55058,7 +55058,7 @@ namespace backend.Migrations
                         {
                             Id = 10691,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6264),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5935),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نانی تیرێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نانی تیرێ (10691)",
@@ -55068,7 +55068,7 @@ namespace backend.Migrations
                         {
                             Id = 10692,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6266),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5937),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەموون",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەموون (10692)",
@@ -55078,7 +55078,7 @@ namespace backend.Migrations
                         {
                             Id = 10693,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6267),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5939),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولێرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کولێرە (10693)",
@@ -55088,7 +55088,7 @@ namespace backend.Migrations
                         {
                             Id = 10694,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6268),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5941),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەلانە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەلانە (10694)",
@@ -55098,7 +55098,7 @@ namespace backend.Migrations
                         {
                             Id = 10695,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6270),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5942),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شلکێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شلکێنە (10695)",
@@ -55108,7 +55108,7 @@ namespace backend.Migrations
                         {
                             Id = 10696,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6272),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5944),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سێو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سێو (10696)",
@@ -55118,7 +55118,7 @@ namespace backend.Migrations
                         {
                             Id = 10697,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6274),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5945),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مۆز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مۆز (10697)",
@@ -55128,7 +55128,7 @@ namespace backend.Migrations
                         {
                             Id = 10698,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6275),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5947),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پرتەقاڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پرتەقاڵ (10698)",
@@ -55138,7 +55138,7 @@ namespace backend.Migrations
                         {
                             Id = 10699,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6277),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5949),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنار (10699)",
@@ -55148,7 +55148,7 @@ namespace backend.Migrations
                         {
                             Id = 10700,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6278),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5951),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ترێ (10700)",
@@ -55158,7 +55158,7 @@ namespace backend.Migrations
                         {
                             Id = 10701,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6280),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5952),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنجیر (10701)",
@@ -55168,7 +55168,7 @@ namespace backend.Migrations
                         {
                             Id = 10702,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6281),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5954),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی (10702)",
@@ -55178,7 +55178,7 @@ namespace backend.Migrations
                         {
                             Id = 10703,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6319),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5955),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شووتی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شووتی (10703)",
@@ -55188,7 +55188,7 @@ namespace backend.Migrations
                         {
                             Id = 10704,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6321),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5956),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کاڵەک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کاڵەک (10704)",
@@ -55198,7 +55198,7 @@ namespace backend.Migrations
                         {
                             Id = 10705,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6322),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5958),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گێلاس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گێلاس (10705)",
@@ -55208,7 +55208,7 @@ namespace backend.Migrations
                         {
                             Id = 10706,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6324),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5960),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەماتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەماتە (10706)",
@@ -55218,7 +55218,7 @@ namespace backend.Migrations
                         {
                             Id = 10707,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6325),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5961),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەیار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەیار (10707)",
@@ -55228,7 +55228,7 @@ namespace backend.Migrations
                         {
                             Id = 10708,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6327),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5962),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیاز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پیاز (10708)",
@@ -55238,7 +55238,7 @@ namespace backend.Migrations
                         {
                             Id = 10709,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6329),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5996),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیر (10709)",
@@ -55248,7 +55248,7 @@ namespace backend.Migrations
                         {
                             Id = 10710,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6330),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5998),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بیبەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بیبەر (10710)",
@@ -55258,7 +55258,7 @@ namespace backend.Migrations
                         {
                             Id = 10711,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6331),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(5999),
                             Description = "ئەم وشەیە پەیوەستە بە لقی باینجان",
                             Importance = 1,
                             Kurdish = "جۆری نایابی باینجان (10711)",
@@ -55268,7 +55268,7 @@ namespace backend.Migrations
                         {
                             Id = 10712,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6333),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6001),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولەکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کولەکە (10712)",
@@ -55278,7 +55278,7 @@ namespace backend.Migrations
                         {
                             Id = 10713,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6334),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6003),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەتاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەتاتە (10713)",
@@ -55288,7 +55288,7 @@ namespace backend.Migrations
                         {
                             Id = 10714,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6336),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6004),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەوزە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەوزە (10714)",
@@ -55298,7 +55298,7 @@ namespace backend.Migrations
                         {
                             Id = 10715,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6337),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6006),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرەوز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەرەوز (10715)",
@@ -55308,7 +55308,7 @@ namespace backend.Migrations
                         {
                             Id = 10716,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6339),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6007),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەنجەڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەنجەڵ (10716)",
@@ -55318,7 +55318,7 @@ namespace backend.Migrations
                         {
                             Id = 10717,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6341),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6009),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاپ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قاپ (10717)",
@@ -55328,7 +55328,7 @@ namespace backend.Migrations
                         {
                             Id = 10718,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6342),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6010),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوچک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەوچک (10718)",
@@ -55338,7 +55338,7 @@ namespace backend.Migrations
                         {
                             Id = 10719,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6344),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6012),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەتاڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چەتاڵ (10719)",
@@ -55348,7 +55348,7 @@ namespace backend.Migrations
                         {
                             Id = 10720,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6345),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6013),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەقۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چەقۆ (10720)",
@@ -55358,7 +55358,7 @@ namespace backend.Migrations
                         {
                             Id = 10721,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6347),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6015),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەرداغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەرداغ (10721)",
@@ -55368,7 +55368,7 @@ namespace backend.Migrations
                         {
                             Id = 10722,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6374),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6016),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆلکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆلکە (10722)",
@@ -55378,7 +55378,7 @@ namespace backend.Migrations
                         {
                             Id = 10723,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6375),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6018),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سفرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سفرە (10723)",
@@ -55388,7 +55388,7 @@ namespace backend.Migrations
                         {
                             Id = 10724,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6377),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6019),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەباغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەباغ (10724)",
@@ -55398,7 +55398,7 @@ namespace backend.Migrations
                         {
                             Id = 10725,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6378),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6020),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فڕن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فڕن (10725)",
@@ -55408,7 +55408,7 @@ namespace backend.Migrations
                         {
                             Id = 10726,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6380),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6022),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەلاجە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەلاجە (10726)",
@@ -55418,7 +55418,7 @@ namespace backend.Migrations
                         {
                             Id = 10727,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6381),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6023),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەڵاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەڵاتە (10727)",
@@ -55428,7 +55428,7 @@ namespace backend.Migrations
                         {
                             Id = 10728,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6383),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6047),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هاوەن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هاوەن (10728)",
@@ -55438,7 +55438,7 @@ namespace backend.Migrations
                         {
                             Id = 10729,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6384),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6049),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەبەتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەبەتە (10729)",
@@ -55448,7 +55448,7 @@ namespace backend.Migrations
                         {
                             Id = 10730,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6386),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6051),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سینای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سینای (10730)",
@@ -55458,7 +55458,7 @@ namespace backend.Migrations
                         {
                             Id = 10731,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6387),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6052),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فنجان",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فنجان (10731)",
@@ -55468,7 +55468,7 @@ namespace backend.Migrations
                         {
                             Id = 10732,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6389),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6054),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قۆری",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قۆری (10732)",
@@ -55478,7 +55478,7 @@ namespace backend.Migrations
                         {
                             Id = 10733,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6390),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6055),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەماوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەماوەر (10733)",
@@ -55488,7 +55488,7 @@ namespace backend.Migrations
                         {
                             Id = 10734,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6392),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6057),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چای (10734)",
@@ -55498,7 +55498,7 @@ namespace backend.Migrations
                         {
                             Id = 10735,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6393),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6058),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قاوە (10735)",
@@ -55508,7 +55508,7 @@ namespace backend.Migrations
                         {
                             Id = 10736,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6395),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6060),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەکر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەکر (10736)",
@@ -55518,7 +55518,7 @@ namespace backend.Migrations
                         {
                             Id = 10737,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6396),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6061),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خوێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خوێ (10737)",
@@ -55528,7 +55528,7 @@ namespace backend.Migrations
                         {
                             Id = 10738,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6398),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6063),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سماق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سماق (10738)",
@@ -55538,7 +55538,7 @@ namespace backend.Migrations
                         {
                             Id = 10739,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6399),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6064),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەردەچەوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەردەچەوە (10739)",
@@ -55548,7 +55548,7 @@ namespace backend.Migrations
                         {
                             Id = 10740,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6401),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6066),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دارچین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دارچین (10740)",
@@ -55558,7 +55558,7 @@ namespace backend.Migrations
                         {
                             Id = 10741,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6427),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6067),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێخەک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مێخەک (10741)",
@@ -55568,7 +55568,7 @@ namespace backend.Migrations
                         {
                             Id = 10742,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6429),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6069),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەیت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەیت (10742)",
@@ -55578,7 +55578,7 @@ namespace backend.Migrations
                         {
                             Id = 10743,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6430),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6071),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی تەماتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاوی تەماتە (10743)",
@@ -55588,7 +55588,7 @@ namespace backend.Migrations
                         {
                             Id = 10744,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6432),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6072),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی لیمۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاوی لیمۆ (10744)",
@@ -55598,7 +55598,7 @@ namespace backend.Migrations
                         {
                             Id = 10745,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6434),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6074),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیرکە (10745)",
@@ -55608,7 +55608,7 @@ namespace backend.Migrations
                         {
                             Id = 10746,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6435),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6075),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گوێز (10746)",
@@ -55618,7 +55618,7 @@ namespace backend.Migrations
                         {
                             Id = 10747,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6437),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6099),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بایەم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بایەم (10747)",
@@ -55628,7 +55628,7 @@ namespace backend.Migrations
                         {
                             Id = 10748,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6438),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6101),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فستق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فستق (10748)",
@@ -55638,7 +55638,7 @@ namespace backend.Migrations
                         {
                             Id = 10749,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6440),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6103),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بندق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بندق (10749)",
@@ -55648,7 +55648,7 @@ namespace backend.Migrations
                         {
                             Id = 10750,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6441),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6104),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێوژ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مێوژ (10750)",
@@ -55658,7 +55658,7 @@ namespace backend.Migrations
                         {
                             Id = 10751,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6443),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6106),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ناووکەوڕەقە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ناووکەوڕەقە (10751)",
@@ -55668,7 +55668,7 @@ namespace backend.Migrations
                         {
                             Id = 10752,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6444),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6108),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خورما",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خورما (10752)",
@@ -55678,7 +55678,7 @@ namespace backend.Migrations
                         {
                             Id = 10753,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6446),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6109),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەنمی کوتراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گەنمی کوتراو (10753)",
@@ -55688,7 +55688,7 @@ namespace backend.Migrations
                         {
                             Id = 10754,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6447),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6111),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆک (10754)",
@@ -55698,7 +55698,7 @@ namespace backend.Migrations
                         {
                             Id = 10755,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6449),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6112),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نیسک (10755)",
@@ -55708,7 +55708,7 @@ namespace backend.Migrations
                         {
                             Id = 10756,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6450),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6114),
                             Description = "ئەم وشەیە پەیوەستە بە لقی یاپراخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی یاپراخ (10756)",
@@ -55718,7 +55718,7 @@ namespace backend.Migrations
                         {
                             Id = 10757,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6452),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6115),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کووپە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کووپە (10757)",
@@ -55728,7 +55728,7 @@ namespace backend.Migrations
                         {
                             Id = 10758,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6453),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6116),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەوژەن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی جەوژەن (10758)",
@@ -55738,7 +55738,7 @@ namespace backend.Migrations
                         {
                             Id = 10759,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6455),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6118),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتەبڕاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتەبڕاو (10759)",
@@ -55748,7 +55748,7 @@ namespace backend.Migrations
                         {
                             Id = 10760,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6482),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6119),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قوراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قوراو (10760)",
@@ -55758,7 +55758,7 @@ namespace backend.Migrations
                         {
                             Id = 10761,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6484),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6121),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرەمۆز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیرەمۆز (10761)",
@@ -55768,7 +55768,7 @@ namespace backend.Migrations
                         {
                             Id = 10762,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6486),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6122),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆ (10762)",
@@ -55778,7 +55778,7 @@ namespace backend.Migrations
                         {
                             Id = 10763,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6487),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6124),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەربەت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەربەت (10763)",
@@ -55788,7 +55788,7 @@ namespace backend.Migrations
                         {
                             Id = 10764,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6489),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6125),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شیر (10764)",
@@ -55798,7 +55798,7 @@ namespace backend.Migrations
                         {
                             Id = 10765,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6490),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6127),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاو (10765)",
@@ -55808,7 +55808,7 @@ namespace backend.Migrations
                         {
                             Id = 10766,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6492),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6152),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەحین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەحین (10766)",
@@ -55818,7 +55818,7 @@ namespace backend.Migrations
                         {
                             Id = 10767,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6493),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6154),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پاقڵاوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پاقڵاوە (10767)",
@@ -55828,7 +55828,7 @@ namespace backend.Migrations
                         {
                             Id = 10768,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6495),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6155),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لوقمەقازی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لوقمەقازی (10768)",
@@ -55838,7 +55838,7 @@ namespace backend.Migrations
                         {
                             Id = 10769,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6496),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6157),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بامیە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بامیە (10769)",
@@ -55848,7 +55848,7 @@ namespace backend.Migrations
                         {
                             Id = 10770,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6498),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6159),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتە (10770)",
@@ -55858,7 +55858,7 @@ namespace backend.Migrations
                         {
                             Id = 10771,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6499),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6160),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شفتە (10771)",
@@ -55868,7 +55868,7 @@ namespace backend.Migrations
                         {
                             Id = 10772,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6501),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6162),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیشکەباب",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شیشکەباب (10772)",
@@ -55878,7 +55878,7 @@ namespace backend.Migrations
                         {
                             Id = 10773,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6502),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6163),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پڵاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پڵاو (10773)",
@@ -55888,7 +55888,7 @@ namespace backend.Migrations
                         {
                             Id = 10774,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6504),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6165),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ساوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ساوەر (10774)",
@@ -55898,7 +55898,7 @@ namespace backend.Migrations
                         {
                             Id = 10775,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6505),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6166),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەلەم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەلەم (10775)",
@@ -55908,7 +55908,7 @@ namespace backend.Migrations
                         {
                             Id = 10776,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6506),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6167),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیزا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پیزا (10776)",
@@ -55918,7 +55918,7 @@ namespace backend.Migrations
                         {
                             Id = 10777,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6508),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6169),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بەرگر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بەرگر (10777)",
@@ -55928,7 +55928,7 @@ namespace backend.Migrations
                         {
                             Id = 10778,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6509),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6171),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فینگەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فینگەر (10778)",
@@ -55938,7 +55938,7 @@ namespace backend.Migrations
                         {
                             Id = 10779,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6537),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6172),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سایندویچ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سایندویچ (10779)",
@@ -55948,7 +55948,7 @@ namespace backend.Migrations
                         {
                             Id = 10780,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6539),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6173),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فەلافل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فەلافل (10780)",
@@ -55958,7 +55958,7 @@ namespace backend.Migrations
                         {
                             Id = 10781,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6540),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6175),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گەس (10781)",
@@ -55968,7 +55968,7 @@ namespace backend.Migrations
                         {
                             Id = 10782,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6542),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6177),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مایۆنێز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مایۆنێز (10782)",
@@ -55978,7 +55978,7 @@ namespace backend.Migrations
                         {
                             Id = 10783,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6543),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6178),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەتچەپ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەتچەپ (10783)",
@@ -55988,7 +55988,7 @@ namespace backend.Migrations
                         {
                             Id = 10784,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6545),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6200),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەردەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەردەل (10784)",
@@ -55998,7 +55998,7 @@ namespace backend.Migrations
                         {
                             Id = 10785,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6547),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6203),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتە (10785)",
@@ -56008,7 +56008,7 @@ namespace backend.Migrations
                         {
                             Id = 10786,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6548),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6204),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سپێناخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سپێناخ (10786)",
@@ -56018,7 +56018,7 @@ namespace backend.Migrations
                         {
                             Id = 10787,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6550),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6206),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەعدەنوس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەعدەنوس (10787)",
@@ -56028,7 +56028,7 @@ namespace backend.Migrations
                         {
                             Id = 10788,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6551),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6208),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەوەر (10788)",
@@ -56038,7 +56038,7 @@ namespace backend.Migrations
                         {
                             Id = 10789,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6553),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6209),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەرۆزی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەرۆزی (10789)",
@@ -56048,7 +56048,7 @@ namespace backend.Migrations
                         {
                             Id = 10790,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6554),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6211),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سڵق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سڵق (10790)",
@@ -56058,7 +56058,7 @@ namespace backend.Migrations
                         {
                             Id = 10791,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6556),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6212),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ڕێواس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ڕێواس (10791)",
@@ -56068,7 +56068,7 @@ namespace backend.Migrations
                         {
                             Id = 10792,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6557),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6214),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قارچک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قارچک (10792)",
@@ -56078,7 +56078,7 @@ namespace backend.Migrations
                         {
                             Id = 10793,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6558),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6215),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کوندەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کوندەر (10793)",
@@ -56088,7 +56088,7 @@ namespace backend.Migrations
                         {
                             Id = 10794,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6560),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6217),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لازانیا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لازانیا (10794)",
@@ -56098,7 +56098,7 @@ namespace backend.Migrations
                         {
                             Id = 10795,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6561),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6219),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماکەرۆنی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماکەرۆنی (10795)",
@@ -56108,7 +56108,7 @@ namespace backend.Migrations
                         {
                             Id = 10796,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6563),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6220),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆدڵز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆدڵز (10796)",
@@ -56118,7 +56118,7 @@ namespace backend.Migrations
                         {
                             Id = 10797,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6589),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6221),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاش (10797)",
@@ -56128,7 +56128,7 @@ namespace backend.Migrations
                         {
                             Id = 10798,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6591),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6223),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شێلم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شێلم (10798)",
@@ -56138,7 +56138,7 @@ namespace backend.Migrations
                         {
                             Id = 10799,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6593),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6224),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماش (10799)",
@@ -56148,7 +56148,7 @@ namespace backend.Migrations
                         {
                             Id = 10800,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6594),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6226),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لۆبیا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لۆبیا (10800)",
@@ -56158,7 +56158,7 @@ namespace backend.Migrations
                         {
                             Id = 10801,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6596),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6227),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆکی ڕەش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆکی ڕەش (10801)",
@@ -56168,7 +56168,7 @@ namespace backend.Migrations
                         {
                             Id = 10802,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6597),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6229),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بڕوێش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بڕوێش (10802)",
@@ -56178,7 +56178,7 @@ namespace backend.Migrations
                         {
                             Id = 10803,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6599),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6254),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێزاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گوێزاو (10803)",
@@ -56188,7 +56188,7 @@ namespace backend.Migrations
                         {
                             Id = 10804,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6600),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6255),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی میوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاوی میوە (10804)",
@@ -56198,7 +56198,7 @@ namespace backend.Migrations
                         {
                             Id = 10805,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6602),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6257),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی هەنار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاوی هەنار (10805)",
@@ -56208,7 +56208,7 @@ namespace backend.Migrations
                         {
                             Id = 10806,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6603),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6259),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی برنج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتەی برنج (10806)",
@@ -56218,7 +56218,7 @@ namespace backend.Migrations
                         {
                             Id = 10807,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6605),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6260),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی ساوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتەی ساوەر (10807)",
@@ -56228,7 +56228,7 @@ namespace backend.Migrations
                         {
                             Id = 10808,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6606),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6262),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتەی مریشک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شفتەی مریشک (10808)",
@@ -56238,7 +56238,7 @@ namespace backend.Migrations
                         {
                             Id = 10809,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6608),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6263),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی تەڕ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی تەڕ (10809)",
@@ -56248,7 +56248,7 @@ namespace backend.Migrations
                         {
                             Id = 10810,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6609),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6265),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیری تەڕ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنجیری تەڕ (10810)",
@@ -56258,7 +56258,7 @@ namespace backend.Migrations
                         {
                             Id = 10811,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6611),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6267),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زالۆکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زالۆکە (10811)",
@@ -56268,7 +56268,7 @@ namespace backend.Migrations
                         {
                             Id = 10812,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6612),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6268),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بابا غەنوج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بابا غەنوج (10812)",
@@ -56278,7 +56278,7 @@ namespace backend.Migrations
                         {
                             Id = 10813,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6614),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6269),
                             Description = "ئەم وشەیە پەیوەستە بە لقی حومس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی حومس (10813)",
@@ -56288,7 +56288,7 @@ namespace backend.Migrations
                         {
                             Id = 10814,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6615),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6271),
                             Description = "ئەم وشەیە پەیوەستە بە لقی موتەبەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی موتەبەل (10814)",
@@ -56298,7 +56298,7 @@ namespace backend.Migrations
                         {
                             Id = 10815,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6617),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6272),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فتووش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فتووش (10815)",
@@ -56308,7 +56308,7 @@ namespace backend.Migrations
                         {
                             Id = 10816,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6634),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6274),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەبولە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەبولە (10816)",
@@ -56318,7 +56318,7 @@ namespace backend.Migrations
                         {
                             Id = 10817,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6636),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6275),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی وەرزی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتەی وەرزی (10817)",
@@ -56328,7 +56328,7 @@ namespace backend.Migrations
                         {
                             Id = 10818,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6637),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6277),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی پەتاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتەی پەتاتە (10818)",
@@ -56338,7 +56338,7 @@ namespace backend.Migrations
                         {
                             Id = 10819,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6639),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6278),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و خەیار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست و خەیار (10819)",
@@ -56348,7 +56348,7 @@ namespace backend.Migrations
                         {
                             Id = 10820,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6640),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6280),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و موسیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست و موسیر (10820)",
@@ -56358,7 +56358,7 @@ namespace backend.Migrations
                         {
                             Id = 10821,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6642),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6294),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆخیوا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆخیوا (10821)",
@@ -56368,7 +56368,7 @@ namespace backend.Migrations
                         {
                             Id = 10822,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6644),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6296),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گیپە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گیپە (10822)",
@@ -56378,7 +56378,7 @@ namespace backend.Migrations
                         {
                             Id = 10823,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6645),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6298),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەروپێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەروپێ (10823)",
@@ -56388,7 +56388,7 @@ namespace backend.Migrations
                         {
                             Id = 10824,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6647),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6300),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەل (10824)",
@@ -56398,7 +56398,7 @@ namespace backend.Migrations
                         {
                             Id = 10825,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6648),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6301),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشکی برژاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مریشکی برژاو (10825)",
@@ -56408,7 +56408,7 @@ namespace backend.Migrations
                         {
                             Id = 10826,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6650),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6303),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماسی (10826)",
@@ -56418,7 +56418,7 @@ namespace backend.Migrations
                         {
                             Id = 10827,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6651),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6304),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی مەسگوف",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماسی مەسگوف (10827)",
@@ -56428,7 +56428,7 @@ namespace backend.Migrations
                         {
                             Id = 10828,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6653),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6306),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی بەرخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتی بەرخ (10828)",
@@ -56438,7 +56438,7 @@ namespace backend.Migrations
                         {
                             Id = 10829,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6654),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6307),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی مانگا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتی مانگا (10829)",
@@ -56448,7 +56448,7 @@ namespace backend.Migrations
                         {
                             Id = 10830,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6656),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6309),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەلیە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەلیە (10830)",
@@ -56458,7 +56458,7 @@ namespace backend.Migrations
                         {
                             Id = 10831,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6658),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6310),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای نیسک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربای نیسک (10831)",
@@ -56468,7 +56468,7 @@ namespace backend.Migrations
                         {
                             Id = 10832,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6659),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6311),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای جۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربای جۆ (10832)",
@@ -56478,7 +56478,7 @@ namespace backend.Migrations
                         {
                             Id = 10833,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6690),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6313),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای سەوزە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربای سەوزە (10833)",
@@ -56488,7 +56488,7 @@ namespace backend.Migrations
                         {
                             Id = 10834,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6692),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6314),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی کوردی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنجی کوردی (10834)",
@@ -56498,7 +56498,7 @@ namespace backend.Migrations
                         {
                             Id = 10835,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6694),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6316),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی بسمەتی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنجی بسمەتی (10835)",
@@ -56508,7 +56508,7 @@ namespace backend.Migrations
                         {
                             Id = 10836,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6695),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6317),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنجی ڕەش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنجی ڕەش (10836)",
@@ -56518,7 +56518,7 @@ namespace backend.Migrations
                         {
                             Id = 10837,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6697),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6319),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی سادە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کێکی سادە (10837)",
@@ -56528,7 +56528,7 @@ namespace backend.Migrations
                         {
                             Id = 10838,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6698),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6320),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کێکی شوکولاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کێکی شوکولاتە (10838)",
@@ -56538,7 +56538,7 @@ namespace backend.Migrations
                         {
                             Id = 10839,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6700),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6348),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پسکیتی چای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پسکیتی چای (10839)",
@@ -56548,7 +56548,7 @@ namespace backend.Migrations
                         {
                             Id = 10840,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6701),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6350),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی وشککراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی وشککراو (10840)",
@@ -56558,7 +56558,7 @@ namespace backend.Migrations
                         {
                             Id = 10841,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6703),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6352),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەمر هیندی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەمر هیندی (10841)",
@@ -56568,7 +56568,7 @@ namespace backend.Migrations
                         {
                             Id = 10842,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6704),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6353),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەمەرەدین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەمەرەدین (10842)",
@@ -56578,7 +56578,7 @@ namespace backend.Migrations
                         {
                             Id = 10843,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6706),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6355),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەلی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی جەلی (10843)",
@@ -56588,7 +56588,7 @@ namespace backend.Migrations
                         {
                             Id = 10844,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6707),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6356),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەهەلەبی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەهەلەبی (10844)",
@@ -56598,7 +56598,7 @@ namespace backend.Migrations
                         {
                             Id = 10845,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6709),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6358),
                             Description = "ئەم وشەیە پەیوەستە بە لقی برنج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی برنج (10845)",
@@ -56608,7 +56608,7 @@ namespace backend.Migrations
                         {
                             Id = 10846,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6711),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6360),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کباب",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کباب (10846)",
@@ -56618,7 +56618,7 @@ namespace backend.Migrations
                         {
                             Id = 10847,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6712),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6361),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆڵمە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆڵمە (10847)",
@@ -56628,7 +56628,7 @@ namespace backend.Migrations
                         {
                             Id = 10848,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6714),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6363),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسکێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نیسکێنە (10848)",
@@ -56638,7 +56638,7 @@ namespace backend.Migrations
                         {
                             Id = 10849,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6715),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6364),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترخێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ترخێنە (10849)",
@@ -56648,7 +56648,7 @@ namespace backend.Migrations
                         {
                             Id = 10850,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6717),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6365),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربا (10850)",
@@ -56658,7 +56658,7 @@ namespace backend.Migrations
                         {
                             Id = 10851,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6753),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6367),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مریشک (10851)",
@@ -56668,7 +56668,7 @@ namespace backend.Migrations
                         {
                             Id = 10852,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6755),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6368),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشت (10852)",
@@ -56678,7 +56678,7 @@ namespace backend.Migrations
                         {
                             Id = 10853,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6756),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6369),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست (10853)",
@@ -56688,7 +56688,7 @@ namespace backend.Migrations
                         {
                             Id = 10854,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6758),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6371),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەنیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەنیر (10854)",
@@ -56698,7 +56698,7 @@ namespace backend.Migrations
                         {
                             Id = 10855,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6759),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6372),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەرە (10855)",
@@ -56708,7 +56708,7 @@ namespace backend.Migrations
                         {
                             Id = 10856,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6761),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6374),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیماغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیماغ (10856)",
@@ -56718,7 +56718,7 @@ namespace backend.Migrations
                         {
                             Id = 10857,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6762),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6406),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنگوین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنگوین (10857)",
@@ -56728,7 +56728,7 @@ namespace backend.Migrations
                         {
                             Id = 10858,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6764),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6408),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مورەبا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مورەبا (10858)",
@@ -56738,7 +56738,7 @@ namespace backend.Migrations
                         {
                             Id = 10859,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6765),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6410),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هێلکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هێلکە (10859)",
@@ -56748,7 +56748,7 @@ namespace backend.Migrations
                         {
                             Id = 10860,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6767),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6412),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نانی تیرێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نانی تیرێ (10860)",
@@ -56758,7 +56758,7 @@ namespace backend.Migrations
                         {
                             Id = 10861,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6769),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6413),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەموون",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەموون (10861)",
@@ -56768,7 +56768,7 @@ namespace backend.Migrations
                         {
                             Id = 10862,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6770),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6415),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولێرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کولێرە (10862)",
@@ -56778,7 +56778,7 @@ namespace backend.Migrations
                         {
                             Id = 10863,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6772),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6416),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەلانە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەلانە (10863)",
@@ -56788,7 +56788,7 @@ namespace backend.Migrations
                         {
                             Id = 10864,
                             Category = "خواردنی سەرەکی",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6773),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6418),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شلکێنە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شلکێنە (10864)",
@@ -56798,7 +56798,7 @@ namespace backend.Migrations
                         {
                             Id = 10865,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6775),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6419),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سێو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سێو (10865)",
@@ -56808,7 +56808,7 @@ namespace backend.Migrations
                         {
                             Id = 10866,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6776),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6421),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مۆز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مۆز (10866)",
@@ -56818,7 +56818,7 @@ namespace backend.Migrations
                         {
                             Id = 10867,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6778),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6423),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پرتەقاڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پرتەقاڵ (10867)",
@@ -56828,7 +56828,7 @@ namespace backend.Migrations
                         {
                             Id = 10868,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6779),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6424),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنار (10868)",
@@ -56838,7 +56838,7 @@ namespace backend.Migrations
                         {
                             Id = 10869,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6781),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6426),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ترێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ترێ (10869)",
@@ -56848,7 +56848,7 @@ namespace backend.Migrations
                         {
                             Id = 10870,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6808),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6427),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنجیر (10870)",
@@ -56858,7 +56858,7 @@ namespace backend.Migrations
                         {
                             Id = 10871,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6810),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6429),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی (10871)",
@@ -56868,7 +56868,7 @@ namespace backend.Migrations
                         {
                             Id = 10872,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6812),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6430),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شووتی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شووتی (10872)",
@@ -56878,7 +56878,7 @@ namespace backend.Migrations
                         {
                             Id = 10873,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6813),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6431),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کاڵەک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کاڵەک (10873)",
@@ -56888,7 +56888,7 @@ namespace backend.Migrations
                         {
                             Id = 10874,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6815),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6433),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گێلاس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گێلاس (10874)",
@@ -56898,7 +56898,7 @@ namespace backend.Migrations
                         {
                             Id = 10875,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6816),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6434),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەماتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەماتە (10875)",
@@ -56908,7 +56908,7 @@ namespace backend.Migrations
                         {
                             Id = 10876,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6818),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6460),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەیار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەیار (10876)",
@@ -56918,7 +56918,7 @@ namespace backend.Migrations
                         {
                             Id = 10877,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6819),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6462),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیاز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پیاز (10877)",
@@ -56928,7 +56928,7 @@ namespace backend.Migrations
                         {
                             Id = 10878,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6821),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6464),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیر (10878)",
@@ -56938,7 +56938,7 @@ namespace backend.Migrations
                         {
                             Id = 10879,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6822),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6465),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بیبەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بیبەر (10879)",
@@ -56948,7 +56948,7 @@ namespace backend.Migrations
                         {
                             Id = 10880,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6824),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6467),
                             Description = "ئەم وشەیە پەیوەستە بە لقی باینجان",
                             Importance = 1,
                             Kurdish = "جۆری نایابی باینجان (10880)",
@@ -56958,7 +56958,7 @@ namespace backend.Migrations
                         {
                             Id = 10881,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6825),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6468),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کولەکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کولەکە (10881)",
@@ -56968,7 +56968,7 @@ namespace backend.Migrations
                         {
                             Id = 10882,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6827),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6470),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەتاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەتاتە (10882)",
@@ -56978,7 +56978,7 @@ namespace backend.Migrations
                         {
                             Id = 10883,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6828),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6472),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەوزە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەوزە (10883)",
@@ -56988,7 +56988,7 @@ namespace backend.Migrations
                         {
                             Id = 10884,
                             Category = "میوە و سەوزە",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6830),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6473),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەرەوز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەرەوز (10884)",
@@ -56998,7 +56998,7 @@ namespace backend.Migrations
                         {
                             Id = 10885,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6831),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6475),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەنجەڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەنجەڵ (10885)",
@@ -57008,7 +57008,7 @@ namespace backend.Migrations
                         {
                             Id = 10886,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6833),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6476),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاپ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قاپ (10886)",
@@ -57018,7 +57018,7 @@ namespace backend.Migrations
                         {
                             Id = 10887,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6835),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6478),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوچک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەوچک (10887)",
@@ -57028,7 +57028,7 @@ namespace backend.Migrations
                         {
                             Id = 10888,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6836),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6479),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەتاڵ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چەتاڵ (10888)",
@@ -57038,7 +57038,7 @@ namespace backend.Migrations
                         {
                             Id = 10889,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6861),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6481),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چەقۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چەقۆ (10889)",
@@ -57048,7 +57048,7 @@ namespace backend.Migrations
                         {
                             Id = 10890,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6863),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6482),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پەرداغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پەرداغ (10890)",
@@ -57058,7 +57058,7 @@ namespace backend.Migrations
                         {
                             Id = 10891,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6864),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6484),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆلکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆلکە (10891)",
@@ -57068,7 +57068,7 @@ namespace backend.Migrations
                         {
                             Id = 10892,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6866),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6485),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سفرە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سفرە (10892)",
@@ -57078,7 +57078,7 @@ namespace backend.Migrations
                         {
                             Id = 10893,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6867),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6487),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەباغ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەباغ (10893)",
@@ -57088,7 +57088,7 @@ namespace backend.Migrations
                         {
                             Id = 10894,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6869),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6488),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فڕن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فڕن (10894)",
@@ -57098,7 +57098,7 @@ namespace backend.Migrations
                         {
                             Id = 10895,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6870),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6512),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەلاجە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەلاجە (10895)",
@@ -57108,7 +57108,7 @@ namespace backend.Migrations
                         {
                             Id = 10896,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6872),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6514),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەڵاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەڵاتە (10896)",
@@ -57118,7 +57118,7 @@ namespace backend.Migrations
                         {
                             Id = 10897,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6873),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6516),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هاوەن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هاوەن (10897)",
@@ -57128,7 +57128,7 @@ namespace backend.Migrations
                         {
                             Id = 10898,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6875),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6518),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەبەتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەبەتە (10898)",
@@ -57138,7 +57138,7 @@ namespace backend.Migrations
                         {
                             Id = 10899,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6876),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6519),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سینای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سینای (10899)",
@@ -57148,7 +57148,7 @@ namespace backend.Migrations
                         {
                             Id = 10900,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6878),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6520),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فنجان",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فنجان (10900)",
@@ -57158,7 +57158,7 @@ namespace backend.Migrations
                         {
                             Id = 10901,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6879),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6522),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قۆری",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قۆری (10901)",
@@ -57168,7 +57168,7 @@ namespace backend.Migrations
                         {
                             Id = 10902,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6881),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6523),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەماوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەماوەر (10902)",
@@ -57178,7 +57178,7 @@ namespace backend.Migrations
                         {
                             Id = 10903,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6882),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6525),
                             Description = "ئەم وشەیە پەیوەستە بە لقی چای",
                             Importance = 1,
                             Kurdish = "جۆری نایابی چای (10903)",
@@ -57188,7 +57188,7 @@ namespace backend.Migrations
                         {
                             Id = 10904,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6884),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6526),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قاوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قاوە (10904)",
@@ -57198,7 +57198,7 @@ namespace backend.Migrations
                         {
                             Id = 10905,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6885),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6528),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەکر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەکر (10905)",
@@ -57208,7 +57208,7 @@ namespace backend.Migrations
                         {
                             Id = 10906,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6887),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6529),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خوێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خوێ (10906)",
@@ -57218,7 +57218,7 @@ namespace backend.Migrations
                         {
                             Id = 10907,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6888),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6531),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سماق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سماق (10907)",
@@ -57228,7 +57228,7 @@ namespace backend.Migrations
                         {
                             Id = 10908,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6916),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6532),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەردەچەوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەردەچەوە (10908)",
@@ -57238,7 +57238,7 @@ namespace backend.Migrations
                         {
                             Id = 10909,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6918),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6533),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دارچین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دارچین (10909)",
@@ -57248,7 +57248,7 @@ namespace backend.Migrations
                         {
                             Id = 10910,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6919),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6535),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێخەک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مێخەک (10910)",
@@ -57258,7 +57258,7 @@ namespace backend.Migrations
                         {
                             Id = 10911,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6921),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6536),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەیت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەیت (10911)",
@@ -57268,7 +57268,7 @@ namespace backend.Migrations
                         {
                             Id = 10912,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6923),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6538),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی تەماتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاوی تەماتە (10912)",
@@ -57278,7 +57278,7 @@ namespace backend.Migrations
                         {
                             Id = 10913,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6924),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6539),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی لیمۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاوی لیمۆ (10913)",
@@ -57288,7 +57288,7 @@ namespace backend.Migrations
                         {
                             Id = 10914,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6926),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6564),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیرکە (10914)",
@@ -57298,7 +57298,7 @@ namespace backend.Migrations
                         {
                             Id = 10915,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6927),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6566),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گوێز (10915)",
@@ -57308,7 +57308,7 @@ namespace backend.Migrations
                         {
                             Id = 10916,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6929),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6567),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بایەم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بایەم (10916)",
@@ -57318,7 +57318,7 @@ namespace backend.Migrations
                         {
                             Id = 10917,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6930),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6569),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فستق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فستق (10917)",
@@ -57328,7 +57328,7 @@ namespace backend.Migrations
                         {
                             Id = 10918,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6932),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6570),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بندق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بندق (10918)",
@@ -57338,7 +57338,7 @@ namespace backend.Migrations
                         {
                             Id = 10919,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6933),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6572),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مێوژ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مێوژ (10919)",
@@ -57348,7 +57348,7 @@ namespace backend.Migrations
                         {
                             Id = 10920,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6935),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6573),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ناووکەوڕەقە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ناووکەوڕەقە (10920)",
@@ -57358,7 +57358,7 @@ namespace backend.Migrations
                         {
                             Id = 10921,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6936),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6575),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خورما",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خورما (10921)",
@@ -57368,7 +57368,7 @@ namespace backend.Migrations
                         {
                             Id = 10922,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6938),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6577),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەنمی کوتراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گەنمی کوتراو (10922)",
@@ -57378,7 +57378,7 @@ namespace backend.Migrations
                         {
                             Id = 10923,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6939),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6579),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆک (10923)",
@@ -57388,7 +57388,7 @@ namespace backend.Migrations
                         {
                             Id = 10924,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6941),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6580),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نیسک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نیسک (10924)",
@@ -57398,7 +57398,7 @@ namespace backend.Migrations
                         {
                             Id = 10925,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6943),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6582),
                             Description = "ئەم وشەیە پەیوەستە بە لقی یاپراخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی یاپراخ (10925)",
@@ -57408,7 +57408,7 @@ namespace backend.Migrations
                         {
                             Id = 10926,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6944),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6583),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کووپە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کووپە (10926)",
@@ -57418,7 +57418,7 @@ namespace backend.Migrations
                         {
                             Id = 10927,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6971),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6585),
                             Description = "ئەم وشەیە پەیوەستە بە لقی جەوژەن",
                             Importance = 1,
                             Kurdish = "جۆری نایابی جەوژەن (10927)",
@@ -57428,7 +57428,7 @@ namespace backend.Migrations
                         {
                             Id = 10928,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6972),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6586),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتەبڕاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتەبڕاو (10928)",
@@ -57438,7 +57438,7 @@ namespace backend.Migrations
                         {
                             Id = 10929,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6974),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6588),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قوراو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قوراو (10929)",
@@ -57448,7 +57448,7 @@ namespace backend.Migrations
                         {
                             Id = 10930,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6975),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6589),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سیرەمۆز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سیرەمۆز (10930)",
@@ -57458,7 +57458,7 @@ namespace backend.Migrations
                         {
                             Id = 10931,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6977),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6591),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆ (10931)",
@@ -57468,7 +57468,7 @@ namespace backend.Migrations
                         {
                             Id = 10932,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6979),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6592),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەربەت",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەربەت (10932)",
@@ -57478,7 +57478,7 @@ namespace backend.Migrations
                         {
                             Id = 10933,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6980),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6616),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شیر (10933)",
@@ -57488,7 +57488,7 @@ namespace backend.Migrations
                         {
                             Id = 10934,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6982),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6617),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاو (10934)",
@@ -57498,7 +57498,7 @@ namespace backend.Migrations
                         {
                             Id = 10935,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6983),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6619),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەحین",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەحین (10935)",
@@ -57508,7 +57508,7 @@ namespace backend.Migrations
                         {
                             Id = 10936,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6985),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6620),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پاقڵاوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پاقڵاوە (10936)",
@@ -57518,7 +57518,7 @@ namespace backend.Migrations
                         {
                             Id = 10937,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6986),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6622),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لوقمەقازی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لوقمەقازی (10937)",
@@ -57528,7 +57528,7 @@ namespace backend.Migrations
                         {
                             Id = 10938,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6988),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6623),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بامیە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بامیە (10938)",
@@ -57538,7 +57538,7 @@ namespace backend.Migrations
                         {
                             Id = 10939,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6989),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6625),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتە (10939)",
@@ -57548,7 +57548,7 @@ namespace backend.Migrations
                         {
                             Id = 10940,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6990),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6626),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شفتە (10940)",
@@ -57558,7 +57558,7 @@ namespace backend.Migrations
                         {
                             Id = 10941,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6992),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6628),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شیشکەباب",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شیشکەباب (10941)",
@@ -57568,7 +57568,7 @@ namespace backend.Migrations
                         {
                             Id = 10942,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6994),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6629),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پڵاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پڵاو (10942)",
@@ -57578,7 +57578,7 @@ namespace backend.Migrations
                         {
                             Id = 10943,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6995),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6631),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ساوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ساوەر (10943)",
@@ -57588,7 +57588,7 @@ namespace backend.Migrations
                         {
                             Id = 10944,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6996),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6632),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شەلەم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شەلەم (10944)",
@@ -57598,7 +57598,7 @@ namespace backend.Migrations
                         {
                             Id = 10945,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(6998),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6633),
                             Description = "ئەم وشەیە پەیوەستە بە لقی پیزا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی پیزا (10945)",
@@ -57608,7 +57608,7 @@ namespace backend.Migrations
                         {
                             Id = 10946,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7025),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6635),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بەرگر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بەرگر (10946)",
@@ -57618,7 +57618,7 @@ namespace backend.Migrations
                         {
                             Id = 10947,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7027),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6636),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فینگەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فینگەر (10947)",
@@ -57628,7 +57628,7 @@ namespace backend.Migrations
                         {
                             Id = 10948,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7028),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6637),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سایندویچ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سایندویچ (10948)",
@@ -57638,7 +57638,7 @@ namespace backend.Migrations
                         {
                             Id = 10949,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7030),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6639),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فەلافل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فەلافل (10949)",
@@ -57648,7 +57648,7 @@ namespace backend.Migrations
                         {
                             Id = 10950,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7031),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6640),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گەس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گەس (10950)",
@@ -57658,7 +57658,7 @@ namespace backend.Migrations
                         {
                             Id = 10951,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7033),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6642),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مایۆنێز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مایۆنێز (10951)",
@@ -57668,7 +57668,7 @@ namespace backend.Migrations
                         {
                             Id = 10952,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7034),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6667),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەتچەپ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەتچەپ (10952)",
@@ -57678,7 +57678,7 @@ namespace backend.Migrations
                         {
                             Id = 10953,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7036),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6669),
                             Description = "ئەم وشەیە پەیوەستە بە لقی خەردەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی خەردەل (10953)",
@@ -57688,7 +57688,7 @@ namespace backend.Migrations
                         {
                             Id = 10954,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7037),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6671),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتە (10954)",
@@ -57698,7 +57698,7 @@ namespace backend.Migrations
                         {
                             Id = 10955,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7039),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6672),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سپێناخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سپێناخ (10955)",
@@ -57708,7 +57708,7 @@ namespace backend.Migrations
                         {
                             Id = 10956,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7040),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6674),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مەعدەنوس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مەعدەنوس (10956)",
@@ -57718,7 +57718,7 @@ namespace backend.Migrations
                         {
                             Id = 10957,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7042),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6676),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کەوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کەوەر (10957)",
@@ -57728,7 +57728,7 @@ namespace backend.Migrations
                         {
                             Id = 10958,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7043),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6677),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەرۆزی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەرۆزی (10958)",
@@ -57738,7 +57738,7 @@ namespace backend.Migrations
                         {
                             Id = 10959,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7045),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6678),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سڵق",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سڵق (10959)",
@@ -57748,7 +57748,7 @@ namespace backend.Migrations
                         {
                             Id = 10960,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7046),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6680),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ڕێواس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ڕێواس (10960)",
@@ -57758,7 +57758,7 @@ namespace backend.Migrations
                         {
                             Id = 10961,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7048),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6681),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قارچک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قارچک (10961)",
@@ -57768,7 +57768,7 @@ namespace backend.Migrations
                         {
                             Id = 10962,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7049),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6683),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کوندەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کوندەر (10962)",
@@ -57778,7 +57778,7 @@ namespace backend.Migrations
                         {
                             Id = 10963,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7050),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6684),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لازانیا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لازانیا (10963)",
@@ -57788,7 +57788,7 @@ namespace backend.Migrations
                         {
                             Id = 10964,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7052),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6685),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماکەرۆنی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماکەرۆنی (10964)",
@@ -57798,7 +57798,7 @@ namespace backend.Migrations
                         {
                             Id = 10965,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7070),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6687),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆدڵز",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆدڵز (10965)",
@@ -57808,7 +57808,7 @@ namespace backend.Migrations
                         {
                             Id = 10966,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7072),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6688),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاش (10966)",
@@ -57818,7 +57818,7 @@ namespace backend.Migrations
                         {
                             Id = 10967,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7073),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6690),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شێلم",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شێلم (10967)",
@@ -57828,7 +57828,7 @@ namespace backend.Migrations
                         {
                             Id = 10968,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7075),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6691),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماش (10968)",
@@ -57838,7 +57838,7 @@ namespace backend.Migrations
                         {
                             Id = 10969,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7077),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6693),
                             Description = "ئەم وشەیە پەیوەستە بە لقی لۆبیا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی لۆبیا (10969)",
@@ -57848,7 +57848,7 @@ namespace backend.Migrations
                         {
                             Id = 10970,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7078),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6694),
                             Description = "ئەم وشەیە پەیوەستە بە لقی نۆکی ڕەش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی نۆکی ڕەش (10970)",
@@ -57858,7 +57858,7 @@ namespace backend.Migrations
                         {
                             Id = 10971,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7080),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6710),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بڕوێش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بڕوێش (10971)",
@@ -57868,7 +57868,7 @@ namespace backend.Migrations
                         {
                             Id = 10972,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7081),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6712),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گوێزاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گوێزاو (10972)",
@@ -57878,7 +57878,7 @@ namespace backend.Migrations
                         {
                             Id = 10973,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7083),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6713),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ئاوی میوە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ئاوی میوە (10973)",
@@ -57888,7 +57888,7 @@ namespace backend.Migrations
                         {
                             Id = 10974,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7084),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6715),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆشاوی هەنار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆشاوی هەنار (10974)",
@@ -57898,7 +57898,7 @@ namespace backend.Migrations
                         {
                             Id = 10975,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7086),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6717),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی برنج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتەی برنج (10975)",
@@ -57908,7 +57908,7 @@ namespace backend.Migrations
                         {
                             Id = 10976,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7088),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6718),
                             Description = "ئەم وشەیە پەیوەستە بە لقی کفتەی ساوەر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی کفتەی ساوەر (10976)",
@@ -57918,7 +57918,7 @@ namespace backend.Migrations
                         {
                             Id = 10977,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7089),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6720),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شفتەی مریشک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شفتەی مریشک (10977)",
@@ -57928,7 +57928,7 @@ namespace backend.Migrations
                         {
                             Id = 10978,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7090),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6721),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەیسی تەڕ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەیسی تەڕ (10978)",
@@ -57938,7 +57938,7 @@ namespace backend.Migrations
                         {
                             Id = 10979,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7092),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6722),
                             Description = "ئەم وشەیە پەیوەستە بە لقی هەنجیری تەڕ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی هەنجیری تەڕ (10979)",
@@ -57948,7 +57948,7 @@ namespace backend.Migrations
                         {
                             Id = 10980,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7093),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6724),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زالۆکە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زالۆکە (10980)",
@@ -57958,7 +57958,7 @@ namespace backend.Migrations
                         {
                             Id = 10981,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7095),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6725),
                             Description = "ئەم وشەیە پەیوەستە بە لقی بابا غەنوج",
                             Importance = 1,
                             Kurdish = "جۆری نایابی بابا غەنوج (10981)",
@@ -57968,7 +57968,7 @@ namespace backend.Migrations
                         {
                             Id = 10982,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7097),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6727),
                             Description = "ئەم وشەیە پەیوەستە بە لقی حومس",
                             Importance = 1,
                             Kurdish = "جۆری نایابی حومس (10982)",
@@ -57978,7 +57978,7 @@ namespace backend.Migrations
                         {
                             Id = 10983,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7131),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6728),
                             Description = "ئەم وشەیە پەیوەستە بە لقی موتەبەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی موتەبەل (10983)",
@@ -57988,7 +57988,7 @@ namespace backend.Migrations
                         {
                             Id = 10984,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7133),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6730),
                             Description = "ئەم وشەیە پەیوەستە بە لقی فتووش",
                             Importance = 1,
                             Kurdish = "جۆری نایابی فتووش (10984)",
@@ -57998,7 +57998,7 @@ namespace backend.Migrations
                         {
                             Id = 10985,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7134),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6731),
                             Description = "ئەم وشەیە پەیوەستە بە لقی تەبولە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی تەبولە (10985)",
@@ -58008,7 +58008,7 @@ namespace backend.Migrations
                         {
                             Id = 10986,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7136),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6733),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی وەرزی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتەی وەرزی (10986)",
@@ -58018,7 +58018,7 @@ namespace backend.Migrations
                         {
                             Id = 10987,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7137),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6734),
                             Description = "ئەم وشەیە پەیوەستە بە لقی زەڵاتەی پەتاتە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی زەڵاتەی پەتاتە (10987)",
@@ -58028,7 +58028,7 @@ namespace backend.Migrations
                         {
                             Id = 10988,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7139),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6764),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و خەیار",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست و خەیار (10988)",
@@ -58038,7 +58038,7 @@ namespace backend.Migrations
                         {
                             Id = 10989,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7140),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6765),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماست و موسیر",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماست و موسیر (10989)",
@@ -58048,7 +58048,7 @@ namespace backend.Migrations
                         {
                             Id = 10990,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7142),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6767),
                             Description = "ئەم وشەیە پەیوەستە بە لقی دۆخیوا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی دۆخیوا (10990)",
@@ -58058,7 +58058,7 @@ namespace backend.Migrations
                         {
                             Id = 10991,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7143),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6769),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گیپە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گیپە (10991)",
@@ -58068,7 +58068,7 @@ namespace backend.Migrations
                         {
                             Id = 10992,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7145),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6770),
                             Description = "ئەم وشەیە پەیوەستە بە لقی سەروپێ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی سەروپێ (10992)",
@@ -58078,7 +58078,7 @@ namespace backend.Migrations
                         {
                             Id = 10993,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7146),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6772),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەل",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەل (10993)",
@@ -58088,7 +58088,7 @@ namespace backend.Migrations
                         {
                             Id = 10994,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7148),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6773),
                             Description = "ئەم وشەیە پەیوەستە بە لقی مریشکی برژاو",
                             Importance = 1,
                             Kurdish = "جۆری نایابی مریشکی برژاو (10994)",
@@ -58098,7 +58098,7 @@ namespace backend.Migrations
                         {
                             Id = 10995,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7150),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6775),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماسی (10995)",
@@ -58108,7 +58108,7 @@ namespace backend.Migrations
                         {
                             Id = 10996,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7151),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6776),
                             Description = "ئەم وشەیە پەیوەستە بە لقی ماسی مەسگوف",
                             Importance = 1,
                             Kurdish = "جۆری نایابی ماسی مەسگوف (10996)",
@@ -58118,7 +58118,7 @@ namespace backend.Migrations
                         {
                             Id = 10997,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7153),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6778),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی بەرخ",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتی بەرخ (10997)",
@@ -58128,7 +58128,7 @@ namespace backend.Migrations
                         {
                             Id = 10998,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7154),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6779),
                             Description = "ئەم وشەیە پەیوەستە بە لقی گۆشتی مانگا",
                             Importance = 1,
                             Kurdish = "جۆری نایابی گۆشتی مانگا (10998)",
@@ -58138,7 +58138,7 @@ namespace backend.Migrations
                         {
                             Id = 10999,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7156),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6781),
                             Description = "ئەم وشەیە پەیوەستە بە لقی قەلیە",
                             Importance = 1,
                             Kurdish = "جۆری نایابی قەلیە (10999)",
@@ -58148,7 +58148,7 @@ namespace backend.Migrations
                         {
                             Id = 11000,
                             Category = "کەلوپەل و بەهارات",
-                            CreatedAt = new DateTime(2026, 4, 15, 10, 26, 2, 802, DateTimeKind.Utc).AddTicks(7157),
+                            CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc).AddTicks(6782),
                             Description = "ئەم وشەیە پەیوەستە بە لقی شۆربای نیسک",
                             Importance = 1,
                             Kurdish = "جۆری نایابی شۆربای نیسک (11000)",
