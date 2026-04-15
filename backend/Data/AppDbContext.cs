@@ -25,20 +25,16 @@ public class AppDbContext : DbContext
             entity.Property(w => w.Description).HasMaxLength(1000);
         });
 
-        modelBuilder.Entity<RelatedWord>(entity =>
-        {
-            entity.HasKey(r => r.Id);
-            entity.Property(r => r.RelationType).IsRequired().HasMaxLength(50);
+        modelBuilder.Entity<RelatedWord>()
+    .HasOne(r => r.Word)
+    .WithMany(w => w.OutgoingRelations)
+    .HasForeignKey(r => r.WordId)
+    .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(r => r.Word)
-                  .WithMany(w => w.RelatedWords)
-                  .HasForeignKey(r => r.WordId)
-                  .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(r => r.TargetWord)
-                  .WithMany()
-                  .HasForeignKey(r => r.TargetWordId)
-                  .OnDelete(DeleteBehavior.Restrict);
-        });
+        modelBuilder.Entity<RelatedWord>()
+            .HasOne(r => r.TargetWord)
+            .WithMany(w => w.IncomingRelations)
+            .HasForeignKey(r => r.TargetWordId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

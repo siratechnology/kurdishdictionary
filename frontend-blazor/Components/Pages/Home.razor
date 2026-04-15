@@ -99,13 +99,17 @@ else
                 }
 
                 <!-- Related words -->
-                @if (word.RelatedWords.Any())
+                @{
+                    var allRelated = word.OutgoingRelations.Concat(word.IncomingRelations).ToList();
+                }
+                @if (allRelated.Any())
                 {
                     <div class="flex flex-wrap gap-1.5 pt-1">
-                        @foreach (var rw in word.RelatedWords)
+                        @foreach (var rw in allRelated)
                         {
-                            <span class="text-xs px-2 py-0.5 rounded-full font-medium @RelationColor(rw.RelationType)" title="@rw.RelationType">
-                                @rw.TargetKurdish
+                            var title = (rw.IsIncoming ? "← " : "→ ") + rw.RelationType;
+                            <span class="text-xs px-2 py-0.5 rounded-full font-medium @RelationColor(rw.RelationType)" title="@title">
+                                @rw.RelatedKurdish
                             </span>
                         }
                     </div>

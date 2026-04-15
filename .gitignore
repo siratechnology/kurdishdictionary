@@ -3,6 +3,10 @@
 **/. env.development.local
 **/.env.local
 
+# Local dev config with real credentials - never commit
+**/appsettings.Development.json
+**/appsettings.Local.json
+
 # .NET
 **/bin/
 **/obj/

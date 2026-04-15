@@ -78,10 +78,11 @@
                             @foreach (var rw in RelatedWords)
                             {
                                 <li class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm">
-                                    <span>
-                                        <span class="font-medium text-gray-800" dir="rtl">@rw.TargetKurdish</span>
-                                        <span class="mx-2 text-gray-300">·</span>
+                                    <span class="flex items-center gap-2">
+                                        <span class="font-medium text-gray-800" dir="rtl">@rw.RelatedKurdish</span>
+                                        <span class="text-gray-300">·</span>
                                         <span class="@RelationColor(rw.RelationType) text-xs font-semibold px-2 py-0.5 rounded-full">@rw.RelationType</span>
+                                        <span class="text-xs text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded-full" title="Weight">⚖ @rw.Weight</span>
                                     </span>
                                     <button @onclick="() => RemoveRelated(rw)" class="text-red-400 hover:text-red-600 text-base leading-none">✕</button>
                                 </li>
@@ -122,6 +123,9 @@
                                 <option value="related">Related</option>
                                 <option value="example">Example</option>
                             </select>
+                            <input type="number" @bind="_relWeight" min="1" max="10"
+                                   title="Weight (نزیکایەتی)"
+                                   class="w-16 border border-gray-300 rounded-lg px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                         </div>
                         @if (_selectedRelWord is not null)
                         {
@@ -171,6 +175,7 @@
 
     string _relSearch = "";
     string _relType = "synonym";
+    int _relWeight = 1;
     List<WordDto> _relResults = new();
     WordDto? _selectedRelWord;
     bool _saving;
@@ -184,7 +189,7 @@
             Meaning = EditingWord.Meaning ?? "";
             Category = EditingWord.Category ?? "";
             Description = EditingWord.Description ?? "";
-            RelatedWords = EditingWord.RelatedWords.ToList();
+            RelatedWords = EditingWord.OutgoingRelations.ToList();
         }
         else
         {
@@ -193,6 +198,7 @@
         }
         _submitted = false;
         _relSearch = "";
+        _relWeight = 1;
         _relResults = new();
         _selectedRelWord = null;
     }
@@ -216,15 +222,18 @@
     void AddRelated()
     {
         if (_selectedRelWord is null) return;
-        if (RelatedWords.Any(r => r.TargetWordId == _selectedRelWord.Id)) return;
+        if (RelatedWords.Any(r => r.RelatedWordId == _selectedRelWord.Id)) return;
         RelatedWords.Add(new RelatedWordDto
         {
-            TargetWordId = _selectedRelWord.Id,
-            TargetKurdish = _selectedRelWord.Kurdish,
-            RelationType = _relType
+            RelatedWordId = _selectedRelWord.Id,
+            RelatedKurdish = _selectedRelWord.Kurdish,
+            RelationType = _relType,
+            IsIncoming = false,
+            Weight = _relWeight
         });
         _selectedRelWord = null;
         _relSearch = "";
+        _relWeight = 1;
     }
 
     void RemoveRelated(RelatedWordDto rw) => RelatedWords.Remove(rw);
@@ -237,8 +246,9 @@
         _saving = true;
         var relDtos = RelatedWords.Select(r => new CreateRelatedWordDto
         {
-            TargetWordId = r.TargetWordId,
-            RelationType = r.RelationType
+            TargetWordId = r.RelatedWordId,
+            RelationType = r.RelationType,
+            Weight = r.Weight
         }).ToList();
 
         if (EditingWord is null)

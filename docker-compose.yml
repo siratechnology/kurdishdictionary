@@ -27,9 +27,9 @@ services:
       dockerfile: backend/Dockerfile
     container_name: kurdish-backend
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=KurdishDictionary;User Id=sa;Password=${SQL_SA_PASSWORD};TrustServerCertificate=True;"
+        ASPNETCORE_ENVIRONMENT: Production
+        ASPNETCORE_URLS: http://+:8080
+        ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=KurdishDictionary;User Id=kurdish_user;Password=${SQL_USER_PASSWORD};TrustServerCertificate=True;"
     ports:
       - "6000:8080"
     depends_on:
