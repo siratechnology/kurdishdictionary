@@ -75,27 +75,56 @@ else
 
                 <!-- Word header -->
                 <div class="flex items-start justify-between gap-2">
-                    <span class="text-2xl font-bold text-gray-900 leading-tight" dir="rtl">@word.Kurdish</span>
-                    @if (!string.IsNullOrEmpty(word.Category))
-                    {
-                        <span class="shrink-0 text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full">
-                            @word.Category
-                        </span>
-                    }
+                    <span class="text-2xl font-bold text-gray-900 dark:text-white leading-tight" dir="rtl">@word.Kurdish</span>
+                    <div class="flex flex-col items-end gap-1 shrink-0">
+                        @if (!string.IsNullOrEmpty(word.SpeechPaneKurdish))
+                        {
+                            <span class="text-xs font-semibold px-2.5 py-1 bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-400 rounded-full">
+                                @word.SpeechPaneKurdish
+                            </span>
+                        }
+                        @if (!string.IsNullOrEmpty(word.Category))
+                        {
+                            <span class="text-xs font-medium px-2.5 py-1 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400 rounded-full">
+                                @word.Category
+                            </span>
+                        }
+                    </div>
                 </div>
 
                 <!-- Meaning -->
                 @if (!string.IsNullOrEmpty(word.Meaning))
                 {
-                    <p class="text-gray-600 text-sm leading-relaxed border-l-4 border-indigo-200 pl-3" dir="rtl">
+                    <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed border-l-4 border-indigo-200 pl-3" dir="rtl">
                         @word.Meaning
                     </p>
+                }
+
+                <!-- Extra meanings -->
+                @if (word.Meanings.Any())
+                {
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach (var m in word.Meanings.Take(3))
+                        {
+                            <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-full" dir="rtl">
+                                @if (!string.IsNullOrEmpty(m.Locate))
+                                {
+                                    <span class="font-semibold opacity-60">[@m.Locate]</span>
+                                }
+                                @m.Meaning
+                            </span>
+                        }
+                        @if (word.Meanings.Count > 3)
+                        {
+                            <span class="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 rounded-full">+@(word.Meanings.Count - 3)</span>
+                        }
+                    </div>
                 }
 
                 <!-- Description -->
                 @if (!string.IsNullOrEmpty(word.Description))
                 {
-                    <p class="text-gray-400 text-xs">@word.Description</p>
+                    <p class="text-gray-400 text-xs dark:text-gray-500">@word.Description</p>
                 }
 
                 <!-- Related words -->

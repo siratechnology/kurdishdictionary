@@ -120,6 +120,15 @@ public class WordsController : ControllerBase
             });
         }
 
+        foreach (var m in dto.Meanings)
+        {
+            word.Meanings.Add(new WordMeans
+            {
+                Meaning = m.Meaning,
+                Locate = m.Locate
+            });
+        }
+
         _db.Words.Add(word);
         await _db.SaveChangesAsync();
 
@@ -132,6 +141,7 @@ public class WordsController : ControllerBase
     {
         var word = await _db.Words
             .Include(w => w.OutgoingRelations)
+            .Include(w => w.Meanings)
             .FirstOrDefaultAsync(w => w.Id == id);
 
         if (word is null) return NotFound();
@@ -153,6 +163,19 @@ public class WordsController : ControllerBase
                 TargetWordId = rel.TargetWordId,
                 RelationType = rel.RelationType,
                 Weight = rel.Weight
+            });
+        }
+
+        _db.WordMeans.RemoveRange(word.Meanings);
+        word.Meanings.Clear();
+
+        foreach (var m in dto.Meanings)
+        {
+            word.Meanings.Add(new WordMeans
+            {
+                WordId = id,
+                Meaning = m.Meaning,
+                Locate = m.Locate
             });
         }
 
