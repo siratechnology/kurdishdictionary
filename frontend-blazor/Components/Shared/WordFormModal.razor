@@ -213,22 +213,30 @@
     bool _submitted;
     List<SpeechTypeItem> _speechTypes = new();
 
-    // ── Static locate suggestions + any already used in this word ────────────
+    // ── Locate options: static base + DB values + current word's locates ─────
     static readonly string[] _baseLocates =
     {
         "English", "Arabic", "Persian", "Turkish",
         "Kurdish Badini", "Kurdish Sorani", "Zazaki", "Gorani"
     };
 
+    List<string> _dbLocates = new();
+
     IEnumerable<string> LocateOptions =>
         _baseLocates
+            .Concat(_dbLocates)
             .Concat(Meanings.Select(m => m.Locate ?? "").Where(l => l.Length > 0))
-            .Distinct(StringComparer.OrdinalIgnoreCase);
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(l => l);
 
     // ─────────────────────────────────────────────────────────────────────────
     protected override async Task OnInitializedAsync()
     {
-        _speechTypes = await WordSvc.GetSpeechTypesAsync();
+        var speechTask = WordSvc.GetSpeechTypesAsync();
+        var locateTask = WordSvc.GetLocatesAsync();
+        await Task.WhenAll(speechTask, locateTask);
+        _speechTypes = await speechTask;
+        _dbLocates   = await locateTask;
     }
 
     protected override void OnParametersSet()

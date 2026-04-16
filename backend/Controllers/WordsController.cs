@@ -75,6 +75,20 @@ public class WordsController : ControllerBase
         return Ok(categories);
     }
 
+    // GET api/words/locates
+    [HttpGet("locates")]
+    public async Task<ActionResult<List<string>>> GetLocates()
+    {
+        var locates = await _db.WordMeans
+            .AsNoTracking()
+            .Where(m => m.Locate != null && m.Locate != "")
+            .Select(m => m.Locate!)
+            .Distinct()
+            .OrderBy(l => l)
+            .ToListAsync();
+        return Ok(locates);
+    }
+
     // GET api/words/speech-types
     [HttpGet("speech-types")]
     public ActionResult<List<object>> GetSpeechTypes()

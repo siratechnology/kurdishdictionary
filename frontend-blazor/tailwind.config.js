@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        nrt: ['NRT', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['nrt-reg', 'system-ui', '-apple-system', 'sans-serif'],
+        nrt: ['nrt-reg', 'system-ui', '-apple-system', 'sans-serif'],
       },
     },
   },

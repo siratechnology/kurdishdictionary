@@ -29,6 +29,9 @@ public class WordService
     public async Task<List<string>> GetCategoriesAsync() =>
         await _http.GetFromJsonAsync<List<string>>("api/words/categories") ?? new();
 
+    public async Task<List<string>> GetLocatesAsync() =>
+        await _http.GetFromJsonAsync<List<string>>("api/words/locates") ?? new();
+
     public async Task<List<SpeechTypeItem>> GetSpeechTypesAsync()
     {
         var raw = await _http.GetFromJsonAsync<List<SpeechTypeRaw>>("api/words/speech-types");

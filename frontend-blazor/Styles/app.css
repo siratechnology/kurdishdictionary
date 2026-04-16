@@ -4,20 +4,26 @@
 
 /* ── NRT Kurdish font ──────────────────────────────────────────────── */
 @font-face {
-  font-family: 'NRT';
+  font-family: 'nrt-reg';
   src: url('/fonts/NRT-Reg.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
-/* ── Base ──────────────────────────────────────────────────────────── */
+/* ── Base — apply nrt-reg to every element ─────────────────────────── */
 :root {
-  --font-main: 'NRT', system-ui, -apple-system, sans-serif;
+  --font-main: 'nrt-reg', system-ui, -apple-system, sans-serif;
 }
 
-html, body {
+html, body,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, li, td, th,
+button, input, select, textarea, optgroup, label {
   font-family: var(--font-main);
+}
+
+html {
   direction: rtl;
 }
 
@@ -29,6 +35,3 @@ html, body {
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.50); }
-
-/* ── RTL text elements ─────────────────────────────────────────────── */
-[dir="rtl"] { font-family: var(--font-main); }
