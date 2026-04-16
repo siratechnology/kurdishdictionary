@@ -1,0 +1,444 @@
+@page "/relations"
+@rendermode InteractiveServer
+@inject WordService WordSvc
+
+<PageTitle>بەڕێوەبردنی پەیوەندییەکان</PageTitle>
+
+<!-- Page header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">بەڕێوەبردنی پەیوەندییەکان</h1>
+        <p class="text-sm text-gray-400">وشەی سەرچاوە هەڵبژێرە، پاشان پەیوەندی زیاد بکە یان بسڕەوە</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- ── Left panel: source word search ── -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex flex-col gap-4">
+        <h2 class="text-base font-bold text-gray-800">وشەی سەرچاوە</h2>
+
+        <!-- Search source -->
+        <div class="relative">
+            <input @bind="_sourceQuery" @bind:event="oninput" @oninput="OnSourceInput"
+                   placeholder="🔍 گەڕان بۆ وشەیەک..."
+                   dir="rtl"
+                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+
+            @if (_sourceSuggestions.Any() && !_sourceSelected)
+            {
+                <ul class="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl max-h-48 overflow-y-auto z-30">
+                    @foreach (var s in _sourceSuggestions)
+                    {
+                        <li @onclick="() => SelectSource(s)"
+                            class="px-4 py-2.5 cursor-pointer hover:bg-indigo-50 flex items-center justify-between text-sm border-b border-gray-50 last:border-0">
+                            <span class="font-bold text-gray-800" dir="rtl">@s.Kurdish</span>
+                            @if (!string.IsNullOrEmpty(s.Meaning))
+                            {
+                                <span class="text-gray-400 truncate max-w-[140px] text-xs" dir="rtl">@s.Meaning</span>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+
+        <!-- Selected word details -->
+        @if (_selectedWord is not null)
+        {
+            <div class="rounded-xl border border-indigo-100 bg-indigo-50 p-4 flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl font-black text-indigo-800" dir="rtl">@_selectedWord.Kurdish</span>
+                    <button @onclick="ClearSource"
+                            class="text-xs text-gray-400 hover:text-red-500 transition-colors px-2 py-1 rounded-lg hover:bg-red-50">
+                        × پاکی بکەوە
+                    </button>
+                </div>
+                @if (!string.IsNullOrEmpty(_selectedWord.Meaning))
+                {
+                    <p class="text-sm text-indigo-700 border-l-4 border-indigo-300 pl-2" dir="rtl">@_selectedWord.Meaning</p>
+                }
+                @if (!string.IsNullOrEmpty(_selectedWord.Category))
+                {
+                    <span class="self-start text-xs font-semibold px-2.5 py-1 bg-indigo-100 text-indigo-600 rounded-full">@_selectedWord.Category</span>
+                }
+
+                <!-- Existing relations list -->
+                @{
+                    var allRels = _selectedWord.OutgoingRelations.Concat(_selectedWord.IncomingRelations).ToList();
+                }
+                @if (allRels.Any())
+                {
+                    <div class="mt-1">
+                        <p class="text-xs text-gray-500 mb-2 font-semibold">پەیوەندییە ئێستاکان (@allRels.Count)</p>
+                        <div class="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
+                            @foreach (var rel in allRels)
+                            {
+                                <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-white border border-gray-100 hover:border-indigo-200 transition-colors group">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded @RelBadgeClass(rel.RelationType)">@rel.RelationType</span>
+                                        <span class="font-bold text-gray-800 text-sm truncate" dir="rtl">@rel.RelatedKurdish</span>
+                                        @if (rel.IsIncoming)
+                                        {
+                                            <span class="text-[9px] text-gray-400">← هاتووە</span>
+                                        }
+                                    </div>
+                                    @if (!rel.IsIncoming)
+                                    {
+                                        <button @onclick="() => DeleteRelation(rel)"
+                                                disabled="@_savingRel"
+                                                class="opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-600 text-xs px-1.5 py-0.5 rounded hover:bg-red-50 shrink-0">
+                                            🗑
+                                        </button>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-xs text-gray-400 italic">هیچ پەیوەندییەک نەدۆزرایەوە</p>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- ── Right panel: add new relation ── -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex flex-col gap-4">
+        <h2 class="text-base font-bold text-gray-800">زیادکردنی پەیوەندیی نوێ</h2>
+
+        @if (_selectedWord is null)
+        {
+            <div class="flex flex-col items-center justify-center h-48 text-center text-gray-400 gap-3">
+                <span class="text-4xl">👈</span>
+                <p class="text-sm">سەرەتا وشەیەک لە لایەنی چەپەوە هەڵبژێرە</p>
+            </div>
+        }
+        else
+        {
+            <!-- Target word search with auto-suggest -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5" dir="rtl">وشەی مەبەست</label>
+                <div class="relative">
+                    <input @bind="_targetQuery" @bind:event="oninput" @oninput="OnTargetInput"
+                           placeholder="🔍 گەڕان بۆ وشەی مەبەست..."
+                           dir="rtl"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+
+                    @if (_targetSuggestions.Any() && _newRel.TargetWordId == 0)
+                    {
+                        <ul class="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl max-h-44 overflow-y-auto z-30">
+                            @foreach (var s in _targetSuggestions)
+                            {
+                                <li @onclick="() => SelectTarget(s)"
+                                    class="px-4 py-2.5 cursor-pointer hover:bg-indigo-50 flex items-center justify-between text-sm border-b border-gray-50 last:border-0">
+                                    <span class="font-bold text-gray-800" dir="rtl">@s.Kurdish</span>
+                                    @if (!string.IsNullOrEmpty(s.Meaning))
+                                    {
+                                        <span class="text-gray-400 truncate max-w-[140px] text-xs" dir="rtl">@s.Meaning</span>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                    @if (_newRel.TargetWordId != 0 && !string.IsNullOrEmpty(_targetQuery))
+                    {
+                        <div class="mt-1.5 flex items-center gap-2 px-3 py-2 rounded-lg bg-indigo-50 border border-indigo-200">
+                            <span class="text-indigo-700 font-bold text-sm" dir="rtl">@_targetQuery</span>
+                            <button @onclick="ClearTarget" class="text-gray-400 hover:text-red-500 text-xs">×</button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Relation type -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5" dir="rtl">جۆری پەیوەندی</label>
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach (var rtype in _relationTypes)
+                    {
+                        <button @onclick="() => _newRel.RelationType = rtype.Key"
+                                class="px-3 py-2 rounded-xl text-xs font-semibold border-2 transition-all @((_newRel.RelationType == rtype.Key) ? rtype.ActiveClass : rtype.InactiveClass)">
+                            @rtype.Label
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Weight slider -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-xs font-semibold text-gray-600" dir="rtl">نزیکایەتی (ئاگرێکی)</label>
+                    <span class="text-xs font-bold text-indigo-600">@_newRel.Weight</span>
+                </div>
+                <input type="range" min="1" max="10" step="1"
+                       @bind="_newRel.Weight" @bind:event="oninput"
+                       class="w-full accent-indigo-600" />
+                <div class="flex justify-between text-[10px] text-gray-400 mt-0.5">
+                    <span>نزیک (١)</span><span>دوور (١٠)</span>
+                </div>
+            </div>
+
+            <!-- Save button -->
+            @if (!string.IsNullOrEmpty(_saveError))
+            {
+                <p class="text-xs text-red-500 px-1" dir="rtl">@_saveError</p>
+            }
+            @if (_saveSuccess)
+            {
+                <p class="text-xs text-green-600 px-1" dir="rtl">✓ پەیوەندییەکە بەسەرکەوتوویی زیاد کرا</p>
+            }
+
+            <button @onclick="SaveRelation" disabled="@(!CanSave || _savingRel)"
+                    class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors text-sm">
+                @if (_savingRel)
+                {
+                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>پاشەکەوتکردن...</span>
+                }
+                else
+                {
+                    <span>+ زیادکردنی پەیوەندی</span>
+                }
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    // ── Source word ──────────────────────────────────────────────────────────
+    string _sourceQuery = "";
+    List<WordDto> _sourceSuggestions = new();
+    WordDto? _selectedWord;
+    bool _sourceSelected;
+    CancellationTokenSource? _sourceCts;
+
+    // ── New relation form ────────────────────────────────────────────────────
+    string _targetQuery = "";
+    List<WordDto> _targetSuggestions = new();
+    CancellationTokenSource? _targetCts;
+
+    NewRelState _newRel = new();
+    bool _savingRel;
+    bool _saveSuccess;
+    string _saveError = "";
+
+    bool CanSave =>
+        _selectedWord is not null &&
+        _newRel.TargetWordId != 0 &&
+        !string.IsNullOrWhiteSpace(_newRel.RelationType);
+
+    // ── Relation type definitions ────────────────────────────────────────────
+    record RelTypeConfig(string Key, string Label, string ActiveClass, string InactiveClass);
+    List<RelTypeConfig> _relationTypes = new()
+    {
+        new("synonym",    "هاوماناکە",    "border-green-500  bg-green-50  text-green-700",  "border-gray-200 bg-white text-gray-600 hover:border-green-300"),
+        new("antonym",    "دژەوشە",       "border-red-500    bg-red-50    text-red-700",    "border-gray-200 bg-white text-gray-600 hover:border-red-300"),
+        new("related",    "پەیوەندیدار",  "border-blue-500   bg-blue-50   text-blue-700",   "border-gray-200 bg-white text-gray-600 hover:border-blue-300"),
+        new("example",    "نموونە",       "border-amber-500  bg-amber-50  text-amber-700",  "border-gray-200 bg-white text-gray-600 hover:border-amber-300"),
+        new("usage",      "بکارهێنان",    "border-purple-500 bg-purple-50 text-purple-700", "border-gray-200 bg-white text-gray-600 hover:border-purple-300"),
+        new("contextual", "چارچێوەیی",   "border-cyan-500   bg-cyan-50   text-cyan-700",   "border-gray-200 bg-white text-gray-600 hover:border-cyan-300"),
+    };
+
+    // ── Source search ────────────────────────────────────────────────────────
+    async Task OnSourceInput(ChangeEventArgs e)
+    {
+        _sourceQuery = e.Value?.ToString() ?? "";
+        _sourceSelected = false;
+        _sourceCts?.Cancel();
+        _sourceCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(280, _sourceCts.Token);
+            if (string.IsNullOrWhiteSpace(_sourceQuery)) { _sourceSuggestions = new(); return; }
+            var result = await WordSvc.GetWordsAsync(1, 8, _sourceQuery);
+            _sourceSuggestions = result?.Items ?? new();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    async Task SelectSource(WordDto w)
+    {
+        _sourceSelected = true;
+        _sourceQuery = w.Kurdish;
+        _sourceSuggestions = new();
+        // Reload with full relations
+        var full = await WordSvc.GetWordsAsync(1, 1, w.Kurdish);
+        var exact = full?.Items.FirstOrDefault(x => x.Id == w.Id);
+        _selectedWord = exact ?? w;
+        _newRel = new();
+        _saveSuccess = false;
+        _saveError = "";
+    }
+
+    void ClearSource()
+    {
+        _selectedWord = null;
+        _sourceQuery = "";
+        _sourceSuggestions = new();
+        _sourceSelected = false;
+    }
+
+    // ── Target search ────────────────────────────────────────────────────────
+    async Task OnTargetInput(ChangeEventArgs e)
+    {
+        _targetQuery = e.Value?.ToString() ?? "";
+        _newRel.TargetWordId = 0;
+        _targetCts?.Cancel();
+        _targetCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(280, _targetCts.Token);
+            if (string.IsNullOrWhiteSpace(_targetQuery)) { _targetSuggestions = new(); return; }
+            var result = await WordSvc.GetWordsAsync(1, 8, _targetQuery);
+            // Exclude the source word itself
+            _targetSuggestions = (result?.Items ?? new())
+                .Where(x => x.Id != _selectedWord?.Id)
+                .ToList();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    void SelectTarget(WordDto w)
+    {
+        _targetQuery = w.Kurdish;
+        _newRel.TargetWordId = w.Id;
+        _targetSuggestions = new();
+        _saveError = "";
+        _saveSuccess = false;
+    }
+
+    void ClearTarget()
+    {
+        _targetQuery = "";
+        _newRel.TargetWordId = 0;
+        _targetSuggestions = new();
+    }
+
+    // ── Save relation ────────────────────────────────────────────────────────
+    async Task SaveRelation()
+    {
+        if (!CanSave || _selectedWord is null) return;
+        _savingRel = true;
+        _saveError = "";
+        _saveSuccess = false;
+        try
+        {
+            // Build full relation list: keep existing outgoing + add new one
+            var existingOutgoing = _selectedWord.OutgoingRelations
+                .Select(r => new CreateRelatedWordDto
+                {
+                    TargetWordId = r.RelatedWordId,
+                    RelationType = r.RelationType,
+                    Weight = r.Weight
+                })
+                .ToList();
+
+            // Check for duplicate
+            if (existingOutgoing.Any(r => r.TargetWordId == _newRel.TargetWordId && r.RelationType == _newRel.RelationType))
+            {
+                _saveError = "ئەم پەیوەندییە پێشتر هەیە.";
+                return;
+            }
+
+            existingOutgoing.Add(new CreateRelatedWordDto
+            {
+                TargetWordId = _newRel.TargetWordId,
+                RelationType = _newRel.RelationType,
+                Weight = _newRel.Weight
+            });
+
+            var updateDto = new UpdateWordDto
+            {
+                Kurdish     = _selectedWord.Kurdish,
+                Meaning     = _selectedWord.Meaning,
+                Category    = _selectedWord.Category,
+                Description = _selectedWord.Description,
+                RelatedWords = existingOutgoing
+            };
+
+            var updated = await WordSvc.UpdateWordAsync(_selectedWord.Id, updateDto);
+            if (updated is not null)
+            {
+                _selectedWord = updated;
+                _saveSuccess = true;
+                ClearTarget();
+                _newRel = new() { RelationType = _newRel.RelationType };
+            }
+            else
+            {
+                _saveError = "کێشەیەک ڕووی دا. دووبارە هەوڵ بدەرەوە.";
+            }
+        }
+        catch
+        {
+            _saveError = "کێشەیەک ڕووی دا. پەیوەستی نێوخۆ بپشکنە.";
+        }
+        finally
+        {
+            _savingRel = false;
+        }
+    }
+
+    // ── Delete relation ──────────────────────────────────────────────────────
+    async Task DeleteRelation(RelatedWordDto rel)
+    {
+        if (_selectedWord is null || rel.IsIncoming) return;
+        _savingRel = true;
+        _saveError = "";
+        _saveSuccess = false;
+        try
+        {
+            var remaining = _selectedWord.OutgoingRelations
+                .Where(r => r.Id != rel.Id)
+                .Select(r => new CreateRelatedWordDto
+                {
+                    TargetWordId = r.RelatedWordId,
+                    RelationType = r.RelationType,
+                    Weight = r.Weight
+                })
+                .ToList();
+
+            var updateDto = new UpdateWordDto
+            {
+                Kurdish     = _selectedWord.Kurdish,
+                Meaning     = _selectedWord.Meaning,
+                Category    = _selectedWord.Category,
+                Description = _selectedWord.Description,
+                RelatedWords = remaining
+            };
+
+            var updated = await WordSvc.UpdateWordAsync(_selectedWord.Id, updateDto);
+            if (updated is not null) _selectedWord = updated;
+        }
+        catch
+        {
+            _saveError = "سڕینەوە سەرکەوتوو نەبوو.";
+        }
+        finally
+        {
+            _savingRel = false;
+        }
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    string RelBadgeClass(string type) => type switch
+    {
+        "synonym"    => "bg-green-100  text-green-700",
+        "antonym"    => "bg-red-100    text-red-700",
+        "related"    => "bg-blue-100   text-blue-700",
+        "example"    => "bg-amber-100  text-amber-700",
+        "usage"      => "bg-purple-100 text-purple-700",
+        "contextual" => "bg-cyan-100   text-cyan-700",
+        _            => "bg-gray-100   text-gray-600",
+    };
+
+    class NewRelState
+    {
+        public int    TargetWordId  { get; set; }
+        public string RelationType  { get; set; } = "";
+        public int    Weight        { get; set; } = 1;
+    }
+}

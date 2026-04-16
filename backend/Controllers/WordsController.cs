@@ -151,6 +151,90 @@ public class WordsController : ControllerBase
         return Ok(await GetWordWithRelations(id));
     }
 
+    // GET api/words/5/graph  — داتای D3.js بۆ مایند ماپ
+    [HttpGet("{id:int}/graph")]
+    public async Task<ActionResult<GraphDto>> GetGraph(int id)
+    {
+        var word = await _db.Words
+            .AsNoTracking()
+            .Include(w => w.OutgoingRelations).ThenInclude(r => r.TargetWord)
+            .Include(w => w.IncomingRelations).ThenInclude(r => r.Word)
+            .FirstOrDefaultAsync(w => w.Id == id);
+
+        if (word is null) return NotFound();
+
+        var nodes = new List<GraphNodeDto>();
+        var links = new List<GraphLinkDto>();
+
+        // نۆدی ناوەند
+        nodes.Add(new GraphNodeDto
+        {
+            Id = word.Id.ToString(),
+            Label = word.Kurdish,
+            Meaning = word.Meaning,
+            Category = word.Category,
+            IsCenter = true,
+            Weight = word.OutgoingRelations.Count + word.IncomingRelations.Count,
+            Color = "#6366f1"
+        });
+
+        // پەیوەندییە دەرچووەکان
+        foreach (var rel in word.OutgoingRelations.Where(r => r.TargetWord != null))
+        {
+            var nodeId = rel.TargetWord!.Id.ToString();
+            if (!nodes.Any(n => n.Id == nodeId))
+            {
+                nodes.Add(new GraphNodeDto
+                {
+                    Id = nodeId,
+                    Label = rel.TargetWord.Kurdish,
+                    Meaning = rel.TargetWord.Meaning,
+                    Category = rel.TargetWord.Category,
+                    IsCenter = false,
+                    Weight = rel.Weight,
+                    RelationType = rel.RelationType
+                });
+            }
+            links.Add(new GraphLinkDto
+            {
+                Source = word.Id.ToString(),
+                Target = nodeId,
+                RelationType = rel.RelationType,
+                Weight = rel.Weight,
+                IsIncoming = false
+            });
+        }
+
+        // پەیوەندییە هاتووەکان
+        foreach (var rel in word.IncomingRelations.Where(r => r.Word != null))
+        {
+            var nodeId = rel.Word!.Id.ToString();
+            if (!nodes.Any(n => n.Id == nodeId))
+            {
+                nodes.Add(new GraphNodeDto
+                {
+                    Id = nodeId,
+                    Label = rel.Word.Kurdish,
+                    Meaning = rel.Word.Meaning,
+                    Category = rel.Word.Category,
+                    IsCenter = false,
+                    Weight = rel.Weight,
+                    RelationType = rel.RelationType
+                });
+            }
+            links.Add(new GraphLinkDto
+            {
+                Source = nodeId,
+                Target = word.Id.ToString(),
+                RelationType = rel.RelationType,
+                Weight = rel.Weight,
+                IsIncoming = true
+            });
+        }
+
+        return Ok(new GraphDto { Nodes = nodes, Links = links });
+    }
+
     // میتۆدێکی یارمەتیدەر بۆ هێنانەوەی وشە بە هەموو پەیوەندییەکانیەوە
     private async Task<WordDto> GetWordWithRelations(int id)
     {
