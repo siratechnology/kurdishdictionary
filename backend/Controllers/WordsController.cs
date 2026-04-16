@@ -212,7 +212,8 @@ public class WordsController : ControllerBase
             Category = word.Category,
             IsCenter = true,
             Weight = word.OutgoingRelations.Count + word.IncomingRelations.Count,
-            Color = "#6366f1"
+            Color = "#6366f1",
+            SpeechPane = (int)word.SpeechPane
         });
 
         foreach (var rel in word.OutgoingRelations.Where(r => r.TargetWord != null))
@@ -226,7 +227,8 @@ public class WordsController : ControllerBase
                     Category = rel.TargetWord.Category,
                     IsCenter = false,
                     Weight = rel.Weight,
-                    RelationType = rel.RelationType
+                    RelationType = rel.RelationType,
+                    SpeechPane = (int)rel.TargetWord.SpeechPane
                 });
             links.Add(new GraphLinkDto
             {
@@ -249,7 +251,8 @@ public class WordsController : ControllerBase
                     Category = rel.Word.Category,
                     IsCenter = false,
                     Weight = rel.Weight,
-                    RelationType = rel.RelationType
+                    RelationType = rel.RelationType,
+                    SpeechPane = (int)rel.Word.SpeechPane
                 });
             links.Add(new GraphLinkDto
             {

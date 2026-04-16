@@ -368,12 +368,13 @@
 
     readonly List<RelTypeConfig> _relTypes = new()
     {
-        new("synonym",    "هاوماناکە",   "border-emerald-500 bg-emerald-50 text-emerald-700",  "border-gray-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600"),
-        new("antonym",    "دژەوشە",      "border-red-500     bg-red-50     text-red-700",      "border-gray-200 text-gray-500 hover:border-red-300     hover:text-red-600"),
-        new("related",    "پەیوەندیدار", "border-blue-500    bg-blue-50    text-blue-700",     "border-gray-200 text-gray-500 hover:border-blue-300    hover:text-blue-600"),
-        new("example",    "نموونە",      "border-amber-500   bg-amber-50   text-amber-700",    "border-gray-200 text-gray-500 hover:border-amber-300   hover:text-amber-600"),
-        new("usage",      "بکارهێنان",   "border-purple-500  bg-purple-50  text-purple-700",   "border-gray-200 text-gray-500 hover:border-purple-300  hover:text-purple-600"),
-        new("contextual", "چارچێوەیی",   "border-cyan-500    bg-cyan-50    text-cyan-700",     "border-gray-200 text-gray-500 hover:border-cyan-300    hover:text-cyan-600"),
+        new("synonym",    "هاوماناکە",       "border-emerald-500 bg-emerald-50 text-emerald-700",  "border-gray-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600"),
+        new("antonym",    "دژەوشە",          "border-red-500     bg-red-50     text-red-700",      "border-gray-200 text-gray-500 hover:border-red-300     hover:text-red-600"),
+        new("related",    "پەیوەندیدار",     "border-blue-500    bg-blue-50    text-blue-700",     "border-gray-200 text-gray-500 hover:border-blue-300    hover:text-blue-600"),
+        new("example",    "نموونە",          "border-amber-500   bg-amber-50   text-amber-700",    "border-gray-200 text-gray-500 hover:border-amber-300   hover:text-amber-600"),
+        new("usage",      "بکارهێنان",       "border-purple-500  bg-purple-50  text-purple-700",   "border-gray-200 text-gray-500 hover:border-purple-300  hover:text-purple-600"),
+        new("contextual", "چارچێوەیی",       "border-cyan-500    bg-cyan-50    text-cyan-700",     "border-gray-200 text-gray-500 hover:border-cyan-300    hover:text-cyan-600"),
+        new("partof",     "بەشێکە لە وشەکە", "border-orange-500  bg-orange-50  text-orange-700",   "border-gray-200 text-gray-500 hover:border-orange-300  hover:text-orange-600"),
     };
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -563,6 +564,7 @@
         "example"    => "نموونە",
         "usage"      => "بکارهێنان",
         "contextual" => "چارچێوەیی",
+        "partof"     => "بەشێکە لە وشەکە",
         _            => type
     };
 
@@ -574,6 +576,7 @@
         "example"    => "bg-amber-100 text-amber-700",
         "usage"      => "bg-purple-100 text-purple-700",
         "contextual" => "bg-cyan-100 text-cyan-700",
+        "partof"     => "bg-orange-100 text-orange-700",
         _            => "bg-gray-100 text-gray-600"
     };
 }

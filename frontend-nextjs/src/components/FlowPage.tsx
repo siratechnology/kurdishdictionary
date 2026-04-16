@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import type { WordBasic } from "@/app/page";
+export interface WordBasic { id: number; kurdish: string; meaning?: string; category?: string; }
 import { useTheme } from "./ThemeProvider";
 import ThemeToggle from "./ThemeToggle";
 

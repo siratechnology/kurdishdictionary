@@ -20,6 +20,8 @@ public class GraphNodeDto
     public string? Color { get; set; }
     /// <summary>جۆری پەیوەندی بە نۆدی ناوەندەوە</summary>
     public string? RelationType { get; set; }
+    /// <summary>جۆری وشە (Noun=1, Verb=2…) — بۆ شێوە و ڕەنگی نۆدەکە</summary>
+    public int SpeechPane { get; set; }
 }
 
 public class GraphLinkDto
