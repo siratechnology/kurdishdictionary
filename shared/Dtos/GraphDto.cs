@@ -13,7 +13,6 @@ public class GraphNodeDto
 {
     public string Id { get; set; } = string.Empty;
     public string Label { get; set; } = string.Empty;
-    public string? Meaning { get; set; }
     public string? Category { get; set; }
     public bool IsCenter { get; set; }
     /// <summary>ژمارەی پەیوەندییەکان — بۆ قەبارەی نۆدەکە</summary>

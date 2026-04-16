@@ -6,7 +6,11 @@ module.exports = {
     "./**/*.cshtml",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        nrt: ['NRT', 'system-ui', '-apple-system', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }

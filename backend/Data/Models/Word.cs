@@ -6,7 +6,6 @@ public class Word
 {
     public int Id { get; set; }
     public string Kurdish { get; set; } = string.Empty;
-    public string? Meaning { get; set; }
     public SpeechPaneType SpeechPane { get; set; } = SpeechPaneType.Other;
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

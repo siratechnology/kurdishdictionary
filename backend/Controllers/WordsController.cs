@@ -25,7 +25,6 @@ public class WordsController : ControllerBase
         [FromQuery] string? search = null,
         [FromQuery] string? category = null)
     {
-        // Use only the lowest-ID entry per unique Kurdish name to skip seeded duplicates
         var minIds = _db.Words.AsNoTracking()
             .GroupBy(w => w.Kurdish)
             .Select(g => g.Min(w => w.Id));
@@ -42,6 +41,7 @@ public class WordsController : ControllerBase
         var totalCount = await query.CountAsync();
 
         var items = await query
+            .Include(w => w.Meanings)
             .OrderBy(w => w.Kurdish)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -92,7 +92,6 @@ public class WordsController : ControllerBase
             .FirstOrDefaultAsync(w => w.Id == id);
 
         if (word is null) return NotFound();
-
         return Ok(MapToDto(word));
     }
 
@@ -103,7 +102,6 @@ public class WordsController : ControllerBase
         var word = new Word
         {
             Kurdish = dto.Kurdish,
-            Meaning = dto.Meaning,
             SpeechPane = (SpeechPaneType)dto.SpeechPane,
             Category = dto.Category,
             Description = dto.Description,
@@ -111,27 +109,18 @@ public class WordsController : ControllerBase
         };
 
         foreach (var rel in dto.RelatedWords)
-        {
             word.OutgoingRelations.Add(new RelatedWord
             {
                 TargetWordId = rel.TargetWordId,
                 RelationType = rel.RelationType,
                 Weight = rel.Weight
             });
-        }
 
         foreach (var m in dto.Meanings)
-        {
-            word.Meanings.Add(new WordMeans
-            {
-                Meaning = m.Meaning,
-                Locate = m.Locate
-            });
-        }
+            word.Meanings.Add(new WordMeans { Meaning = m.Meaning, Locate = m.Locate });
 
         _db.Words.Add(word);
         await _db.SaveChangesAsync();
-
         return CreatedAtAction(nameof(GetById), new { id = word.Id }, await GetWordWithRelations(word.Id));
     }
 
@@ -147,16 +136,13 @@ public class WordsController : ControllerBase
         if (word is null) return NotFound();
 
         word.Kurdish = dto.Kurdish;
-        word.Meaning = dto.Meaning;
         word.SpeechPane = (SpeechPaneType)dto.SpeechPane;
         word.Category = dto.Category;
         word.Description = dto.Description;
 
         _db.RelatedWords.RemoveRange(word.OutgoingRelations);
         word.OutgoingRelations.Clear();
-
         foreach (var rel in dto.RelatedWords)
-        {
             word.OutgoingRelations.Add(new RelatedWord
             {
                 WordId = id,
@@ -164,20 +150,11 @@ public class WordsController : ControllerBase
                 RelationType = rel.RelationType,
                 Weight = rel.Weight
             });
-        }
 
         _db.WordMeans.RemoveRange(word.Meanings);
         word.Meanings.Clear();
-
         foreach (var m in dto.Meanings)
-        {
-            word.Meanings.Add(new WordMeans
-            {
-                WordId = id,
-                Meaning = m.Meaning,
-                Locate = m.Locate
-            });
-        }
+            word.Meanings.Add(new WordMeans { WordId = id, Meaning = m.Meaning, Locate = m.Locate });
 
         await _db.SaveChangesAsync();
         return Ok(await GetWordWithRelations(id));
@@ -189,7 +166,6 @@ public class WordsController : ControllerBase
     {
         var word = await _db.Words.FindAsync(id);
         if (word is null) return NotFound();
-
         _db.Words.Remove(word);
         await _db.SaveChangesAsync();
         return NoContent();
@@ -214,7 +190,6 @@ public class WordsController : ControllerBase
         {
             Id = word.Id.ToString(),
             Label = word.Kurdish,
-            Meaning = word.Meaning,
             Category = word.Category,
             IsCenter = true,
             Weight = word.OutgoingRelations.Count + word.IncomingRelations.Count,
@@ -225,18 +200,15 @@ public class WordsController : ControllerBase
         {
             var nodeId = rel.TargetWord!.Id.ToString();
             if (!nodes.Any(n => n.Id == nodeId))
-            {
                 nodes.Add(new GraphNodeDto
                 {
                     Id = nodeId,
                     Label = rel.TargetWord.Kurdish,
-                    Meaning = rel.TargetWord.Meaning,
                     Category = rel.TargetWord.Category,
                     IsCenter = false,
                     Weight = rel.Weight,
                     RelationType = rel.RelationType
                 });
-            }
             links.Add(new GraphLinkDto
             {
                 Source = word.Id.ToString(),
@@ -251,18 +223,15 @@ public class WordsController : ControllerBase
         {
             var nodeId = rel.Word!.Id.ToString();
             if (!nodes.Any(n => n.Id == nodeId))
-            {
                 nodes.Add(new GraphNodeDto
                 {
                     Id = nodeId,
                     Label = rel.Word.Kurdish,
-                    Meaning = rel.Word.Meaning,
                     Category = rel.Word.Category,
                     IsCenter = false,
                     Weight = rel.Weight,
                     RelationType = rel.RelationType
                 });
-            }
             links.Add(new GraphLinkDto
             {
                 Source = nodeId,
@@ -291,7 +260,6 @@ public class WordsController : ControllerBase
     {
         Id = w.Id,
         Kurdish = w.Kurdish,
-        Meaning = w.Meaning,
         SpeechPane = (int)w.SpeechPane,
         SpeechPaneKurdish = w.SpeechPane.ToKurdish(),
         Category = w.Category,

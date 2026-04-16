@@ -31,12 +31,8 @@
                     @foreach (var s in _sourceSuggestions)
                     {
                         <li @onclick="() => SelectSource(s)"
-                            class="px-4 py-2.5 cursor-pointer hover:bg-indigo-50 flex items-center justify-between text-sm border-b border-gray-50 last:border-0">
+                            class="px-4 py-2.5 cursor-pointer hover:bg-indigo-50 text-sm border-b border-gray-50 last:border-0">
                             <span class="font-bold text-gray-800" dir="rtl">@s.Kurdish</span>
-                            @if (!string.IsNullOrEmpty(s.Meaning))
-                            {
-                                <span class="text-gray-400 truncate max-w-[140px] text-xs" dir="rtl">@s.Meaning</span>
-                            }
                         </li>
                     }
                 </ul>
@@ -54,10 +50,6 @@
                         × پاکی بکەوە
                     </button>
                 </div>
-                @if (!string.IsNullOrEmpty(_selectedWord.Meaning))
-                {
-                    <p class="text-sm text-indigo-700 border-l-4 border-indigo-300 pl-2" dir="rtl">@_selectedWord.Meaning</p>
-                }
                 @if (!string.IsNullOrEmpty(_selectedWord.Category))
                 {
                     <span class="self-start text-xs font-semibold px-2.5 py-1 bg-indigo-100 text-indigo-600 rounded-full">@_selectedWord.Category</span>
@@ -134,10 +126,6 @@
                                 <li @onclick="() => SelectTarget(s)"
                                     class="px-4 py-2.5 cursor-pointer hover:bg-indigo-50 flex items-center justify-between text-sm border-b border-gray-50 last:border-0">
                                     <span class="font-bold text-gray-800" dir="rtl">@s.Kurdish</span>
-                                    @if (!string.IsNullOrEmpty(s.Meaning))
-                                    {
-                                        <span class="text-gray-400 truncate max-w-[140px] text-xs" dir="rtl">@s.Meaning</span>
-                                    }
                                 </li>
                             }
                         </ul>
@@ -352,7 +340,6 @@
             var updateDto = new UpdateWordDto
             {
                 Kurdish     = _selectedWord.Kurdish,
-                Meaning     = _selectedWord.Meaning,
                 SpeechPane  = _selectedWord.SpeechPane,
                 Category    = _selectedWord.Category,
                 Description = _selectedWord.Description,
@@ -405,7 +392,6 @@
             var updateDto = new UpdateWordDto
             {
                 Kurdish     = _selectedWord.Kurdish,
-                Meaning     = _selectedWord.Meaning,
                 SpeechPane  = _selectedWord.SpeechPane,
                 Category    = _selectedWord.Category,
                 Description = _selectedWord.Description,

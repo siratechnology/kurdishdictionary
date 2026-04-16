@@ -81,15 +81,6 @@
                     </div>
                 </div>
 
-                <!-- Main Meaning (scalar) -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">مانای سەرەکی</label>
-                    <textarea @bind="Meaning" @bind:event="oninput"
-                              dir="rtl" rows="2"
-                              placeholder="مانای کورتی وشەکە..."
-                              class="w-full border border-gray-300 dark:border-gray-600 rounded-xl px-4 py-2.5 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none transition-colors"></textarea>
-                </div>
-
                 <!-- Description -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">تێبینی / Description</label>
@@ -208,7 +199,6 @@
 
     // ── Form fields ───────────────────────────────────────────────────────────
     string Kurdish = "";
-    string Meaning = "";
     string Category = "";
     string Description = "";
     int SpeechPane = 14; // Other
@@ -248,7 +238,6 @@
         if (EditingWord is not null)
         {
             Kurdish = EditingWord.Kurdish;
-            Meaning = EditingWord.Meaning ?? "";
             Category = EditingWord.Category ?? "";
             Description = EditingWord.Description ?? "";
             SpeechPane = EditingWord.SpeechPane > 0 ? EditingWord.SpeechPane : 14;
@@ -261,7 +250,7 @@
         }
         else
         {
-            Kurdish = Meaning = Category = Description = "";
+            Kurdish = Category = Description = "";
             SpeechPane = 14;
             Meanings = new();
         }
@@ -307,7 +296,6 @@
             await WordSvc.CreateWordAsync(new CreateWordDto
             {
                 Kurdish = Kurdish.Trim(),
-                Meaning = NullIfEmpty(Meaning),
                 SpeechPane = SpeechPane,
                 Category = NullIfEmpty(Category),
                 Description = NullIfEmpty(Description),
@@ -328,7 +316,6 @@
             await WordSvc.UpdateWordAsync(EditingWord.Id, new UpdateWordDto
             {
                 Kurdish = Kurdish.Trim(),
-                Meaning = NullIfEmpty(Meaning),
                 SpeechPane = SpeechPane,
                 Category = NullIfEmpty(Category),
                 Description = NullIfEmpty(Description),

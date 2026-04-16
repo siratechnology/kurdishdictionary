@@ -21,7 +21,6 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(w => w.Id);
             entity.Property(w => w.Kurdish).IsRequired().HasMaxLength(200);
-            entity.Property(w => w.Meaning).HasMaxLength(500);
             entity.Property(w => w.Category).HasMaxLength(100);
             entity.Property(w => w.Description).HasMaxLength(1000);
             entity.Property(w => w.SpeechPane).HasDefaultValue(SpeechPaneType.Other);
@@ -86,7 +85,6 @@ public class AppDbContext : DbContext
             {
                 Id = i,
                 Kurdish = $"{prefix}{baseKurdishWords[baseIndex]}{suffix}",
-                Meaning = $"زانیاری ورد دەربارەی {baseKurdishWords[baseIndex]}",
                 SpeechPane = SpeechPaneType.Noun,
                 Category = baseIndex < 20 ? "خواردنی سەرەکی" : (baseIndex < 40 ? "میوە و سەوزە" : "کەلوپەل و بەهارات"),
                 Description = $"ئەم وشەیە پەیوەستە بە لقی {baseKurdishWords[baseIndex]}",
