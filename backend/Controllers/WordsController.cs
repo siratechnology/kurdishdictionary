@@ -41,15 +41,20 @@ public class WordsController : ControllerBase
         var totalCount = await query.CountAsync();
 
         var items = await query
-            .Include(w => w.Meanings)
             .OrderBy(w => w.Kurdish)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Select(w => new
+            {
+                Word = w,
+                TotalRelations = w.OutgoingRelations.Count + w.IncomingRelations.Count,
+                Meanings = w.Meanings.ToList()
+            })
             .ToListAsync();
 
         return Ok(new PagedResultDto<WordDto>
         {
-            Items = items.Select(MapToDto).ToList(),
+            Items = items.Select(r => MapToDto(r.Word, r.Meanings, r.TotalRelations)).ToList(),
             TotalCount = totalCount,
             Page = page,
             PageSize = pageSize
@@ -256,7 +261,9 @@ public class WordsController : ControllerBase
         return MapToDto(word);
     }
 
-    private static WordDto MapToDto(Word w) => new()
+    private static WordDto MapToDto(Word w,
+        IEnumerable<WordMeans>? meanings = null,
+        int totalRelations = -1) => new()
     {
         Id = w.Id,
         Kurdish = w.Kurdish,
@@ -265,7 +272,10 @@ public class WordsController : ControllerBase
         Category = w.Category,
         Description = w.Description,
         CreatedAt = w.CreatedAt,
-        Meanings = w.Meanings?.Select(m => new WordMeansDto
+        TotalRelations = totalRelations >= 0
+            ? totalRelations
+            : (w.OutgoingRelations?.Count ?? 0) + (w.IncomingRelations?.Count ?? 0),
+        Meanings = (meanings ?? w.Meanings)?.Select(m => new WordMeansDto
         {
             Id = m.Id,
             Meaning = m.Meaning,

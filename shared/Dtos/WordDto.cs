@@ -9,6 +9,7 @@ public class WordDto
     public string? Category { get; set; }
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
+    public int TotalRelations { get; set; }
     public List<WordMeansDto> Meanings { get; set; } = new();
     public List<RelatedWordDto> OutgoingRelations { get; set; } = new();
     public List<RelatedWordDto> IncomingRelations { get; set; } = new();
