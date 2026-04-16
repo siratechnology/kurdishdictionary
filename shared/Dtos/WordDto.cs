@@ -1,36 +1,44 @@
-﻿namespace Shared.Dtos;
+namespace Shared.Dtos;
 
 public class WordDto
 {
     public int Id { get; set; }
     public string Kurdish { get; set; } = string.Empty;
     public string? Meaning { get; set; }
+    public int SpeechPane { get; set; }
+    public string? SpeechPaneKurdish { get; set; }
     public string? Category { get; set; }
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
-
-    // لێرەدا دەتوانیت هەردووکیان جیابکەیتەوە بۆ ئەوەی لە گرافەکەدا سوودی لێ ببینی
+    public List<WordMeansDto> Meanings { get; set; } = new();
     public List<RelatedWordDto> OutgoingRelations { get; set; } = new();
     public List<RelatedWordDto> IncomingRelations { get; set; } = new();
+}
+
+public class WordMeansDto
+{
+    public int Id { get; set; }
+    public string Meaning { get; set; } = string.Empty;
+    public string? Locate { get; set; }
 }
 
 public class RelatedWordDto
 {
     public int Id { get; set; }
-    public int RelatedWordId { get; set; } // ئایدی وشە پەیوەندیدارەکە
+    public int RelatedWordId { get; set; }
     public string? RelatedKurdish { get; set; }
     public string RelationType { get; set; } = string.Empty;
-    public bool IsIncoming { get; set; } // بۆ ئەوەی بزانیت ئەم وشەیە ئاماژەی بۆ کراوە یان خۆی ئاماژەی کردووە
-    public int Weight { get; set; } = 1; // نزیکایەتی وشەکە لە وشەی سەرەکییەوە
+    public bool IsIncoming { get; set; }
+    public int Weight { get; set; } = 1;
 }
 
 public class CreateWordDto
 {
     public string Kurdish { get; set; } = string.Empty;
     public string? Meaning { get; set; }
+    public int SpeechPane { get; set; }
     public string? Category { get; set; }
     public string? Description { get; set; }
-    // کاتی دروستکردن تەنها پەیوەندییە دەرچووەکان دادەنێین
     public List<CreateRelatedWordDto> RelatedWords { get; set; } = new();
 }
 

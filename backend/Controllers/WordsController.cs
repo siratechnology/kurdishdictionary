@@ -1,4 +1,4 @@
-﻿using backend.Data;
+using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +70,17 @@ public class WordsController : ControllerBase
         return Ok(categories);
     }
 
-    // GET api/words/5 (بۆ بینینی وشەکە و هەموو پەیوەندییەکانی لە مایند ماپدا)
+    // GET api/words/speech-types
+    [HttpGet("speech-types")]
+    public ActionResult<List<object>> GetSpeechTypes()
+    {
+        var types = SpeechPaneTypeExtensions.ToList()
+            .Select(t => new { id = t.Id, kurdish = t.Kurdish })
+            .ToList<object>();
+        return Ok(types);
+    }
+
+    // GET api/words/5
     [HttpGet("{id:int}")]
     public async Task<ActionResult<WordDto>> GetById(int id)
     {
@@ -78,6 +88,7 @@ public class WordsController : ControllerBase
             .AsNoTracking()
             .Include(w => w.OutgoingRelations).ThenInclude(r => r.TargetWord)
             .Include(w => w.IncomingRelations).ThenInclude(r => r.Word)
+            .Include(w => w.Meanings)
             .FirstOrDefaultAsync(w => w.Id == id);
 
         if (word is null) return NotFound();
@@ -93,22 +104,20 @@ public class WordsController : ControllerBase
         {
             Kurdish = dto.Kurdish,
             Meaning = dto.Meaning,
+            SpeechPane = (SpeechPaneType)dto.SpeechPane,
             Category = dto.Category,
             Description = dto.Description,
             CreatedAt = DateTime.UtcNow
         };
 
-        if (dto.RelatedWords != null)
+        foreach (var rel in dto.RelatedWords)
         {
-            foreach (var rel in dto.RelatedWords)
+            word.OutgoingRelations.Add(new RelatedWord
             {
-                word.OutgoingRelations.Add(new RelatedWord
-                {
-                    TargetWordId = rel.TargetWordId,
-                    RelationType = rel.RelationType,
-                    Weight = rel.Weight
-                });
-            }
+                TargetWordId = rel.TargetWordId,
+                RelationType = rel.RelationType,
+                Weight = rel.Weight
+            });
         }
 
         _db.Words.Add(word);
@@ -129,10 +138,10 @@ public class WordsController : ControllerBase
 
         word.Kurdish = dto.Kurdish;
         word.Meaning = dto.Meaning;
+        word.SpeechPane = (SpeechPaneType)dto.SpeechPane;
         word.Category = dto.Category;
         word.Description = dto.Description;
 
-        // نوێکردنەوەی پەیوەندییەکان (سڕینەوەی کۆن و دانانی نوێ)
         _db.RelatedWords.RemoveRange(word.OutgoingRelations);
         word.OutgoingRelations.Clear();
 
@@ -151,7 +160,19 @@ public class WordsController : ControllerBase
         return Ok(await GetWordWithRelations(id));
     }
 
-    // GET api/words/5/graph  — داتای D3.js بۆ مایند ماپ
+    // DELETE api/words/5
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var word = await _db.Words.FindAsync(id);
+        if (word is null) return NotFound();
+
+        _db.Words.Remove(word);
+        await _db.SaveChangesAsync();
+        return NoContent();
+    }
+
+    // GET api/words/5/graph
     [HttpGet("{id:int}/graph")]
     public async Task<ActionResult<GraphDto>> GetGraph(int id)
     {
@@ -166,7 +187,6 @@ public class WordsController : ControllerBase
         var nodes = new List<GraphNodeDto>();
         var links = new List<GraphLinkDto>();
 
-        // نۆدی ناوەند
         nodes.Add(new GraphNodeDto
         {
             Id = word.Id.ToString(),
@@ -178,7 +198,6 @@ public class WordsController : ControllerBase
             Color = "#6366f1"
         });
 
-        // پەیوەندییە دەرچووەکان
         foreach (var rel in word.OutgoingRelations.Where(r => r.TargetWord != null))
         {
             var nodeId = rel.TargetWord!.Id.ToString();
@@ -205,7 +224,6 @@ public class WordsController : ControllerBase
             });
         }
 
-        // پەیوەندییە هاتووەکان
         foreach (var rel in word.IncomingRelations.Where(r => r.Word != null))
         {
             var nodeId = rel.Word!.Id.ToString();
@@ -235,45 +253,50 @@ public class WordsController : ControllerBase
         return Ok(new GraphDto { Nodes = nodes, Links = links });
     }
 
-    // میتۆدێکی یارمەتیدەر بۆ هێنانەوەی وشە بە هەموو پەیوەندییەکانیەوە
     private async Task<WordDto> GetWordWithRelations(int id)
     {
         var word = await _db.Words
             .AsNoTracking()
             .Include(w => w.OutgoingRelations).ThenInclude(r => r.TargetWord)
             .Include(w => w.IncomingRelations).ThenInclude(r => r.Word)
+            .Include(w => w.Meanings)
             .FirstAsync(w => w.Id == id);
         return MapToDto(word);
     }
 
-    private static WordDto MapToDto(Word w)
+    private static WordDto MapToDto(Word w) => new()
     {
-        return new WordDto
+        Id = w.Id,
+        Kurdish = w.Kurdish,
+        Meaning = w.Meaning,
+        SpeechPane = (int)w.SpeechPane,
+        SpeechPaneKurdish = w.SpeechPane.ToKurdish(),
+        Category = w.Category,
+        Description = w.Description,
+        CreatedAt = w.CreatedAt,
+        Meanings = w.Meanings?.Select(m => new WordMeansDto
         {
-            Id = w.Id,
-            Kurdish = w.Kurdish,
-            Meaning = w.Meaning,
-            Category = w.Category,
-            Description = w.Description,
-            CreatedAt = w.CreatedAt,
-            OutgoingRelations = w.OutgoingRelations?.Select(r => new RelatedWordDto
-            {
-                Id = r.Id,
-                RelatedWordId = r.TargetWordId,
-                RelatedKurdish = r.TargetWord?.Kurdish,
-                RelationType = r.RelationType,
-                IsIncoming = false,
-                Weight = r.Weight
-            }).ToList() ?? new(),
-            IncomingRelations = w.IncomingRelations?.Select(r => new RelatedWordDto
-            {
-                Id = r.Id,
-                RelatedWordId = r.WordId,
-                RelatedKurdish = r.Word?.Kurdish,
-                RelationType = r.RelationType,
-                IsIncoming = true,
-                Weight = r.Weight
-            }).ToList() ?? new()
-        };
-    }
+            Id = m.Id,
+            Meaning = m.Meaning,
+            Locate = m.Locate
+        }).ToList() ?? new(),
+        OutgoingRelations = w.OutgoingRelations?.Select(r => new RelatedWordDto
+        {
+            Id = r.Id,
+            RelatedWordId = r.TargetWordId,
+            RelatedKurdish = r.TargetWord?.Kurdish,
+            RelationType = r.RelationType,
+            IsIncoming = false,
+            Weight = r.Weight
+        }).ToList() ?? new(),
+        IncomingRelations = w.IncomingRelations?.Select(r => new RelatedWordDto
+        {
+            Id = r.Id,
+            RelatedWordId = r.WordId,
+            RelatedKurdish = r.Word?.Kurdish,
+            RelationType = r.RelationType,
+            IsIncoming = true,
+            Weight = r.Weight
+        }).ToList() ?? new()
+    };
 }
