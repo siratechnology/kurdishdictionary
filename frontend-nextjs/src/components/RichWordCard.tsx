@@ -98,7 +98,7 @@ export default function RichWordCard({ word, onExplore }: Props) {
               {catIcon(word.category)} {word.category}
             </span>
           )}
-          {/* Galaxy explore */}
+          {/* MindMap explore */}
           <button
             onClick={() => onExplore(word.id)}
             className="text-[10px] font-semibold px-2 py-0.5 rounded-full transition-all duration-150 hover:scale-105"
@@ -107,7 +107,7 @@ export default function RichWordCard({ word, onExplore }: Props) {
               border: "1px solid rgba(6,182,212,.32)",
               color: "#22d3ee",
             }}>
-            ↗ گەلاکسی
+            ↗ نەخشە
           </button>
         </div>
       </div>
