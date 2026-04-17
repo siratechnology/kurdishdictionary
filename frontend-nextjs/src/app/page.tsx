@@ -1,5 +1,5 @@
-import UniversePage from "@/components/UniversePage";
+import DiscoveryPage from "@/components/DiscoveryPage";
 
 export default function HomePage() {
-  return <UniversePage />;
+  return <DiscoveryPage />;
 }
