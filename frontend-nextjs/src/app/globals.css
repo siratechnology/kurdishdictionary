@@ -76,7 +76,7 @@
   color-scheme: light;
 
   /* Backgrounds */
-  --background:      #eef2ff;
+  --background:      #dbeafe;
   --surface:         rgba(255, 255, 255, 0.70);
   --surface-raised:  rgba(248, 250, 255, 0.80);
   --surface-card:    rgba(255, 255, 255, 0.75);
@@ -160,12 +160,16 @@ body::before {
   transition: opacity 0.4s ease;
 }
 
-/* Ambient glow — light mode (subtler) */
+/* Clear Morning Sky — light mode */
+[data-theme="light"] body {
+  background: linear-gradient(160deg, #bfdbfe 0%, #dbeafe 35%, #e0f2fe 65%, #f0f9ff 100%);
+}
+
 [data-theme="light"] body::before {
   background:
-    radial-gradient(ellipse 70% 50% at 15% 60%, rgba(99,102,241,0.05) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 85% 20%, rgba(139,92,246,0.03) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 60% at 50% 100%, rgba(59,130,246,0.03) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(186,230,255,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 15%, rgba(224,242,254,0.45) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 65% at 50% 95%, rgba(240,249,255,0.35) 0%, transparent 60%);
 }
 
 /* ── Glassmorphism utilities ──────────────────────────────────────── */
@@ -239,3 +243,19 @@ body::before {
   0%, 100% { opacity: 0.35; stroke-dashoffset: 0; }
   50%       { opacity: 0.70; stroke-dashoffset: 14; }
 }
+
+/* Traveling pulse dot along graph edges */
+@keyframes link-pulse {
+  from { stroke-dashoffset: 305; }
+  to   { stroke-dashoffset:   0; }
+}
+
+/* Gentle float for word star field */
+@keyframes float-word {
+  0%, 100% { transform: translateY(0px);  }
+  50%       { transform: translateY(-7px); }
+}
+
+/* SVG label theming */
+.lbl { stroke: rgba(8,12,26,0.92); }
+[data-theme="light"] .lbl { stroke: rgba(255,255,255,0.88); }
