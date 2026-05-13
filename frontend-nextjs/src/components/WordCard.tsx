@@ -11,7 +11,8 @@ export interface WordDto {
   id: number;
   kurdish: string;
   meaning?: string;
-  category?: string;
+  categories: { id: number; name: string }[];
+  speechPanes: { id: number; kurdish: string }[];
   description?: string;
   createdAt: string;
   outgoingRelations: RelatedWordDto[];
@@ -32,8 +33,9 @@ interface Props {
 }
 
 export default function WordCard({ word, onFlowClick }: Props) {
+  const primaryCat = word.categories?.[0];
   const catCls =
-    CAT_COLOR[word.category?.toLowerCase() ?? ""] ??
+    CAT_COLOR[primaryCat?.name.toLowerCase() ?? ""] ??
     "bg-indigo-50 text-indigo-700 border-indigo-200";
 
   const relCount =
@@ -48,9 +50,9 @@ export default function WordCard({ word, onFlowClick }: Props) {
         <h2 className="text-2xl font-extrabold text-gray-900 tracking-wide leading-tight" dir="rtl">
           {word.kurdish}
         </h2>
-        {word.category && (
+        {primaryCat && (
           <span className={`shrink-0 mt-1 text-xs font-semibold px-3 py-1 rounded-full border ${catCls}`}>
-            {word.category}
+            {primaryCat.name}
           </span>
         )}
       </div>

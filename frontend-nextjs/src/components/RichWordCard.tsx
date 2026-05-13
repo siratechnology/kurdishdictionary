@@ -7,12 +7,16 @@ const MiniMap = dynamic(() => import("./MiniMap"), { ssr: false });
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+export interface SpeechPaneDto { id: number; kurdish: string; }
+export interface CategoryDto   { id: number; name:    string; }
+
 export interface WordItem {
   id: number;
   kurdish: string;
-  speechPane: number;
-  speechPaneKurdish?: string;
-  category?: string;
+  speechPanes: SpeechPaneDto[];
+  categories:  CategoryDto[];
+  gender?: number;
+  genderKurdish?: string;
   description?: string;
   totalRelations: number;
   meanings: { id: number; meaning: string; locate?: string }[];
@@ -59,10 +63,12 @@ const REL5 = [
 interface Props { word: WordItem; onExplore: (id: number) => void; }
 
 export default function RichWordCard({ word, onExplore }: Props) {
-  const dialects  = groupByDialect(word.meanings);
-  const spBg      = SP_BG[word.speechPane]   ?? "rgba(99,102,241,.14)";
-  const spBd      = SP_BD[word.speechPane]   ?? "rgba(99,102,241,.38)";
-  const spText    = SP_TEXT[word.speechPane] ?? "#818cf8";
+  const dialects   = groupByDialect(word.meanings);
+  const primarySp  = word.speechPanes[0];
+  const spBg       = SP_BG[primarySp?.id ?? 0]   ?? "rgba(99,102,241,.14)";
+  const spBd       = SP_BD[primarySp?.id ?? 0]   ?? "rgba(99,102,241,.38)";
+  const spText     = SP_TEXT[primarySp?.id ?? 0] ?? "#818cf8";
+  const primaryCat = word.categories[0];
 
   return (
     <article
@@ -84,20 +90,20 @@ export default function RichWordCard({ word, onExplore }: Props) {
         </h2>
 
         <div className="flex items-center flex-wrap gap-1 shrink-0 pt-0.5">
-          {/* Speech type */}
-          {word.speechPaneKurdish && (
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+          {/* Speech panes */}
+          {word.speechPanes.map(sp => (
+            <span key={sp.id} className="text-[10px] font-bold px-2 py-0.5 rounded-full"
               style={{ background: spBg, border: `1px solid ${spBd}`, color: spText }}>
-              {word.speechPaneKurdish}
+              {sp.kurdish}
             </span>
-          )}
-          {/* Category */}
-          {word.category && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+          ))}
+          {/* Categories */}
+          {word.categories.map(cat => (
+            <span key={cat.id} className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
               style={{ background: "rgba(99,102,241,.10)", border: "1px solid rgba(99,102,241,.22)", color: "var(--accent-light)" }}>
-              {catIcon(word.category)} {word.category}
+              {catIcon(cat.name)} {cat.name}
             </span>
-          )}
+          ))}
           {/* MindMap explore */}
           <button
             onClick={() => onExplore(word.id)}

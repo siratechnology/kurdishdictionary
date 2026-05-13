@@ -10,11 +10,14 @@ const UniverseGraph = dynamic(() => import("./UniverseGraph"), { ssr: false });
 
 interface Meaning { id: number; meaning: string; locate?: string; }
 
+interface SpeechPane { id: number; kurdish: string; }
+interface Category   { id: number; name:    string; }
+
 interface FocalWord {
   id: number;
   kurdish: string;
-  speechPaneKurdish?: string;
-  category?: string;
+  speechPanes: SpeechPane[];
+  categories:  Category[];
   description?: string;
   meanings: Meaning[];
 }
@@ -22,9 +25,8 @@ interface FocalWord {
 interface SearchHit {
   id: number;
   kurdish: string;
-  speechPane: number;
-  speechPaneKurdish?: string;
-  category?: string;
+  speechPanes: SpeechPane[];
+  categories:  Category[];
   totalRelations: number;
   meanings: Meaning[];
 }
@@ -192,8 +194,9 @@ export default function UniversePage() {
       if (word) {
         setFocal({
           id: word.id, kurdish: word.kurdish,
-          speechPaneKurdish: word.speechPaneKurdish,
-          category: word.category, description: word.description,
+          speechPanes: word.speechPanes ?? [],
+          categories:  word.categories  ?? [],
+          description: word.description,
           meanings: word.meanings ?? [],
         });
         setReady(true);
@@ -480,10 +483,10 @@ function SearchBox({
                 )}
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
-                {h.speechPaneKurdish && (
+                {h.speechPanes[0] && (
                   <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
                     style={{ background: "rgba(6,182,212,.15)", color: "#22d3ee" }}>
-                    {h.speechPaneKurdish}
+                    {h.speechPanes[0].kurdish}
                   </span>
                 )}
               </div>
@@ -517,18 +520,18 @@ function WordPanel({ word }: { word: FocalWord }) {
             {word.kurdish}
           </h2>
           <div className="flex flex-wrap gap-1 mt-1">
-            {word.speechPaneKurdish && (
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+            {word.speechPanes.map(sp => (
+              <span key={sp.id} className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                 style={{ background: "rgba(6,182,212,.15)", border: "1px solid rgba(6,182,212,.25)", color: "#22d3ee" }}>
-                {word.speechPaneKurdish}
+                {sp.kurdish}
               </span>
-            )}
-            {word.category && (
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+            ))}
+            {word.categories.map(cat => (
+              <span key={cat.id} className="text-[10px] font-medium px-2 py-0.5 rounded-full"
                 style={{ background: "rgba(99,102,241,.12)", border: "1px solid rgba(99,102,241,.2)", color: "var(--accent-light)" }}>
-                {word.category}
+                {cat.name}
               </span>
-            )}
+            ))}
           </div>
         </div>
 

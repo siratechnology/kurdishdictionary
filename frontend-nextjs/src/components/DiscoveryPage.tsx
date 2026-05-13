@@ -14,8 +14,10 @@ const UniverseGraph = dynamic(() => import("./UniverseGraph"), { ssr: false });
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Meaning    { id: number; meaning: string; locate?: string; }
-interface FocalWord  { id: number; kurdish: string; speechPaneKurdish?: string; category?: string; description?: string; meanings: Meaning[]; }
-interface SearchHit  { id: number; kurdish: string; speechPane: number; speechPaneKurdish?: string; category?: string; totalRelations: number; meanings: Meaning[]; }
+interface SpeechPane { id: number; kurdish: string; }
+interface Category   { id: number; name:    string; }
+interface FocalWord  { id: number; kurdish: string; speechPanes: SpeechPane[]; categories: Category[]; description?: string; meanings: Meaning[]; }
+interface SearchHit  { id: number; kurdish: string; speechPanes: SpeechPane[]; categories: Category[]; totalRelations: number; meanings: Meaning[]; }
 interface PagedResult{ items: WordItem[]; totalCount: number; totalPages: number; page: number; }
 
 const GRID_SIZE = 18;
@@ -40,7 +42,7 @@ export default function DiscoveryPage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   // ── Discovery state ───────────────────────────────────────────────────────
-  const [categories,     setCategories]     = useState<string[]>([]);
+  const [categories,     setCategories]     = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState("");
   const [discSearch,     setDiscSearch]     = useState("");
   const [words,          setWords]          = useState<WordItem[]>([]);
@@ -150,7 +152,7 @@ export default function DiscoveryPage() {
         ]);
         if (wRes?.ok) {
           const w = await wRes.json();
-          setMmFocal({ id: w.id, kurdish: w.kurdish, speechPaneKurdish: w.speechPaneKurdish, category: w.category, description: w.description, meanings: w.meanings ?? [] });
+          setMmFocal({ id: w.id, kurdish: w.kurdish, speechPanes: w.speechPanes ?? [], categories: w.categories ?? [], description: w.description, meanings: w.meanings ?? [] });
         }
       } finally { setMmLoading(false); }
     }, 180);
@@ -184,7 +186,7 @@ export default function DiscoveryPage() {
       ]);
       if (wRes?.ok) {
         const w = await wRes.json();
-        setMmFocal({ id: w.id, kurdish: w.kurdish, speechPaneKurdish: w.speechPaneKurdish, category: w.category, description: w.description, meanings: w.meanings ?? [] });
+        setMmFocal({ id: w.id, kurdish: w.kurdish, speechPanes: w.speechPanes ?? [], categories: w.categories ?? [], description: w.description, meanings: w.meanings ?? [] });
       }
     } finally { setMmLoading(false); }
   }, []);
@@ -339,11 +341,11 @@ export default function DiscoveryPage() {
             هەموو
           </button>
           {categories.map(cat => (
-            <button key={cat}
-              onClick={() => handleCategorySelect(cat)}
+            <button key={cat.id}
+              onClick={() => handleCategorySelect(cat.name)}
               className="shrink-0 text-xs font-semibold px-3 py-1 rounded-full transition-all whitespace-nowrap"
-              style={{ fontFamily: "'NRT',system-ui,sans-serif", background: activeCategory === cat ? "rgba(6,182,212,.18)" : "var(--surface)", border: `1px solid ${activeCategory === cat ? "rgba(6,182,212,.4)" : "var(--border)"}`, color: activeCategory === cat ? "#22d3ee" : "var(--t-text-3)" }}>
-              {cat}
+              style={{ fontFamily: "'NRT',system-ui,sans-serif", background: activeCategory === cat.name ? "rgba(6,182,212,.18)" : "var(--surface)", border: `1px solid ${activeCategory === cat.name ? "rgba(6,182,212,.4)" : "var(--border)"}`, color: activeCategory === cat.name ? "#22d3ee" : "var(--t-text-3)" }}>
+              {cat.name}
             </button>
           ))}
         </div>
@@ -552,9 +554,9 @@ function MmSearchBox({
                   <p className="text-xs truncate mt-0.5" style={{ color: "var(--t-text-3)" }}>{h.meanings[0].meaning}</p>
                 )}
               </div>
-              {h.speechPaneKurdish && (
+              {h.speechPanes[0] && (
                 <span className="text-[10px] px-2 py-0.5 rounded-full shrink-0"
-                  style={{ background: "rgba(6,182,212,.14)", color: "#22d3ee" }}>{h.speechPaneKurdish}</span>
+                  style={{ background: "rgba(6,182,212,.14)", color: "#22d3ee" }}>{h.speechPanes[0].kurdish}</span>
               )}
             </button>
           ))}
@@ -575,18 +577,18 @@ function MmWordPanel({ word }: { word: FocalWord }) {
           {word.kurdish}
         </h2>
         <div className="flex flex-wrap gap-1 mt-1">
-          {word.speechPaneKurdish && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+          {word.speechPanes.map(sp => (
+            <span key={sp.id} className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
               style={{ background: "rgba(6,182,212,.14)", border: "1px solid rgba(6,182,212,.28)", color: "#22d3ee" }}>
-              {word.speechPaneKurdish}
+              {sp.kurdish}
             </span>
-          )}
-          {word.category && (
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+          ))}
+          {word.categories.map(cat => (
+            <span key={cat.id} className="text-[10px] font-medium px-2 py-0.5 rounded-full"
               style={{ background: "rgba(99,102,241,.12)", border: "1px solid rgba(99,102,241,.2)", color: "var(--accent-light)" }}>
-              {word.category}
+              {cat.name}
             </span>
-          )}
+          ))}
         </div>
       </div>
 
