@@ -6,13 +6,39 @@ public class Word
 {
     public int Id { get; set; }
     public string Kurdish { get; set; } = string.Empty;
-    public SpeechPaneType SpeechPane { get; set; } = SpeechPaneType.Other;
+    public GrammaticalGender Gender { get; set; } = GrammaticalGender.None;
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public string? Category { get; set; }
+
+    public ICollection<WordSpeechPane> SpeechPanes { get; set; } = new List<WordSpeechPane>();
+    public ICollection<WordCategory> WordCategories { get; set; } = new List<WordCategory>();
     public ICollection<WordMeans> Meanings { get; set; } = new List<WordMeans>();
     public ICollection<RelatedWord> OutgoingRelations { get; set; } = new List<RelatedWord>();
     public ICollection<RelatedWord> IncomingRelations { get; set; } = new List<RelatedWord>();
+}
+
+// Join entity: Word <-> SpeechPaneType (many-to-many via enum, no separate table needed)
+public class WordSpeechPane
+{
+    public int WordId { get; set; }
+    public Word Word { get; set; } = null!;
+    public SpeechPaneType SpeechPaneType { get; set; }
+}
+
+public class Category
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public ICollection<WordCategory> WordCategories { get; set; } = new List<WordCategory>();
+}
+
+// Join entity: Word <-> Category (many-to-many)
+public class WordCategory
+{
+    public int WordId { get; set; }
+    public Word Word { get; set; } = null!;
+    public int CategoryId { get; set; }
+    public Category Category { get; set; } = null!;
 }
 
 public class RelatedWord
@@ -34,6 +60,31 @@ public class WordMeans
     public Word Word { get; set; } = null!;
     public string Meaning { get; set; } = string.Empty;
     public string? Locate { get; set; }
+}
+
+public enum GrammaticalGender
+{
+    None = 0,
+    Masculine = 1,
+    Feminine = 2,
+    Neuter = 3
+}
+
+public static class GrammaticalGenderExtensions
+{
+    public static string ToKurdish(this GrammaticalGender gender) => gender switch
+    {
+        GrammaticalGender.None => "نییە",
+        GrammaticalGender.Masculine => "نێر",
+        GrammaticalGender.Feminine => "مێ",
+        GrammaticalGender.Neuter => "بێلایەن",
+        _ => throw new ArgumentOutOfRangeException(nameof(gender), gender, null)
+    };
+
+    public static List<(int Id, string Kurdish)> ToList() =>
+        Enum.GetValues<GrammaticalGender>()
+            .Select(x => ((int)x, x.ToKurdish()))
+            .ToList();
 }
 
 public enum SpeechPaneType

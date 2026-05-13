@@ -26,8 +26,21 @@ public class WordService
     public async Task<WordDto?> GetWordByIdAsync(int id) =>
         await _http.GetFromJsonAsync<WordDto>($"api/words/{id}");
 
-    public async Task<List<string>> GetCategoriesAsync() =>
-        await _http.GetFromJsonAsync<List<string>>("api/words/categories") ?? new();
+    public async Task<List<CategoryDto>> GetCategoriesAsync() =>
+        await _http.GetFromJsonAsync<List<CategoryDto>>("api/words/categories") ?? new();
+
+    public async Task<CategoryDto?> CreateCategoryAsync(string name)
+    {
+        var res = await _http.PostAsJsonAsync("api/words/categories", name);
+        res.EnsureSuccessStatusCode();
+        return await res.Content.ReadFromJsonAsync<CategoryDto>();
+    }
+
+    public async Task<List<GenderItem>> GetGendersAsync()
+    {
+        var raw = await _http.GetFromJsonAsync<List<GenderRaw>>("api/words/genders");
+        return raw?.Select(r => new GenderItem(r.Id, r.Kurdish)).ToList() ?? new();
+    }
 
     public async Task<List<string>> GetLocatesAsync() =>
         await _http.GetFromJsonAsync<List<string>>("api/words/locates") ?? new();
@@ -56,4 +69,7 @@ public class WordService
         await _http.DeleteAsync($"api/words/{id}");
 
     private record SpeechTypeRaw(int Id, string Kurdish);
+    private record GenderRaw(int Id, string Kurdish);
 }
+
+public record GenderItem(int Id, string Kurdish);

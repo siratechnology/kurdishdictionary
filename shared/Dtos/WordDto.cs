@@ -4,15 +4,28 @@ public class WordDto
 {
     public int Id { get; set; }
     public string Kurdish { get; set; } = string.Empty;
-    public int SpeechPane { get; set; }
-    public string? SpeechPaneKurdish { get; set; }
-    public string? Category { get; set; }
+    public List<SpeechPaneDto> SpeechPanes { get; set; } = new();
+    public List<CategoryDto> Categories { get; set; } = new();
+    public int Gender { get; set; }
+    public string? GenderKurdish { get; set; }
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public int TotalRelations { get; set; }
     public List<WordMeansDto> Meanings { get; set; } = new();
     public List<RelatedWordDto> OutgoingRelations { get; set; } = new();
     public List<RelatedWordDto> IncomingRelations { get; set; } = new();
+}
+
+public class SpeechPaneDto
+{
+    public int Id { get; set; }
+    public string Kurdish { get; set; } = string.Empty;
+}
+
+public class CategoryDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
 }
 
 public class WordMeansDto
@@ -35,8 +48,9 @@ public class RelatedWordDto
 public class CreateWordDto
 {
     public string Kurdish { get; set; } = string.Empty;
-    public int SpeechPane { get; set; }
-    public string? Category { get; set; }
+    public List<int> SpeechPanes { get; set; } = new();
+    public List<int> CategoryIds { get; set; } = new();
+    public int Gender { get; set; }
     public string? Description { get; set; }
     public List<WordMeansDto> Meanings { get; set; } = new();
     public List<CreateRelatedWordDto> RelatedWords { get; set; } = new();

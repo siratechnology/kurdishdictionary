@@ -5,13 +5,14 @@ namespace backend.Data;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Word> Words => Set<Word>();
     public DbSet<RelatedWord> RelatedWords => Set<RelatedWord>();
     public DbSet<WordMeans> WordMeans => Set<WordMeans>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<WordSpeechPane> WordSpeechPanes => Set<WordSpeechPane>();
+    public DbSet<WordCategory> WordCategories => Set<WordCategory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,9 +22,39 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(w => w.Id);
             entity.Property(w => w.Kurdish).IsRequired().HasMaxLength(200);
-            entity.Property(w => w.Category).HasMaxLength(100);
             entity.Property(w => w.Description).HasMaxLength(1000);
-            entity.Property(w => w.SpeechPane).HasDefaultValue(SpeechPaneType.Other);
+            entity.Property(w => w.Gender).HasDefaultValue(GrammaticalGender.None);
+        });
+
+        // Many-to-many: Word <-> SpeechPaneType (enum-backed join table)
+        modelBuilder.Entity<WordSpeechPane>(entity =>
+        {
+            entity.HasKey(wsp => new { wsp.WordId, wsp.SpeechPaneType });
+            entity.HasOne(wsp => wsp.Word)
+                  .WithMany(w => w.SpeechPanes)
+                  .HasForeignKey(wsp => wsp.WordId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Name).IsRequired().HasMaxLength(100);
+            entity.HasIndex(c => c.Name).IsUnique();
+        });
+
+        // Many-to-many: Word <-> Category (explicit join entity)
+        modelBuilder.Entity<WordCategory>(entity =>
+        {
+            entity.HasKey(wc => new { wc.WordId, wc.CategoryId });
+            entity.HasOne(wc => wc.Word)
+                  .WithMany(w => w.WordCategories)
+                  .HasForeignKey(wc => wc.WordId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(wc => wc.Category)
+                  .WithMany(c => c.WordCategories)
+                  .HasForeignKey(wc => wc.CategoryId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<WordMeans>(entity =>
@@ -71,6 +102,13 @@ public class AppDbContext : DbContext
             "کێکی سادە", "کێکی شوکولاتە", "پسکیتی چای", "قەیسی وشككراو", "تەمر هیندی", "قەمەرەدین", "جەلی", "مەهەلەبی"
         };
 
+        // Seed canonical categories
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = 1, Name = "خواردنی سەرەکی" },
+            new Category { Id = 2, Name = "میوە و سەوزە" },
+            new Category { Id = 3, Name = "کەلوپەل و بەهارات" }
+        );
+
         var words = new List<Word>();
         var relations = new List<RelatedWord>();
         int relId = 1;
@@ -85,8 +123,7 @@ public class AppDbContext : DbContext
             {
                 Id = i,
                 Kurdish = $"{prefix}{baseKurdishWords[baseIndex]}{suffix}",
-                SpeechPane = SpeechPaneType.Noun,
-                Category = baseIndex < 20 ? "خواردنی سەرەکی" : (baseIndex < 40 ? "میوە و سەوزە" : "کەلوپەل و بەهارات"),
+                Gender = GrammaticalGender.None,
                 Description = $"ئەم وشەیە پەیوەستە بە لقی {baseKurdishWords[baseIndex]}",
                 CreatedAt = new DateTime(2026, 4, 15, 15, 2, 54, 130, DateTimeKind.Utc)
             });
@@ -112,5 +149,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Word>().HasData(words);
         modelBuilder.Entity<RelatedWord>().HasData(relations);
+        // WordSpeechPane and WordCategory seed data intentionally omitted:
+        // the seeded word IDs (10000-11000) may not exist in a live database.
     }
 }

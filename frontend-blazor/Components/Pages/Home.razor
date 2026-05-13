@@ -27,7 +27,7 @@
         <option value="">هەموو بەشەکان</option>
         @foreach (var cat in _categories)
         {
-            <option value="@cat">@cat</option>
+            <option value="@cat.Name">@cat.Name</option>
         }
     </select>
 </div>
@@ -42,9 +42,9 @@
         </button>
         @foreach (var cat in _categories)
         {
-            <button @onclick="() => SetCategory(cat)"
-                    class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == cat ? "bg-indigo-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600")">
-                @cat
+            <button @onclick="() => SetCategory(cat.Name)"
+                    class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == cat.Name ? "bg-indigo-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600")">
+                @cat.Name
             </button>
         }
     </div>
@@ -185,7 +185,6 @@ else
 <!-- Add/Edit Modal -->
 <WordFormModal IsVisible="_showModal"
                EditingWord="_editingWord"
-               Categories="_categories"
                OnClose="CloseModal"
                OnSaved="OnSaved" />
 
@@ -216,7 +215,7 @@ else
 
 @code {
     List<WordDto> _words = new();
-    List<string> _categories = new();
+    List<CategoryDto> _categories = new();
     int _totalCount;
     int _totalPages;
     int _currentPage = 1;
