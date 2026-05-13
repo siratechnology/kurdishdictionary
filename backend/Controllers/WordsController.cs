@@ -231,6 +231,40 @@ public class WordsController : ControllerBase
         return Ok(await GetWordWithRelations(id));
     }
 
+    // GET api/words/5/meta  (lightweight — for OG image generation)
+    [HttpGet("{id:int}/meta")]
+    [ResponseCache(Duration = 3600)]
+    public async Task<ActionResult<WordMetaDto>> GetMeta(int id)
+    {
+        var word = await _db.Words
+            .AsNoTracking()
+            .Include(w => w.SpeechPanes)
+            .Include(w => w.WordCategories).ThenInclude(wc => wc.Category)
+            .Include(w => w.Meanings)
+            .FirstOrDefaultAsync(w => w.Id == id);
+
+        if (word is null) return NotFound();
+
+        return Ok(new WordMetaDto
+        {
+            Id = word.Id,
+            Kurdish = word.Kurdish,
+            SpeechPanes = word.SpeechPanes.Select(sp => new SpeechPaneDto
+            {
+                Id = (int)sp.SpeechPaneType,
+                Kurdish = sp.SpeechPaneType.ToKurdish()
+            }).ToList(),
+            Categories = word.WordCategories.Select(wc => new CategoryDto
+            {
+                Id = wc.CategoryId,
+                Name = wc.Category?.Name ?? string.Empty
+            }).ToList(),
+            GenderKurdish = word.Gender.ToKurdish(),
+            FirstMeaning = word.Meanings.FirstOrDefault()?.Meaning,
+            Description = word.Description,
+        });
+    }
+
     // DELETE api/words/5
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)

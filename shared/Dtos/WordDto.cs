@@ -62,3 +62,14 @@ public class CreateRelatedWordDto
     public string RelationType { get; set; } = string.Empty;
     public int Weight { get; set; } = 1;
 }
+
+public class WordMetaDto
+{
+    public int Id { get; set; }
+    public string Kurdish { get; set; } = string.Empty;
+    public List<SpeechPaneDto> SpeechPanes { get; set; } = new();
+    public List<CategoryDto> Categories { get; set; } = new();
+    public string? GenderKurdish { get; set; }
+    public string? FirstMeaning { get; set; }
+    public string? Description { get; set; }
+}
