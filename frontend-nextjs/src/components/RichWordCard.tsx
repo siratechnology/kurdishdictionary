@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import { REL5_COLOR } from "./MiniMap";
 
 const MiniMap = dynamic(() => import("./MiniMap"), { ssr: false });
@@ -63,6 +64,22 @@ const REL5 = [
 interface Props { word: WordItem; onExplore: (id: number) => void; }
 
 export default function RichWordCard({ word, onExplore }: Props) {
+  const [copied, setCopied] = useState(false);
+
+  function handleShare() {
+    const url = `${window.location.origin}/word/${word.id}`;
+    const title = `${word.kurdish} — فەرهەنگی کوردی`;
+    const text  = word.meanings[0]?.meaning ?? word.kurdish;
+    if (navigator.share) {
+      navigator.share({ title, text, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    }
+  }
+
   const dialects   = groupByDialect(word.meanings);
   const primarySp  = word.speechPanes[0];
   const spBg       = SP_BG[primarySp?.id ?? 0]   ?? "rgba(99,102,241,.14)";
@@ -114,6 +131,18 @@ export default function RichWordCard({ word, onExplore }: Props) {
               color: "#22d3ee",
             }}>
             ↗ نەخشە
+          </button>
+          {/* Share */}
+          <button
+            onClick={handleShare}
+            title="هاوبەشکردن"
+            className="text-[10px] font-semibold px-2 py-0.5 rounded-full transition-all duration-150 hover:scale-105"
+            style={{
+              background: copied ? "rgba(16,185,129,.18)" : "rgba(99,102,241,.12)",
+              border:     copied ? "1px solid rgba(16,185,129,.40)" : "1px solid rgba(99,102,241,.28)",
+              color:      copied ? "#6ee7b7" : "var(--accent-light)",
+            }}>
+            {copied ? "✓ کۆپی کرا" : "⬆ هاوبەشکردن"}
           </button>
         </div>
       </div>
