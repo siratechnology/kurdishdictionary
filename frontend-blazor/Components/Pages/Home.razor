@@ -87,13 +87,13 @@ else
                     <!-- Row 1: word name + speech + category -->
                     <div class="flex flex-wrap items-center gap-2">
                         <span class="text-xl font-bold text-gray-900 leading-tight">@word.Kurdish</span>
-                        @if (!string.IsNullOrEmpty(word.SpeechPaneKurdish))
+                        @foreach (var sp in word.SpeechPanes)
                         {
-                            <span class="text-[11px] font-semibold px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full">@word.SpeechPaneKurdish</span>
+                            <span class="text-[11px] font-semibold px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full">@sp.Kurdish</span>
                         }
-                        @if (!string.IsNullOrEmpty(word.Category))
+                        @foreach (var cat in word.Categories)
                         {
-                            <span class="text-[11px] font-medium px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-100">@word.Category</span>
+                            <span class="text-[11px] font-medium px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-100">@cat.Name</span>
                         }
                     </div>
 
