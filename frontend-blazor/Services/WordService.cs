@@ -23,6 +23,9 @@ public class WordService
         return await _http.GetFromJsonAsync<PagedResultDto<WordDto>>(url);
     }
 
+    public async Task<DashboardDto?> GetDashboardAsync() =>
+        await _http.GetFromJsonAsync<DashboardDto>("api/words/dashboard");
+
     public async Task<WordDto?> GetWordByIdAsync(int id) =>
         await _http.GetFromJsonAsync<WordDto>($"api/words/{id}");
 
@@ -34,6 +37,64 @@ public class WordService
         var res = await _http.PostAsJsonAsync("api/words/categories", name);
         res.EnsureSuccessStatusCode();
         return await res.Content.ReadFromJsonAsync<CategoryDto>();
+    }
+
+    public async Task<CategoryDto?> UpdateCategoryAsync(int id, string name)
+    {
+        var res = await _http.PutAsJsonAsync($"api/words/categories/{id}", name);
+        res.EnsureSuccessStatusCode();
+        return await res.Content.ReadFromJsonAsync<CategoryDto>();
+    }
+
+    public async Task DeleteCategoryAsync(int id)
+    {
+        var res = await _http.DeleteAsync($"api/words/categories/{id}");
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task<PagedResultDto<WordDto>?> GetCategoryWordsAsync(
+        int categoryId, int page = 1, int pageSize = 30, string? search = null)
+    {
+        var url = $"api/words/categories/{categoryId}/words?page={page}&pageSize={pageSize}";
+        if (!string.IsNullOrWhiteSpace(search))
+            url += $"&search={Uri.EscapeDataString(search)}";
+        return await _http.GetFromJsonAsync<PagedResultDto<WordDto>>(url);
+    }
+
+    public async Task AddWordToCategoryAsync(int categoryId, int wordId)
+    {
+        var res = await _http.PostAsync($"api/words/categories/{categoryId}/words/{wordId}", null);
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task RemoveWordFromCategoryAsync(int categoryId, int wordId)
+    {
+        var res = await _http.DeleteAsync($"api/words/categories/{categoryId}/words/{wordId}");
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task<List<SpeechPaneStatDto>> GetSpeechTypeStatsAsync() =>
+        await _http.GetFromJsonAsync<List<SpeechPaneStatDto>>("api/words/speech-types/stats") ?? new();
+
+    public async Task<PagedResultDto<WordDto>?> GetSpeechTypeWordsAsync(
+        int typeId, int page = 1, int pageSize = 30, string? search = null)
+    {
+        var url = $"api/words/speech-types/{typeId}/words?page={page}&pageSize={pageSize}";
+        if (!string.IsNullOrWhiteSpace(search))
+            url += $"&search={Uri.EscapeDataString(search)}";
+        return await _http.GetFromJsonAsync<PagedResultDto<WordDto>>(url);
+    }
+
+    public async Task AddWordToSpeechTypeAsync(int typeId, int wordId)
+    {
+        var res = await _http.PostAsync($"api/words/speech-types/{typeId}/words/{wordId}", null);
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task RemoveWordFromSpeechTypeAsync(int typeId, int wordId)
+    {
+        var res = await _http.DeleteAsync($"api/words/speech-types/{typeId}/words/{wordId}");
+        res.EnsureSuccessStatusCode();
     }
 
     public async Task<List<GenderItem>> GetGendersAsync()

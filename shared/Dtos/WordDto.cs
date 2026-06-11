@@ -26,6 +26,14 @@ public class CategoryDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+    public int WordCount { get; set; }
+}
+
+public class SpeechPaneStatDto
+{
+    public int Id { get; set; }
+    public string Kurdish { get; set; } = string.Empty;
+    public int WordCount { get; set; }
 }
 
 public class WordMeansDto

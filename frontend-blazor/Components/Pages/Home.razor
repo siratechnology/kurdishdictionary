@@ -2,307 +2,419 @@
 @rendermode InteractiveServer
 @inject WordService WordSvc
 
-<PageTitle>فەرھەنگی کوردی</PageTitle>
+<PageTitle>داشبۆرد — فەرھەنگی کوردی</PageTitle>
 
-<!-- Top bar -->
-<div class="flex items-center justify-between gap-4 mb-6" dir="rtl">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900">وشەکان</h1>
-        <p class="text-sm text-gray-400">@_totalCount وشە تۆمارکراوە</p>
-    </div>
-    <button @onclick="OpenAdd"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-xl shadow-sm transition-colors text-sm">
-        + وشەی نوێ
-    </button>
-</div>
-
-<!-- Search + Filter row -->
-<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 mb-5 flex flex-col sm:flex-row gap-2" dir="rtl">
-    <input value="@_search" @oninput="OnSearchInput"
-           placeholder="🔍  گەڕان بە ناوی کوردی..."
-           dir="rtl"
-           class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-    <select @bind="_selectedCategory" @bind:after="LoadWords"
-            class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 min-w-[160px]">
-        <option value="">هەموو بەشەکان</option>
-        @foreach (var cat in _categories)
-        {
-            <option value="@cat.Name">@cat.Name</option>
-        }
-    </select>
-</div>
-
-<!-- Category pills -->
-@if (_categories.Any())
-{
-    <div class="flex flex-wrap gap-2 mb-5" dir="rtl">
-        <button @onclick='() => SetCategory("")'
-                class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == "" ? "bg-indigo-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600")">
-            هەموو
-        </button>
-        @foreach (var cat in _categories)
-        {
-            <button @onclick="() => SetCategory(cat.Name)"
-                    class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == cat.Name ? "bg-indigo-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600")">
-                @cat.Name
-            </button>
-        }
-    </div>
-}
-
-<!-- Loading -->
 @if (_loading)
 {
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        @for (int i = 0; i < 8; i++)
-        {
-            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-50 last:border-0 animate-pulse" dir="rtl">
-                <div class="flex-1 space-y-2">
-                    <div class="h-5 bg-gray-200 rounded-lg w-32"></div>
-                    <div class="h-3.5 bg-gray-100 rounded w-56"></div>
-                </div>
-                <div class="h-5 bg-gray-100 rounded-full w-14"></div>
-            </div>
-        }
+    <!-- Skeleton -->
+    <div class="space-y-5" dir="rtl">
+        <div class="h-36 bg-slate-900/90 rounded-3xl animate-pulse"></div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            @for (int i = 0; i < 4; i++)
+            {
+                <div class="h-28 bg-slate-900/80 rounded-2xl animate-pulse"></div>
+            }
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            @for (int i = 0; i < 3; i++)
+            {
+                <div class="h-72 bg-slate-900/70 rounded-2xl animate-pulse"></div>
+            }
+        </div>
     </div>
 }
-else if (!_words.Any())
+else if (_stats is null)
 {
-    <div class="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-200">
-        <p class="text-5xl mb-4">📖</p>
-        <p class="text-lg font-medium">هیچ وشەیەک نەدۆزرایەوە</p>
-        <p class="text-sm mt-1">وشەی نوێ زیاد بکە</p>
+    <div class="flex flex-col items-center justify-center py-24 bg-slate-900 rounded-3xl text-center gap-3" dir="rtl">
+        <span class="text-4xl">📡</span>
+        <p class="text-slate-300 font-semibold">پەیوەندی بە ڕاژەکارەوە نەکرا</p>
+        <button @onclick="Load" class="mt-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-colors">
+            هەوڵدانەوە
+        </button>
     </div>
 }
 else
 {
-    <!-- Word list -->
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-        @foreach (var (word, idx) in _words.Select((w, i) => (w, i)))
-        {
-            <div class="group flex items-start gap-4 px-5 py-4 @(idx < _words.Count - 1 ? "border-b border-gray-50" : "") hover:bg-indigo-50/40 transition-colors" dir="rtl">
+    <div class="space-y-5" dir="rtl">
 
-                <!-- Right: word + badges -->
-                <div class="flex-1 min-w-0 space-y-2">
-                    <!-- Row 1: word name + speech + category -->
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="text-xl font-bold text-gray-900 leading-tight">@word.Kurdish</span>
-                        @foreach (var sp in word.SpeechPanes)
+        <!-- ══════════════════════════════════════════════════════════
+             HERO — command bar
+        ══════════════════════════════════════════════════════════ -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-l from-slate-950 via-indigo-950 to-slate-900 border border-indigo-900/50 shadow-xl">
+            <!-- glow decorations -->
+            <div class="absolute -top-24 -left-24 w-72 h-72 bg-indigo-600/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-32 right-1/3 w-80 h-80 bg-violet-600/10 rounded-full blur-3xl"></div>
+
+            <div class="relative p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center gap-6">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2.5 mb-2">
+                        <span class="relative flex w-2.5 h-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-400"></span>
+                        </span>
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-300">زیندوو</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-white">ژووری کارگێڕی فەرھەنگ</h1>
+                    <p class="text-sm text-indigo-200/70 mt-1.5">
+                        تێڕوانینێکی گشتی بۆ هەموو داتاکانی فەرھەنگی کوردی — وشە، واتا، پەیوەندی و پۆلەکان
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-5">
+                        <a href="/words" class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-900/50 transition-colors">
+                            📖 بەڕێوەبردنی وشەکان
+                        </a>
+                        <a href="/relations" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 text-indigo-100 text-xs font-bold rounded-xl border border-white/10 transition-colors">
+                            🕸 پەیوەندییەکان
+                        </a>
+                        <a href="/taxonomy" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 text-indigo-100 text-xs font-bold rounded-xl border border-white/10 transition-colors">
+                            🏷 پۆل و جۆرەکان
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 14-day activity -->
+                <div class="shrink-0 w-full lg:w-72 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-indigo-200/80">چالاکی ١٤ ڕۆژی ڕابردوو</span>
+                        <span class="text-[11px] font-black text-emerald-300">+@_stats.WordsAddedLast7Days ئەم حەفتەیە</span>
+                    </div>
+                    <div class="flex items-end gap-1 h-16" dir="ltr">
+                        @foreach (var d in _stats.DailyAdded)
                         {
-                            <span class="text-[11px] font-semibold px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full">@sp.Kurdish</span>
-                        }
-                        @foreach (var cat in word.Categories)
-                        {
-                            <span class="text-[11px] font-medium px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-100">@cat.Name</span>
+                            int max = Math.Max(1, _stats.DailyAdded.Max(x => x.Count));
+                            double h = d.Count == 0 ? 6 : Math.Max(12, d.Count * 100.0 / max);
+                            <div class="flex-1 rounded-t-sm @(d.Count > 0 ? "bg-gradient-to-t from-indigo-500 to-violet-400" : "bg-white/10")"
+                                 style="height:@(h.ToString("0"))%"
+                                 title="@d.Date.ToString("yyyy-MM-dd") — @d.Count وشە"></div>
                         }
                     </div>
-
-                    <!-- Row 2: meanings list -->
-                    @if (word.Meanings.Any())
-                    {
-                        <div class="flex flex-wrap gap-1.5">
-                            @foreach (var m in word.Meanings.Take(4))
-                            {
-                                <span class="inline-flex items-baseline gap-1 text-xs text-gray-600 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-lg leading-snug">
-                                    @if (!string.IsNullOrEmpty(m.Locate))
-                                    {
-                                        <span class="text-[10px] font-semibold text-indigo-400 shrink-0">@m.Locate</span>
-                                        <span class="text-gray-300 text-[10px]">·</span>
-                                    }
-                                    <span dir="rtl">@m.Meaning</span>
-                                </span>
-                            }
-                            @if (word.Meanings.Count > 4)
-                            {
-                                <span class="text-xs px-2 py-1 bg-gray-100 text-gray-400 rounded-lg">+@(word.Meanings.Count - 4)</span>
-                            }
-                        </div>
-                    }
-
-                    <!-- Row 3: description (condensed) -->
-                    @if (!string.IsNullOrEmpty(word.Description))
-                    {
-                        <p class="text-xs text-gray-400 leading-relaxed line-clamp-1">@word.Description</p>
-                    }
-
-                    <!-- Row 4: relation chips (compact) -->
-                    @{
-                        var allRelated = word.OutgoingRelations.Concat(word.IncomingRelations).ToList();
-                    }
-                    @if (allRelated.Any())
-                    {
-                        <div class="flex flex-wrap gap-1">
-                            @foreach (var rw in allRelated.Take(6))
-                            {
-                                <span class="text-[11px] px-2 py-0.5 rounded-full font-medium @RelationColor(rw.RelationType)"
-                                      title="@((rw.IsIncoming ? "← " : "→ ") + rw.RelationType)">
-                                    @rw.RelatedKurdish
-                                </span>
-                            }
-                            @if (allRelated.Count > 6)
-                            {
-                                <span class="text-[11px] px-2 py-0.5 bg-gray-100 text-gray-400 rounded-full">+@(allRelated.Count - 6)</span>
-                            }
-                        </div>
-                    }
                 </div>
-
-                <!-- Left: action buttons (reveal on hover) -->
-                <div class="shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pt-0.5">
-                    <button @onclick="() => OpenEdit(word)"
-                            class="p-2 text-indigo-500 hover:bg-indigo-100 rounded-lg transition-colors text-sm"
-                            title="دەستکاری">
-                        ✏
-                    </button>
-                    <button @onclick="() => ConfirmDelete(word)"
-                            class="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors text-sm"
-                            title="سڕینەوە">
-                        🗑
-                    </button>
-                </div>
-
             </div>
-        }
-    </div>
-
-    <!-- Pagination -->
-    @if (_totalPages > 1)
-    {
-        <div class="flex justify-center items-center gap-2" dir="ltr">
-            <button @onclick="PrevPage" disabled="@(_currentPage == 1)"
-                    class="px-4 py-2 text-sm rounded-xl border border-gray-200 bg-white disabled:opacity-40 hover:bg-gray-50 transition-colors">
-                ← پێشتر
-            </button>
-            <span class="text-sm text-gray-500 px-2">@_currentPage / @_totalPages</span>
-            <button @onclick="NextPage" disabled="@(_currentPage == _totalPages)"
-                    class="px-4 py-2 text-sm rounded-xl border border-gray-200 bg-white disabled:opacity-40 hover:bg-gray-50 transition-colors">
-                دواتر →
-            </button>
         </div>
-    }
-}
 
-<!-- Add/Edit Modal -->
-<WordFormModal IsVisible="_showModal"
-               EditingWord="_editingWord"
-               OnClose="CloseModal"
-               OnSaved="OnSaved" />
+        <!-- ══════════════════════════════════════════════════════════
+             KPI CARDS
+        ══════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-indigo-600 to-indigo-800 text-white shadow-lg shadow-indigo-200">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl">📖</span>
+                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">گشتی</span>
+                </div>
+                <p class="text-3xl font-black mt-3">@_stats.TotalWords.ToString("N0")</p>
+                <p class="text-xs text-indigo-200 mt-1">وشەی تۆمارکراو</p>
+            </div>
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-emerald-600 to-teal-800 text-white shadow-lg shadow-emerald-200">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl">🕸</span>
+                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">تۆڕ</span>
+                </div>
+                <p class="text-3xl font-black mt-3">@_stats.TotalRelations.ToString("N0")</p>
+                <p class="text-xs text-emerald-200 mt-1">پەیوەندی نێوان وشەکان</p>
+            </div>
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-amber-500 to-orange-700 text-white shadow-lg shadow-amber-200">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl">💡</span>
+                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">ناوەڕۆک</span>
+                </div>
+                <p class="text-3xl font-black mt-3">@_stats.TotalMeanings.ToString("N0")</p>
+                <p class="text-xs text-amber-100 mt-1">واتای تۆمارکراو</p>
+            </div>
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-rose-600 to-pink-800 text-white shadow-lg shadow-rose-200">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl">🏷</span>
+                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">پۆلێن</span>
+                </div>
+                <p class="text-3xl font-black mt-3">@_stats.TotalCategories.ToString("N0")</p>
+                <p class="text-xs text-rose-200 mt-1">پۆلی وشەکان</p>
+            </div>
+        </div>
 
-<!-- Delete confirmation -->
-@if (_deletingWord is not null)
-{
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" @onclick="CancelDelete"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm text-center" dir="rtl">
-            <p class="text-4xl mb-3">🗑</p>
-            <h3 class="text-lg font-bold text-gray-900 mb-1">دڵنیای؟</h3>
-            <p class="text-gray-500 text-sm mb-5">
-                وشەی <strong>"@_deletingWord.Kurdish"</strong> دەسڕێتەوە و ناتوانرێت بگەڕێندرێتەوە.
-            </p>
-            <div class="flex gap-3">
-                <button @onclick="CancelDelete"
-                        class="flex-1 px-4 py-2 text-sm font-medium bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200">
-                    پاشگەز
-                </button>
-                <button @onclick="ExecuteDelete" disabled="@_deleting"
-                        class="flex-1 px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50">
-                    @(_deleting ? "..." : "سڕینەوە")
-                </button>
+        <!-- ══════════════════════════════════════════════════════════
+             DISTRIBUTION CHARTS
+        ══════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+            <!-- Speech panes -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-bold text-white">🗂 جۆرەکانی وشە</span>
+                    <a href="/taxonomy" class="text-[11px] font-semibold text-violet-400 hover:text-violet-300 transition-colors">بەڕێوەبردن ←</a>
+                </div>
+                @if (!_stats.SpeechPanes.Any(s => s.Count > 0))
+                {
+                    <p class="text-xs text-slate-500 py-8 text-center">هێشتا داتا نییە</p>
+                }
+                else
+                {
+                    <div class="space-y-2.5">
+                        @foreach (var sp in _stats.SpeechPanes.Where(s => s.Count > 0).Take(8))
+                        {
+                            <div>
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="font-semibold text-slate-300">@sp.Name</span>
+                                    <span class="font-black text-violet-300">@sp.Count</span>
+                                </div>
+                                <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full bg-gradient-to-l from-violet-500 to-fuchsia-400"
+                                         style="width:@(Pct(sp.Count, MaxCount(_stats.SpeechPanes)))%"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Categories -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-bold text-white">🏷 پۆلەکان</span>
+                    <a href="/taxonomy" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">بەڕێوەبردن ←</a>
+                </div>
+                @if (!_stats.Categories.Any())
+                {
+                    <p class="text-xs text-slate-500 py-8 text-center">هێشتا هیچ پۆلێک نییە</p>
+                }
+                else
+                {
+                    <div class="space-y-2.5">
+                        @foreach (var cat in _stats.Categories.Take(8))
+                        {
+                            <div>
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="font-semibold text-slate-300 truncate ml-2">@cat.Name</span>
+                                    <span class="font-black text-indigo-300 shrink-0">@cat.Count</span>
+                                </div>
+                                <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full bg-gradient-to-l from-indigo-500 to-sky-400"
+                                         style="width:@(Pct(cat.Count, MaxCount(_stats.Categories)))%"></div>
+                                </div>
+                            </div>
+                        }
+                        @if (_stats.Categories.Count > 8)
+                        {
+                            <p class="text-[11px] text-slate-500 pt-1">+@(_stats.Categories.Count - 8) پۆلی دیکە</p>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Gender donut + relation types -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg md:col-span-2 xl:col-span-1">
+                <span class="text-sm font-bold text-white block mb-4">⚧ ڕەگەزی ڕێزمانی</span>
+
+                <div class="flex items-center gap-5">
+                    <div class="relative shrink-0 w-28 h-28 rounded-full" style="background:@GenderDonutStyle()">
+                        <div class="absolute inset-3 bg-slate-900 rounded-full flex flex-col items-center justify-center">
+                            <span class="text-lg font-black text-white">@_stats.TotalWords.ToString("N0")</span>
+                            <span class="text-[9px] text-slate-400">وشە</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 space-y-2 min-w-0">
+                        @foreach (var g in _stats.Genders.OrderByDescending(x => x.Count))
+                        {
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:@GenderColor(g.Name)"></span>
+                                <span class="flex-1 text-slate-300 font-semibold truncate">@g.Name</span>
+                                <span class="font-black text-white">@g.Count.ToString("N0")</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-800 mt-5 pt-4">
+                    <span class="text-xs font-bold text-slate-400 block mb-3">جۆرەکانی پەیوەندی</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach (var rt in _stats.RelationTypes)
+                        {
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold @RelChipClass(rt.Name)">
+                                @RelLabel(rt.Name)
+                                <span class="opacity-70">@rt.Count.ToString("N0")</span>
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             DATA QUALITY + RECENT WORDS
+        ══════════════════════════════════════════════════════════ -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+
+            <!-- Data quality radar -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-sm font-bold text-white">🩺 کوالیتی داتا</span>
+                    <span class="relative flex w-2 h-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full @(HasQualityIssues ? "bg-amber-400" : "bg-emerald-400") opacity-75"></span>
+                        <span class="relative inline-flex rounded-full w-2 h-2 @(HasQualityIssues ? "bg-amber-400" : "bg-emerald-400")"></span>
+                    </span>
+                </div>
+
+                <div class="space-y-4">
+                    @foreach (var q in QualityRows)
+                    {
+                        int covered = _stats.TotalWords - q.Missing;
+                        int pct = Pct(covered, _stats.TotalWords);
+                        <div>
+                            <div class="flex items-center justify-between text-xs mb-1.5">
+                                <a href="@q.Href" class="font-semibold text-slate-300 hover:text-white transition-colors">@q.Label</a>
+                                @if (q.Missing == 0)
+                                {
+                                    <span class="font-black text-emerald-400">✓ تەواو</span>
+                                }
+                                else
+                                {
+                                    <span class="font-black @(pct >= 80 ? "text-emerald-400" : pct >= 50 ? "text-amber-400" : "text-rose-400")">
+                                        @q.Missing.ToString("N0") کەموکوڕی
+                                    </span>
+                                }
+                            </div>
+                            <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full @(pct >= 80 ? "bg-gradient-to-l from-emerald-500 to-teal-400" : pct >= 50 ? "bg-gradient-to-l from-amber-500 to-yellow-400" : "bg-gradient-to-l from-rose-500 to-red-400")"
+                                     style="width:@pct%"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1">%@pct لە وشەکان @(q.Label)یان هەیە</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent words -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-lg overflow-hidden xl:col-span-2">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+                    <span class="text-sm font-bold text-white">🕘 نوێترین وشەکان</span>
+                    <a href="/words" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">هەموو وشەکان ←</a>
+                </div>
+                @if (!_stats.RecentWords.Any())
+                {
+                    <p class="text-xs text-slate-500 py-10 text-center">هێشتا هیچ وشەیەک نییە</p>
+                }
+                else
+                {
+                    <div class="divide-y divide-slate-800/70">
+                        @foreach (var w in _stats.RecentWords)
+                        {
+                            <div class="flex items-center gap-3 px-5 py-3 hover:bg-slate-800/40 transition-colors">
+                                <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/20 flex items-center justify-center text-sm font-black text-indigo-300">
+                                    @(w.Kurdish.Length > 0 ? w.Kurdish[..1] : "؟")
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="text-sm font-bold text-white truncate">@w.Kurdish</span>
+                                        @if (!string.IsNullOrEmpty(w.SpeechPane))
+                                        {
+                                            <span class="text-[10px] font-semibold px-2 py-0.5 bg-violet-500/15 text-violet-300 border border-violet-500/20 rounded-full">@w.SpeechPane</span>
+                                        }
+                                        @if (!string.IsNullOrEmpty(w.Category))
+                                        {
+                                            <span class="text-[10px] font-medium px-2 py-0.5 bg-indigo-500/15 text-indigo-300 border border-indigo-500/20 rounded-full">@w.Category</span>
+                                        }
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">@w.MeaningCount واتا</p>
+                                </div>
+                                <span class="shrink-0 text-[10px] font-semibold text-slate-500">@Ago(w.CreatedAt)</span>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
 }
 
 @code {
-    List<WordDto> _words = new();
-    List<CategoryDto> _categories = new();
-    int _totalCount;
-    int _totalPages;
-    int _currentPage = 1;
-    const int PageSize = 20;
-
-    string _search = "";
-    string _selectedCategory = "";
+    DashboardDto? _stats;
     bool _loading = true;
 
-    bool _showModal;
-    WordDto? _editingWord;
-    WordDto? _deletingWord;
-    bool _deleting;
-    CancellationTokenSource? _searchCts;
+    protected override async Task OnInitializedAsync() => await Load();
 
-    protected override async Task OnInitializedAsync() =>
-        await Task.WhenAll(LoadWords(), LoadCategories());
-
-    async Task LoadWords()
+    async Task Load()
     {
         _loading = true;
-        var result = await WordSvc.GetWordsAsync(_currentPage, PageSize, _search, _selectedCategory);
-        _words = result?.Items ?? new();
-        _totalCount = result?.TotalCount ?? 0;
-        _totalPages = result?.TotalPages ?? 1;
-        _loading = false;
+        try { _stats = await WordSvc.GetDashboardAsync(); }
+        catch { _stats = null; }
+        finally { _loading = false; }
     }
 
-    async Task LoadCategories() =>
-        _categories = await WordSvc.GetCategoriesAsync();
+    // ── Helpers ─────────────────────────────────────────────────────────────
+    static int MaxCount(List<NameCountDto> items) => Math.Max(1, items.Any() ? items.Max(i => i.Count) : 1);
 
-    async Task OnSearchInput(ChangeEventArgs e)
+    static int Pct(int value, int total) => total <= 0 ? 0 : (int)Math.Round(value * 100.0 / total);
+
+    bool HasQualityIssues =>
+        _stats is not null &&
+        (_stats.WordsWithoutRelations > 0 || _stats.WordsWithoutMeanings > 0 ||
+         _stats.WordsWithoutCategory > 0 || _stats.WordsWithoutSpeechPane > 0);
+
+    record QualityRow(string Label, int Missing, string Href);
+
+    List<QualityRow> QualityRows => _stats is null ? new() : new()
     {
-        _search = e.Value?.ToString() ?? "";
-        _searchCts?.Cancel();
-        _searchCts = new CancellationTokenSource();
-        try
+        new("واتا",      _stats.WordsWithoutMeanings,  "/words"),
+        new("پەیوەندی",  _stats.WordsWithoutRelations, "/relations"),
+        new("پۆل",       _stats.WordsWithoutCategory,  "/taxonomy"),
+        new("جۆری وشە",  _stats.WordsWithoutSpeechPane,"/taxonomy"),
+    };
+
+    static readonly Dictionary<string, string> GenderPalette = new()
+    {
+        ["نییە"]    = "#64748b",
+        ["نێر"]     = "#0ea5e9",
+        ["مێ"]      = "#ec4899",
+        ["بێلایەن"] = "#f59e0b",
+    };
+
+    string GenderColor(string name) => GenderPalette.GetValueOrDefault(name, "#6366f1");
+
+    string GenderDonutStyle()
+    {
+        var genders = _stats?.Genders.Where(g => g.Count > 0).OrderByDescending(g => g.Count).ToList() ?? new();
+        int total = genders.Sum(g => g.Count);
+        if (total == 0) return "#1e293b";
+
+        var parts = new List<string>();
+        double cursor = 0;
+        foreach (var g in genders)
         {
-            await Task.Delay(350, _searchCts.Token);
-            _currentPage = 1;
-            await LoadWords();
+            double end = cursor + g.Count * 100.0 / total;
+            parts.Add($"{GenderColor(g.Name)} {cursor:0.##}% {end:0.##}%");
+            cursor = end;
         }
-        catch (TaskCanceledException) { }
+        return $"conic-gradient({string.Join(", ", parts)})";
     }
 
-    async Task SetCategory(string cat)
+    string Ago(DateTime utc)
     {
-        _selectedCategory = cat;
-        _currentPage = 1;
-        await LoadWords();
+        var span = DateTime.UtcNow - utc;
+        if (span.TotalMinutes < 1) return "ئێستا";
+        if (span.TotalHours < 1) return $"{(int)span.TotalMinutes} خولەک لەمەوبەر";
+        if (span.TotalDays < 1) return $"{(int)span.TotalHours} کاتژمێر لەمەوبەر";
+        if (span.TotalDays < 30) return $"{(int)span.TotalDays} ڕۆژ لەمەوبەر";
+        return utc.ToString("yyyy-MM-dd");
     }
 
-    async Task PrevPage() { if (_currentPage > 1) { _currentPage--; await LoadWords(); } }
-    async Task NextPage() { if (_currentPage < _totalPages) { _currentPage++; await LoadWords(); } }
-
-    void OpenAdd() { _editingWord = null; _showModal = true; }
-    void OpenEdit(WordDto w) { _editingWord = w; _showModal = true; }
-    void CloseModal() => _showModal = false;
-
-    async Task OnSaved()
+    string RelLabel(string type) => type switch
     {
-        _showModal = false;
-        _currentPage = 1;
-        await Task.WhenAll(LoadWords(), LoadCategories());
-    }
+        "synonym"    => "هاوماناکە",
+        "antonym"    => "دژەوشە",
+        "related"    => "پەیوەندیدار",
+        "example"    => "نموونە",
+        "usage"      => "بکارهێنان",
+        "contextual" => "چارچێوەیی",
+        "partof"     => "بەشێکە لە وشەکە",
+        _            => type
+    };
 
-    void ConfirmDelete(WordDto w) => _deletingWord = w;
-    void CancelDelete() => _deletingWord = null;
-
-    async Task ExecuteDelete()
+    string RelChipClass(string type) => type switch
     {
-        if (_deletingWord is null) return;
-        _deleting = true;
-        await WordSvc.DeleteWordAsync(_deletingWord.Id);
-        _deletingWord = null;
-        _deleting = false;
-        await Task.WhenAll(LoadWords(), LoadCategories());
-    }
-
-    string RelationColor(string type) => type switch
-    {
-        "synonym"    => "bg-green-100 text-green-700",
-        "antonym"    => "bg-red-100 text-red-700",
-        "example"    => "bg-blue-100 text-blue-700",
-        "usage"      => "bg-purple-100 text-purple-700",
-        "contextual" => "bg-cyan-100 text-cyan-700",
-        "partof"     => "bg-orange-100 text-orange-700",
-        _            => "bg-gray-100 text-gray-500"
+        "synonym"    => "bg-emerald-500/15 text-emerald-300 border border-emerald-500/20",
+        "antonym"    => "bg-red-500/15 text-red-300 border border-red-500/20",
+        "related"    => "bg-blue-500/15 text-blue-300 border border-blue-500/20",
+        "example"    => "bg-amber-500/15 text-amber-300 border border-amber-500/20",
+        "usage"      => "bg-purple-500/15 text-purple-300 border border-purple-500/20",
+        "contextual" => "bg-cyan-500/15 text-cyan-300 border border-cyan-500/20",
+        "partof"     => "bg-orange-500/15 text-orange-300 border border-orange-500/20",
+        _            => "bg-slate-500/15 text-slate-300 border border-slate-500/20"
     };
 }

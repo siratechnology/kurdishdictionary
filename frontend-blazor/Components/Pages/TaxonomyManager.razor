@@ -1,0 +1,706 @@
+@page "/taxonomy"
+@rendermode InteractiveServer
+@inject WordService WordSvc
+
+<PageTitle>پۆل و جۆرەکانی وشە</PageTitle>
+
+<!-- Page header -->
+<div class="flex items-center justify-between mb-6" dir="rtl">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">پۆل و جۆرەکانی وشە</h1>
+        <p class="text-sm text-gray-400 mt-0.5">
+            بەڕێوەبردنی پۆلەکان و جۆرەکانی وشە و وشە پەیوەستەکانیان
+        </p>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="flex items-center gap-1 bg-gray-100 rounded-xl p-1">
+        <button @onclick="() => SwitchTab(Tab.Categories)"
+                class="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all @(_tab == Tab.Categories ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700")">
+            <span>🏷</span><span>پۆلەکان</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full @(_tab == Tab.Categories ? "bg-indigo-100 text-indigo-600" : "bg-gray-200 text-gray-500")">@_categories.Count</span>
+        </button>
+        <button @onclick="() => SwitchTab(Tab.SpeechPanes)"
+                class="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all @(_tab == Tab.SpeechPanes ? "bg-white text-violet-700 shadow-sm" : "text-gray-500 hover:text-gray-700")">
+            <span>🗂</span><span>جۆرەکانی وشە</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full @(_tab == Tab.SpeechPanes ? "bg-violet-100 text-violet-600" : "bg-gray-200 text-gray-500")">@_speechStats.Count</span>
+        </button>
+    </div>
+</div>
+
+<!-- Two-column layout -->
+<div class="flex gap-5" style="height: calc(100vh - 180px); min-height: 500px;">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         LEFT PANEL — category / speech-pane list
+    ══════════════════════════════════════════════════════════════ -->
+    <div class="w-80 shrink-0 flex flex-col gap-3 overflow-hidden">
+
+        @if (_tab == Tab.Categories)
+        {
+            <!-- Create category -->
+            <div class="flex gap-2" dir="rtl">
+                <input @bind="_newCatName" @bind:event="oninput"
+                       @onkeydown="@(async e => { if (e.Key == "Enter") await CreateCategory(); })"
+                       placeholder="＋ ناوی پۆلی نوێ..."
+                       dir="rtl"
+                       class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all" />
+                <button @onclick="CreateCategory"
+                        disabled="@(string.IsNullOrWhiteSpace(_newCatName) || _catSaving)"
+                        class="shrink-0 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
+                    @(_catSaving ? "..." : "زیادکردن")
+                </button>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_catError))
+            {
+                <div class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl text-xs font-medium text-red-600" dir="rtl">
+                    <span>⚠</span> @_catError
+                </div>
+            }
+
+            <!-- Category list -->
+            <div class="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-200 shadow-sm">
+                @if (_listLoading)
+                {
+                    @for (int i = 0; i < 8; i++)
+                    {
+                        <div class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50 animate-pulse" dir="rtl">
+                            <div class="flex-1 h-4 bg-gray-200 rounded-lg"></div>
+                            <div class="w-8 h-5 bg-gray-100 rounded-full"></div>
+                        </div>
+                    }
+                }
+                else if (!_categories.Any())
+                {
+                    <div class="flex flex-col items-center justify-center py-12 text-gray-400 gap-2">
+                        <span class="text-3xl">🏷</span>
+                        <p class="text-sm">هێشتا هیچ پۆلێک نییە</p>
+                        <p class="text-xs text-gray-300">لە سەرەوە پۆلی نوێ زیاد بکە</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var cat in _categories)
+                    {
+                        bool isSelected = _tab == Tab.Categories && _selectedCatId == cat.Id;
+                        bool isEditing = _editingCatId == cat.Id;
+                        bool isConfirming = _confirmDeleteCatId == cat.Id;
+
+                        <div class="group border-b border-gray-50 last:border-0 @(isSelected ? "bg-indigo-50 border-r-2 border-r-indigo-500" : "hover:bg-gray-50") transition-colors" dir="rtl">
+                            @if (isEditing)
+                            {
+                                <div class="flex items-center gap-2 px-3 py-2.5">
+                                    <input @bind="_editCatName" @bind:event="oninput"
+                                           @onkeydown="@(async e => { if (e.Key == "Enter") await SaveCategoryRename(); if (e.Key == "Escape") CancelRename(); })"
+                                           dir="rtl"
+                                           class="flex-1 min-w-0 border-2 border-indigo-400 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100" />
+                                    <button @onclick="SaveCategoryRename"
+                                            disabled="@(string.IsNullOrWhiteSpace(_editCatName) || _catSaving)"
+                                            class="shrink-0 w-7 h-7 flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white rounded-lg text-xs transition-colors">✓</button>
+                                    <button @onclick="CancelRename"
+                                            class="shrink-0 w-7 h-7 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-lg text-xs transition-colors">✕</button>
+                                </div>
+                            }
+                            else if (isConfirming)
+                            {
+                                <div class="flex items-center gap-2 px-3 py-2.5 bg-red-50">
+                                    <span class="flex-1 text-xs font-semibold text-red-700 truncate">سڕینەوەی «@cat.Name»؟</span>
+                                    <button @onclick="() => DeleteCategory(cat)"
+                                            disabled="@_catSaving"
+                                            class="shrink-0 px-2.5 py-1 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-lg text-xs font-bold transition-colors">بەڵێ</button>
+                                    <button @onclick="() => _confirmDeleteCatId = null"
+                                            class="shrink-0 px-2.5 py-1 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-lg text-xs font-bold transition-colors">نەخێر</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="flex items-center gap-1 pl-2">
+                                    <button @onclick="() => SelectCategory(cat)"
+                                            class="flex-1 min-w-0 flex items-center gap-3 px-4 py-3 text-right">
+                                        <span class="flex-1 text-sm font-bold text-gray-900 truncate">@cat.Name</span>
+                                        <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full @(cat.WordCount > 0 ? "bg-indigo-100 text-indigo-600 border border-indigo-200" : "bg-gray-100 text-gray-400 border border-gray-200")">
+                                            @cat.WordCount وشە
+                                        </span>
+                                    </button>
+                                    <button @onclick="() => StartRename(cat)" @onclick:stopPropagation="true"
+                                            title="گۆڕینی ناو"
+                                            class="shrink-0 w-7 h-7 hidden group-hover:flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-lg text-xs transition-colors">✎</button>
+                                    <button @onclick="() => _confirmDeleteCatId = cat.Id" @onclick:stopPropagation="true"
+                                            title="سڕینەوە"
+                                            class="shrink-0 w-7 h-7 hidden group-hover:flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-100 rounded-lg text-xs transition-colors">🗑</button>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Speech panes are a fixed set -->
+            <div class="flex items-center gap-2 px-3 py-2.5 bg-violet-50 border border-violet-200 rounded-xl text-xs font-medium text-violet-700" dir="rtl">
+                <span>ℹ</span> جۆرەکانی وشە نەگۆڕن — تەنها وشەکانیان بەڕێوە ببە
+            </div>
+
+            <!-- Speech pane list -->
+            <div class="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-200 shadow-sm">
+                @if (_listLoading)
+                {
+                    @for (int i = 0; i < 10; i++)
+                    {
+                        <div class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50 animate-pulse" dir="rtl">
+                            <div class="flex-1 h-4 bg-gray-200 rounded-lg"></div>
+                            <div class="w-8 h-5 bg-gray-100 rounded-full"></div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    @foreach (var sp in _speechStats)
+                    {
+                        bool isSelected = _tab == Tab.SpeechPanes && _selectedSpeechId == sp.Id;
+                        <button @onclick="() => SelectSpeechPane(sp)"
+                                class="w-full flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 text-right transition-colors @(isSelected ? "bg-violet-50 border-r-2 border-r-violet-500" : "hover:bg-gray-50")"
+                                dir="rtl">
+                            <span class="flex-1 text-sm font-bold text-gray-900 truncate">@sp.Kurdish</span>
+                            <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full @(sp.WordCount > 0 ? "bg-violet-100 text-violet-600 border border-violet-200" : "bg-gray-100 text-gray-400 border border-gray-200")">
+                                @sp.WordCount وشە
+                            </span>
+                        </button>
+                    }
+                }
+            </div>
+        }
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         RIGHT PANEL — word membership manager
+    ══════════════════════════════════════════════════════════════ -->
+    <div class="flex-1 flex flex-col gap-4 overflow-hidden min-w-0">
+
+        @if (!HasSelection)
+        {
+            <div class="flex-1 flex flex-col items-center justify-center text-center text-gray-400 bg-white rounded-2xl border border-gray-200 border-dashed gap-4 p-8">
+                <div class="w-16 h-16 rounded-2xl @(_tab == Tab.Categories ? "bg-indigo-50 border-indigo-100" : "bg-violet-50 border-violet-100") border flex items-center justify-center text-3xl">
+                    @(_tab == Tab.Categories ? "🏷" : "🗂")
+                </div>
+                <div>
+                    <p class="font-semibold text-gray-600 text-base">@(_tab == Tab.Categories ? "پۆلێک هەڵبژێرە" : "جۆرێک هەڵبژێرە")</p>
+                    <p class="text-sm text-gray-400 mt-1.5 leading-relaxed">
+                        لە لیستەکەوە دانەیەک هەڵبژێرە<br />بۆ بینین و بەڕێوەبردنی وشەکانی
+                    </p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Selected item header -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm px-5 py-4" dir="rtl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-xl @(_tab == Tab.Categories ? "bg-indigo-100" : "bg-violet-100") flex items-center justify-center text-xl">
+                            @(_tab == Tab.Categories ? "🏷" : "🗂")
+                        </span>
+                        <div>
+                            <span class="text-xl font-black text-gray-900 block leading-tight">@SelectionName</span>
+                            <span class="text-xs text-gray-400">@(_tab == Tab.Categories ? "پۆل" : "جۆری وشە")</span>
+                        </div>
+                    </div>
+                    <span class="text-xs font-semibold px-3 py-1.5 bg-gray-100 text-gray-600 rounded-xl">
+                        @_membersTotal وشە
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex-1 flex flex-col gap-4 overflow-y-auto pb-1 pr-0.5">
+
+                <!-- ── Add words ── -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" dir="rtl">
+                    <div class="px-5 py-3.5 bg-gray-50 border-b border-gray-100">
+                        <span class="text-sm font-bold text-gray-800">+ زیادکردنی وشە</span>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+                        <!-- Multi-select combobox -->
+                        <div>
+                            <div class="min-h-[44px] border-2 @(_comboFocused ? AccentBorder : "border-gray-200") rounded-xl px-3 py-2 flex flex-wrap gap-1.5 items-center cursor-text transition-all bg-white"
+                                 @onclick="FocusComboInput">
+
+                                @foreach (var pick in _picks)
+                                {
+                                    <span class="inline-flex items-center gap-1 pl-1.5 pr-2.5 py-1 @AccentChip rounded-full text-sm font-semibold">
+                                        <button @onclick:stopPropagation="true"
+                                                @onclick="() => RemovePick(pick)"
+                                                class="w-4 h-4 flex items-center justify-center rounded-full hover:bg-black/10 text-xs leading-none">
+                                            ×
+                                        </button>
+                                        @pick.Kurdish
+                                    </span>
+                                }
+
+                                <input @ref="_comboInputRef"
+                                       value="@_comboSearch"
+                                       @oninput="OnComboInput"
+                                       @onfocus="() => _comboFocused = true"
+                                       @onblur="OnComboBlur"
+                                       placeholder="@(_picks.Any() ? "" : "وشە بگەڕێ و هەڵبژێرە...")"
+                                       dir="rtl"
+                                       class="flex-1 min-w-[140px] outline-none text-sm bg-transparent placeholder-gray-400 py-0.5" />
+                            </div>
+
+                            @if (_comboSuggestions.Any())
+                            {
+                                <div class="relative">
+                                    <ul class="absolute top-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl max-h-48 overflow-y-auto z-40">
+                                        @foreach (var s in _comboSuggestions)
+                                        {
+                                            bool isPicked = _picks.Any(p => p.Id == s.Id);
+                                            bool isMember = IsAlreadyMember(s);
+                                            <li @onclick="() => { if (!isMember) TogglePick(s); }"
+                                                class="flex items-center justify-between px-4 py-2.5 text-sm border-b border-gray-50 last:border-0 transition-colors @(isMember ? "opacity-50 cursor-default" : isPicked ? "bg-indigo-50 cursor-pointer" : "hover:bg-gray-50 cursor-pointer")">
+                                                <span class="font-bold text-gray-800" dir="rtl">@s.Kurdish</span>
+                                                <div class="flex items-center gap-2 shrink-0">
+                                                    @if (isMember)
+                                                    {
+                                                        <span class="text-[10px] text-gray-400">پێشتر زیادکراوە</span>
+                                                    }
+                                                    else if (s.SpeechPanes.Any())
+                                                    {
+                                                        <span class="text-[10px] text-gray-400">@s.SpeechPanes.First().Kurdish</span>
+                                                    }
+                                                    @if (isPicked)
+                                                    {
+                                                        <span class="w-4 h-4 flex items-center justify-center bg-indigo-500 text-white rounded-full text-[9px] font-bold">✓</span>
+                                                    }
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(_saveError))
+                        {
+                            <div class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-xs font-medium text-red-600">
+                                <span>⚠</span> @_saveError
+                            </div>
+                        }
+                        @if (_saveSuccess)
+                        {
+                            <div class="flex items-center gap-2 px-3 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-medium text-emerald-700">
+                                <span>✓</span> وشەکان بەسەرکەوتوویی زیاد کران
+                            </div>
+                        }
+
+                        <button @onclick="AddPickedWords"
+                                disabled="@(!_picks.Any() || _saving)"
+                                class="w-full flex items-center justify-center gap-2 @AccentButton disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors text-sm">
+                            @if (_saving)
+                            {
+                                <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                <span>پاشەکەوتکردن...</span>
+                            }
+                            else
+                            {
+                                <span>+ زیادکردنی @_picks.Count وشە</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── Member words ── -->
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" dir="rtl">
+                    <div class="flex items-center justify-between gap-3 px-5 py-3.5 bg-gray-50 border-b border-gray-100">
+                        <span class="text-sm font-bold text-gray-800 shrink-0">وشەکان</span>
+                        <input value="@_memberSearch" @oninput="OnMemberSearch"
+                               placeholder="🔍 گەڕان لەناو وشەکان..."
+                               dir="rtl"
+                               class="w-56 border border-gray-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all" />
+                    </div>
+
+                    @if (_membersLoading)
+                    {
+                        <div class="p-5 flex flex-wrap gap-2">
+                            @for (int i = 0; i < 12; i++)
+                            {
+                                <div class="h-8 w-24 bg-gray-100 rounded-full animate-pulse"></div>
+                            }
+                        </div>
+                    }
+                    else if (!_members.Any())
+                    {
+                        <div class="px-5 py-10 text-center">
+                            <p class="text-sm text-gray-400">
+                                @(string.IsNullOrWhiteSpace(_memberSearch) ? "هێشتا هیچ وشەیەک زیادنەکراوە" : "هیچ وشەیەک نەدۆزرایەوە")
+                            </p>
+                            @if (string.IsNullOrWhiteSpace(_memberSearch))
+                            {
+                                <p class="text-xs text-gray-300 mt-1">لە سەرەوە وشە زیاد بکە</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-5">
+                            <div class="flex flex-wrap gap-2">
+                                @foreach (var w in _members)
+                                {
+                                    <span class="inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1.5 rounded-full text-sm font-semibold @MemberChip">
+                                        <button @onclick="() => RemoveMember(w)"
+                                                disabled="@_saving"
+                                                title="لابردن"
+                                                class="w-4 h-4 flex items-center justify-center rounded-full hover:bg-black/10 text-xs leading-none disabled:opacity-40 transition-colors shrink-0">
+                                            ×
+                                        </button>
+                                        @w.Kurdish
+                                    </span>
+                                }
+                            </div>
+
+                            @if (_membersHasMore)
+                            {
+                                <button @onclick="LoadMoreMembers"
+                                        disabled="@_membersLoadingMore"
+                                        class="mt-4 w-full py-2.5 text-xs font-semibold @AccentText rounded-xl border border-dashed @(_tab == Tab.Categories ? "border-indigo-200 hover:bg-indigo-50" : "border-violet-200 hover:bg-violet-50") transition-colors disabled:opacity-40">
+                                    @(_membersLoadingMore ? "بارکردن..." : "+ وشەی زیاتر")
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    enum Tab { Categories, SpeechPanes }
+    Tab _tab = Tab.Categories;
+
+    // ── Left panel data ─────────────────────────────────────────────────────
+    List<CategoryDto> _categories = new();
+    List<SpeechPaneStatDto> _speechStats = new();
+    bool _listLoading = true;
+
+    // ── Category CRUD ───────────────────────────────────────────────────────
+    string _newCatName = "";
+    int? _editingCatId;
+    string _editCatName = "";
+    int? _confirmDeleteCatId;
+    bool _catSaving;
+    string _catError = "";
+
+    // ── Selection ───────────────────────────────────────────────────────────
+    int? _selectedCatId;
+    int? _selectedSpeechId;
+    bool HasSelection => _tab == Tab.Categories ? _selectedCatId is not null : _selectedSpeechId is not null;
+
+    string SelectionName => _tab == Tab.Categories
+        ? _categories.FirstOrDefault(c => c.Id == _selectedCatId)?.Name ?? ""
+        : _speechStats.FirstOrDefault(s => s.Id == _selectedSpeechId)?.Kurdish ?? "";
+
+    // ── Member words ────────────────────────────────────────────────────────
+    List<WordDto> _members = new();
+    int _membersTotal;
+    string _memberSearch = "";
+    bool _membersLoading;
+    bool _membersLoadingMore;
+    bool _membersHasMore;
+    int _membersPage = 1;
+    const int MembersPageSize = 40;
+    CancellationTokenSource? _memberCts;
+
+    // ── Add-words combobox ──────────────────────────────────────────────────
+    string _comboSearch = "";
+    List<WordDto> _comboSuggestions = new();
+    List<WordDto> _picks = new();
+    bool _comboFocused;
+    ElementReference _comboInputRef;
+    CancellationTokenSource? _comboCts;
+
+    bool _saving;
+    bool _saveSuccess;
+    string _saveError = "";
+
+    // ── Accent classes per tab ──────────────────────────────────────────────
+    string AccentBorder => _tab == Tab.Categories ? "border-indigo-400 ring-2 ring-indigo-100" : "border-violet-400 ring-2 ring-violet-100";
+    string AccentChip   => _tab == Tab.Categories ? "bg-indigo-100 text-indigo-700" : "bg-violet-100 text-violet-700";
+    string AccentButton => _tab == Tab.Categories ? "bg-indigo-600 hover:bg-indigo-700" : "bg-violet-600 hover:bg-violet-700";
+    string AccentText   => _tab == Tab.Categories ? "text-indigo-600" : "text-violet-600";
+    string MemberChip   => _tab == Tab.Categories ? "bg-indigo-50 text-indigo-700 border border-indigo-100" : "bg-violet-50 text-violet-700 border border-violet-100";
+
+    // ═══════════════════════════════════════════════════════════════════════
+    protected override async Task OnInitializedAsync()
+    {
+        _listLoading = true;
+        var catsTask = WordSvc.GetCategoriesAsync();
+        var statsTask = WordSvc.GetSpeechTypeStatsAsync();
+        _categories = await catsTask;
+        _speechStats = await statsTask;
+        _listLoading = false;
+    }
+
+    void SwitchTab(Tab tab)
+    {
+        if (_tab == tab) return;
+        _tab = tab;
+        ResetRightPanel();
+    }
+
+    void ResetRightPanel()
+    {
+        _members = new();
+        _membersTotal = 0;
+        _memberSearch = "";
+        _membersHasMore = false;
+        _picks = new();
+        _comboSearch = "";
+        _comboSuggestions = new();
+        _saveError = "";
+        _saveSuccess = false;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Category CRUD
+    // ═══════════════════════════════════════════════════════════════════════
+    async Task CreateCategory()
+    {
+        if (string.IsNullOrWhiteSpace(_newCatName) || _catSaving) return;
+        _catSaving = true; _catError = "";
+        try
+        {
+            var created = await WordSvc.CreateCategoryAsync(_newCatName.Trim());
+            if (created is not null && !_categories.Any(c => c.Id == created.Id))
+            {
+                _categories.Add(created);
+                _categories = _categories.OrderBy(c => c.Name).ToList();
+            }
+            _newCatName = "";
+        }
+        catch { _catError = "زیادکردنی پۆل سەرکەوتوو نەبوو."; }
+        finally { _catSaving = false; }
+    }
+
+    void StartRename(CategoryDto cat)
+    {
+        _editingCatId = cat.Id;
+        _editCatName = cat.Name;
+        _confirmDeleteCatId = null;
+        _catError = "";
+    }
+
+    void CancelRename() { _editingCatId = null; _editCatName = ""; }
+
+    async Task SaveCategoryRename()
+    {
+        if (_editingCatId is null || string.IsNullOrWhiteSpace(_editCatName) || _catSaving) return;
+        _catSaving = true; _catError = "";
+        try
+        {
+            var updated = await WordSvc.UpdateCategoryAsync(_editingCatId.Value, _editCatName.Trim());
+            if (updated is not null)
+            {
+                var idx = _categories.FindIndex(c => c.Id == updated.Id);
+                if (idx >= 0) _categories[idx] = updated;
+                _categories = _categories.OrderBy(c => c.Name).ToList();
+            }
+            CancelRename();
+        }
+        catch { _catError = "گۆڕینی ناو سەرکەوتوو نەبوو — لەوانەیە ناوەکە دووبارە بێت."; }
+        finally { _catSaving = false; }
+    }
+
+    async Task DeleteCategory(CategoryDto cat)
+    {
+        if (_catSaving) return;
+        _catSaving = true; _catError = "";
+        try
+        {
+            await WordSvc.DeleteCategoryAsync(cat.Id);
+            _categories.RemoveAll(c => c.Id == cat.Id);
+            if (_selectedCatId == cat.Id) { _selectedCatId = null; ResetRightPanel(); }
+        }
+        catch { _catError = "سڕینەوە سەرکەوتوو نەبوو."; }
+        finally { _catSaving = false; _confirmDeleteCatId = null; }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Selection + member list
+    // ═══════════════════════════════════════════════════════════════════════
+    async Task SelectCategory(CategoryDto cat)
+    {
+        _selectedCatId = cat.Id;
+        _confirmDeleteCatId = null;
+        ResetRightPanel();
+        await LoadMembers(reset: true);
+    }
+
+    async Task SelectSpeechPane(SpeechPaneStatDto sp)
+    {
+        _selectedSpeechId = sp.Id;
+        ResetRightPanel();
+        await LoadMembers(reset: true);
+    }
+
+    async Task LoadMembers(bool reset)
+    {
+        if (!HasSelection) return;
+        if (reset) { _membersPage = 1; _members = new(); _membersLoading = true; }
+        else _membersLoadingMore = true;
+
+        try
+        {
+            var result = _tab == Tab.Categories
+                ? await WordSvc.GetCategoryWordsAsync(_selectedCatId!.Value, _membersPage, MembersPageSize, _memberSearch)
+                : await WordSvc.GetSpeechTypeWordsAsync(_selectedSpeechId!.Value, _membersPage, MembersPageSize, _memberSearch);
+
+            var incoming = result?.Items ?? new();
+            if (reset) _members = incoming;
+            else _members.AddRange(incoming);
+
+            _membersTotal = result?.TotalCount ?? _members.Count;
+            _membersHasMore = _members.Count < _membersTotal;
+        }
+        catch { _saveError = "بارکردنی وشەکان سەرکەوتوو نەبوو."; }
+        finally { _membersLoading = false; _membersLoadingMore = false; }
+    }
+
+    async Task LoadMoreMembers() { _membersPage++; await LoadMembers(reset: false); }
+
+    async Task OnMemberSearch(ChangeEventArgs e)
+    {
+        _memberSearch = e.Value?.ToString() ?? "";
+        _memberCts?.Cancel();
+        _memberCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(300, _memberCts.Token);
+            await LoadMembers(reset: true);
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Add / remove membership
+    // ═══════════════════════════════════════════════════════════════════════
+    bool IsAlreadyMember(WordDto w) => _tab == Tab.Categories
+        ? w.Categories.Any(c => c.Id == _selectedCatId)
+        : w.SpeechPanes.Any(sp => sp.Id == _selectedSpeechId);
+
+    async Task OnComboInput(ChangeEventArgs e)
+    {
+        _comboSearch = e.Value?.ToString() ?? "";
+        _comboCts?.Cancel();
+        _comboCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(250, _comboCts.Token);
+            if (string.IsNullOrWhiteSpace(_comboSearch)) { _comboSuggestions = new(); return; }
+            var result = await WordSvc.GetWordsAsync(search: _comboSearch, pageSize: 10);
+            _comboSuggestions = (result?.Items ?? new())
+                .Where(w => !_picks.Any(p => p.Id == w.Id))
+                .ToList();
+        }
+        catch (TaskCanceledException) { }
+    }
+
+    void TogglePick(WordDto w)
+    {
+        var existing = _picks.FirstOrDefault(p => p.Id == w.Id);
+        if (existing is not null) _picks.Remove(existing);
+        else _picks.Add(w);
+        _comboSuggestions = _comboSuggestions.ToList();
+        _saveSuccess = false;
+        _saveError = "";
+    }
+
+    void RemovePick(WordDto w) => _picks.Remove(w);
+
+    async Task FocusComboInput() => await _comboInputRef.FocusAsync();
+
+    async Task OnComboBlur()
+    {
+        await Task.Delay(200);
+        _comboFocused = false;
+        if (string.IsNullOrWhiteSpace(_comboSearch)) _comboSuggestions = new();
+    }
+
+    async Task AddPickedWords()
+    {
+        if (!_picks.Any() || !HasSelection || _saving) return;
+        _saving = true; _saveError = ""; _saveSuccess = false;
+        try
+        {
+            foreach (var pick in _picks)
+            {
+                if (_tab == Tab.Categories)
+                    await WordSvc.AddWordToCategoryAsync(_selectedCatId!.Value, pick.Id);
+                else
+                    await WordSvc.AddWordToSpeechTypeAsync(_selectedSpeechId!.Value, pick.Id);
+            }
+
+            var added = _picks.Count;
+            _picks = new();
+            _comboSearch = "";
+            _comboSuggestions = new();
+            _saveSuccess = true;
+            await LoadMembers(reset: true);
+
+            // With no active filter the paged total is authoritative; otherwise apply the delta
+            if (string.IsNullOrWhiteSpace(_memberSearch)) SetSelectedCount(_membersTotal);
+            else UpdateSelectedCount(added);
+        }
+        catch { _saveError = "زیادکردن سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە."; }
+        finally { _saving = false; }
+    }
+
+    async Task RemoveMember(WordDto w)
+    {
+        if (!HasSelection || _saving) return;
+        _saving = true; _saveError = ""; _saveSuccess = false;
+        try
+        {
+            if (_tab == Tab.Categories)
+                await WordSvc.RemoveWordFromCategoryAsync(_selectedCatId!.Value, w.Id);
+            else
+                await WordSvc.RemoveWordFromSpeechTypeAsync(_selectedSpeechId!.Value, w.Id);
+
+            _members.RemoveAll(m => m.Id == w.Id);
+            _membersTotal = Math.Max(0, _membersTotal - 1);
+            UpdateSelectedCount(-1);
+        }
+        catch { _saveError = "لابردن سەرکەوتوو نەبوو."; }
+        finally { _saving = false; }
+    }
+
+    void UpdateSelectedCount(int delta)
+    {
+        if (_tab == Tab.Categories)
+        {
+            var cat = _categories.FirstOrDefault(c => c.Id == _selectedCatId);
+            if (cat is not null) cat.WordCount = Math.Max(0, cat.WordCount + delta);
+        }
+        else
+        {
+            var sp = _speechStats.FirstOrDefault(s => s.Id == _selectedSpeechId);
+            if (sp is not null) sp.WordCount = Math.Max(0, sp.WordCount + delta);
+        }
+    }
+
+    void SetSelectedCount(int count)
+    {
+        if (_tab == Tab.Categories)
+        {
+            var cat = _categories.FirstOrDefault(c => c.Id == _selectedCatId);
+            if (cat is not null) cat.WordCount = count;
+        }
+        else
+        {
+            var sp = _speechStats.FirstOrDefault(s => s.Id == _selectedSpeechId);
+            if (sp is not null) sp.WordCount = count;
+        }
+    }
+}
