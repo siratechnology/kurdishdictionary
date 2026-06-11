@@ -67,7 +67,8 @@ public enum GrammaticalGender
     None = 0,
     Masculine = 1,
     Feminine = 2,
-    Neuter = 3
+    Neuter = 3,
+    Common = 4
 }
 
 public static class GrammaticalGenderExtensions
@@ -78,6 +79,7 @@ public static class GrammaticalGenderExtensions
         GrammaticalGender.Masculine => "نێر",
         GrammaticalGender.Feminine => "مێ",
         GrammaticalGender.Neuter => "بێلایەن",
+        GrammaticalGender.Common => "دوولایەن",
         _ => throw new ArgumentOutOfRangeException(nameof(gender), gender, null)
     };
 

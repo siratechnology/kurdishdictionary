@@ -1,5 +1,5 @@
 @page "/words"
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @inject WordService WordSvc
 
 <PageTitle>وشەکان — فەرھەنگی کوردی</PageTitle>
@@ -56,12 +56,12 @@
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         @for (int i = 0; i < 8; i++)
         {
-            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-50 last:border-0 animate-pulse" dir="rtl">
+            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-50 last:border-0" dir="rtl">
                 <div class="flex-1 space-y-2">
-                    <div class="h-5 bg-gray-200 rounded-lg w-32"></div>
-                    <div class="h-3.5 bg-gray-100 rounded w-56"></div>
+                    <div class="skeleton h-5 w-32"></div>
+                    <div class="skeleton h-3.5 w-56"></div>
                 </div>
-                <div class="h-5 bg-gray-100 rounded-full w-14"></div>
+                <div class="skeleton h-5 w-14 rounded-full"></div>
             </div>
         }
     </div>

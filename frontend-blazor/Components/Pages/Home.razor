@@ -1,88 +1,92 @@
 @page "/"
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @inject WordService WordSvc
 
 <PageTitle>داشبۆرد — فەرھەنگی کوردی</PageTitle>
 
 @if (_loading)
 {
-    <!-- Skeleton -->
+    <!-- Light shimmer skeleton -->
     <div class="space-y-5" dir="rtl">
-        <div class="h-36 bg-slate-900/90 rounded-3xl animate-pulse"></div>
+        <div class="skeleton h-40 rounded-3xl"></div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @for (int i = 0; i < 4; i++)
             {
-                <div class="h-28 bg-slate-900/80 rounded-2xl animate-pulse"></div>
+                <div class="skeleton h-28 rounded-2xl"></div>
             }
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             @for (int i = 0; i < 3; i++)
             {
-                <div class="h-72 bg-slate-900/70 rounded-2xl animate-pulse"></div>
+                <div class="skeleton h-72 rounded-2xl"></div>
             }
+        </div>
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div class="skeleton h-64 rounded-2xl"></div>
+            <div class="skeleton h-64 rounded-2xl xl:col-span-2"></div>
         </div>
     </div>
 }
 else if (_stats is null)
 {
-    <div class="flex flex-col items-center justify-center py-24 bg-slate-900 rounded-3xl text-center gap-3" dir="rtl">
+    <div class="flex flex-col items-center justify-center py-24 bg-white border border-gray-200 rounded-3xl text-center gap-3 page-enter" dir="rtl">
         <span class="text-4xl">📡</span>
-        <p class="text-slate-300 font-semibold">پەیوەندی بە ڕاژەکارەوە نەکرا</p>
-        <button @onclick="Load" class="mt-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition-colors">
+        <p class="text-gray-600 font-semibold">پەیوەندی بە ڕاژەکارەوە نەکرا</p>
+        <button @onclick="Load" class="mt-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors">
             هەوڵدانەوە
         </button>
     </div>
 }
 else
 {
-    <div class="space-y-5" dir="rtl">
+    <div class="space-y-5 page-enter" dir="rtl">
 
         <!-- ══════════════════════════════════════════════════════════
-             HERO — command bar
+             HERO — command bar (vibrant, light-friendly)
         ══════════════════════════════════════════════════════════ -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-l from-slate-950 via-indigo-950 to-slate-900 border border-indigo-900/50 shadow-xl">
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-l from-indigo-500 via-violet-500 to-fuchsia-500 shadow-xl shadow-indigo-200">
             <!-- glow decorations -->
-            <div class="absolute -top-24 -left-24 w-72 h-72 bg-indigo-600/20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-32 right-1/3 w-80 h-80 bg-violet-600/10 rounded-full blur-3xl"></div>
+            <div class="absolute -top-24 -left-24 w-72 h-72 bg-white/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-32 right-1/3 w-80 h-80 bg-fuchsia-300/20 rounded-full blur-3xl"></div>
 
             <div class="relative p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center gap-6">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2.5 mb-2">
                         <span class="relative flex w-2.5 h-2.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-400"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-300"></span>
                         </span>
-                        <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-300">زیندوو</span>
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-200">زیندوو</span>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-white">ژووری کارگێڕی فەرھەنگ</h1>
-                    <p class="text-sm text-indigo-200/70 mt-1.5">
+                    <p class="text-sm text-indigo-100 mt-1.5">
                         تێڕوانینێکی گشتی بۆ هەموو داتاکانی فەرھەنگی کوردی — وشە، واتا، پەیوەندی و پۆلەکان
                     </p>
                     <div class="flex flex-wrap gap-2 mt-5">
-                        <a href="/words" class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-900/50 transition-colors">
+                        <a href="/words" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-700 hover:bg-indigo-50 text-xs font-bold rounded-xl shadow-lg shadow-indigo-900/20 transition-colors">
                             📖 بەڕێوەبردنی وشەکان
                         </a>
-                        <a href="/relations" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 text-indigo-100 text-xs font-bold rounded-xl border border-white/10 transition-colors">
+                        <a href="/relations" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/20 transition-colors">
                             🕸 پەیوەندییەکان
                         </a>
-                        <a href="/taxonomy" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/20 text-indigo-100 text-xs font-bold rounded-xl border border-white/10 transition-colors">
+                        <a href="/taxonomy" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/20 transition-colors">
                             🏷 پۆل و جۆرەکان
                         </a>
                     </div>
                 </div>
 
                 <!-- 14-day activity -->
-                <div class="shrink-0 w-full lg:w-72 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div class="shrink-0 w-full lg:w-72 bg-white/15 border border-white/20 rounded-2xl p-4 backdrop-blur-sm">
                     <div class="flex items-center justify-between mb-3">
-                        <span class="text-[11px] font-bold text-indigo-200/80">چالاکی ١٤ ڕۆژی ڕابردوو</span>
-                        <span class="text-[11px] font-black text-emerald-300">+@_stats.WordsAddedLast7Days ئەم حەفتەیە</span>
+                        <span class="text-[11px] font-bold text-white/90">چالاکی ١٤ ڕۆژی ڕابردوو</span>
+                        <span class="text-[11px] font-black text-emerald-200">+@_stats.WordsAddedLast7Days ئەم حەفتەیە</span>
                     </div>
                     <div class="flex items-end gap-1 h-16" dir="ltr">
                         @foreach (var d in _stats.DailyAdded)
                         {
                             int max = Math.Max(1, _stats.DailyAdded.Max(x => x.Count));
                             double h = d.Count == 0 ? 6 : Math.Max(12, d.Count * 100.0 / max);
-                            <div class="flex-1 rounded-t-sm @(d.Count > 0 ? "bg-gradient-to-t from-indigo-500 to-violet-400" : "bg-white/10")"
+                            <div class="flex-1 rounded-t-sm @(d.Count > 0 ? "bg-gradient-to-t from-white/70 to-white" : "bg-white/20")"
                                  style="height:@(h.ToString("0"))%"
                                  title="@d.Date.ToString("yyyy-MM-dd") — @d.Count وشە"></div>
                         }
@@ -95,54 +99,54 @@ else
              KPI CARDS
         ══════════════════════════════════════════════════════════ -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-indigo-600 to-indigo-800 text-white shadow-lg shadow-indigo-200">
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-lg shadow-indigo-200 hover:-translate-y-0.5 transition-transform">
                 <div class="flex items-center justify-between">
                     <span class="text-2xl">📖</span>
-                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">گشتی</span>
+                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">گشتی</span>
                 </div>
                 <p class="text-3xl font-black mt-3">@_stats.TotalWords.ToString("N0")</p>
-                <p class="text-xs text-indigo-200 mt-1">وشەی تۆمارکراو</p>
+                <p class="text-xs text-indigo-100 mt-1">وشەی تۆمارکراو</p>
             </div>
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-emerald-600 to-teal-800 text-white shadow-lg shadow-emerald-200">
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-emerald-500 to-teal-700 text-white shadow-lg shadow-emerald-200 hover:-translate-y-0.5 transition-transform">
                 <div class="flex items-center justify-between">
                     <span class="text-2xl">🕸</span>
-                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">تۆڕ</span>
+                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">تۆڕ</span>
                 </div>
                 <p class="text-3xl font-black mt-3">@_stats.TotalRelations.ToString("N0")</p>
-                <p class="text-xs text-emerald-200 mt-1">پەیوەندی نێوان وشەکان</p>
+                <p class="text-xs text-emerald-100 mt-1">پەیوەندی نێوان وشەکان</p>
             </div>
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-amber-500 to-orange-700 text-white shadow-lg shadow-amber-200">
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-amber-400 to-orange-600 text-white shadow-lg shadow-amber-200 hover:-translate-y-0.5 transition-transform">
                 <div class="flex items-center justify-between">
                     <span class="text-2xl">💡</span>
-                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">ناوەڕۆک</span>
+                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">ناوەڕۆک</span>
                 </div>
                 <p class="text-3xl font-black mt-3">@_stats.TotalMeanings.ToString("N0")</p>
                 <p class="text-xs text-amber-100 mt-1">واتای تۆمارکراو</p>
             </div>
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-rose-600 to-pink-800 text-white shadow-lg shadow-rose-200">
+            <div class="rounded-2xl p-5 bg-gradient-to-br from-rose-500 to-pink-700 text-white shadow-lg shadow-rose-200 hover:-translate-y-0.5 transition-transform">
                 <div class="flex items-center justify-between">
                     <span class="text-2xl">🏷</span>
-                    <span class="text-[10px] font-bold bg-white/15 px-2 py-0.5 rounded-full">پۆلێن</span>
+                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">پۆلێن</span>
                 </div>
                 <p class="text-3xl font-black mt-3">@_stats.TotalCategories.ToString("N0")</p>
-                <p class="text-xs text-rose-200 mt-1">پۆلی وشەکان</p>
+                <p class="text-xs text-rose-100 mt-1">پۆلی وشەکان</p>
             </div>
         </div>
 
         <!-- ══════════════════════════════════════════════════════════
-             DISTRIBUTION CHARTS
+             DISTRIBUTION CHARTS (light cards)
         ══════════════════════════════════════════════════════════ -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
             <!-- Speech panes -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg">
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-bold text-white">🗂 جۆرەکانی وشە</span>
-                    <a href="/taxonomy" class="text-[11px] font-semibold text-violet-400 hover:text-violet-300 transition-colors">بەڕێوەبردن ←</a>
+                    <span class="text-sm font-bold text-gray-900">🗂 جۆرەکانی وشە</span>
+                    <a href="/taxonomy" class="text-[11px] font-semibold text-violet-600 hover:text-violet-700 transition-colors">بەڕێوەبردن ←</a>
                 </div>
                 @if (!_stats.SpeechPanes.Any(s => s.Count > 0))
                 {
-                    <p class="text-xs text-slate-500 py-8 text-center">هێشتا داتا نییە</p>
+                    <p class="text-xs text-gray-400 py-8 text-center">هێشتا داتا نییە</p>
                 }
                 else
                 {
@@ -151,11 +155,11 @@ else
                         {
                             <div>
                                 <div class="flex items-center justify-between text-xs mb-1">
-                                    <span class="font-semibold text-slate-300">@sp.Name</span>
-                                    <span class="font-black text-violet-300">@sp.Count</span>
+                                    <span class="font-semibold text-gray-600">@sp.Name</span>
+                                    <span class="font-black text-violet-600">@sp.Count</span>
                                 </div>
-                                <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-l from-violet-500 to-fuchsia-400"
+                                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full bg-gradient-to-l from-violet-500 to-fuchsia-400 transition-all duration-700"
                                          style="width:@(Pct(sp.Count, MaxCount(_stats.SpeechPanes)))%"></div>
                                 </div>
                             </div>
@@ -165,14 +169,14 @@ else
             </div>
 
             <!-- Categories -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg">
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-bold text-white">🏷 پۆلەکان</span>
-                    <a href="/taxonomy" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">بەڕێوەبردن ←</a>
+                    <span class="text-sm font-bold text-gray-900">🏷 پۆلەکان</span>
+                    <a href="/taxonomy" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">بەڕێوەبردن ←</a>
                 </div>
                 @if (!_stats.Categories.Any())
                 {
-                    <p class="text-xs text-slate-500 py-8 text-center">هێشتا هیچ پۆلێک نییە</p>
+                    <p class="text-xs text-gray-400 py-8 text-center">هێشتا هیچ پۆلێک نییە</p>
                 }
                 else
                 {
@@ -181,32 +185,32 @@ else
                         {
                             <div>
                                 <div class="flex items-center justify-between text-xs mb-1">
-                                    <span class="font-semibold text-slate-300 truncate ml-2">@cat.Name</span>
-                                    <span class="font-black text-indigo-300 shrink-0">@cat.Count</span>
+                                    <span class="font-semibold text-gray-600 truncate ml-2">@cat.Name</span>
+                                    <span class="font-black text-indigo-600 shrink-0">@cat.Count</span>
                                 </div>
-                                <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-l from-indigo-500 to-sky-400"
+                                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full bg-gradient-to-l from-indigo-500 to-sky-400 transition-all duration-700"
                                          style="width:@(Pct(cat.Count, MaxCount(_stats.Categories)))%"></div>
                                 </div>
                             </div>
                         }
                         @if (_stats.Categories.Count > 8)
                         {
-                            <p class="text-[11px] text-slate-500 pt-1">+@(_stats.Categories.Count - 8) پۆلی دیکە</p>
+                            <p class="text-[11px] text-gray-400 pt-1">+@(_stats.Categories.Count - 8) پۆلی دیکە</p>
                         }
                     </div>
                 }
             </div>
 
             <!-- Gender donut + relation types -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg md:col-span-2 xl:col-span-1">
-                <span class="text-sm font-bold text-white block mb-4">⚧ ڕەگەزی ڕێزمانی</span>
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm md:col-span-2 xl:col-span-1">
+                <span class="text-sm font-bold text-gray-900 block mb-4">⚧ ڕەگەزی ڕێزمانی</span>
 
                 <div class="flex items-center gap-5">
                     <div class="relative shrink-0 w-28 h-28 rounded-full" style="background:@GenderDonutStyle()">
-                        <div class="absolute inset-3 bg-slate-900 rounded-full flex flex-col items-center justify-center">
-                            <span class="text-lg font-black text-white">@_stats.TotalWords.ToString("N0")</span>
-                            <span class="text-[9px] text-slate-400">وشە</span>
+                        <div class="absolute inset-3 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
+                            <span class="text-lg font-black text-gray-900">@_stats.TotalWords.ToString("N0")</span>
+                            <span class="text-[9px] text-gray-400">وشە</span>
                         </div>
                     </div>
                     <div class="flex-1 space-y-2 min-w-0">
@@ -214,15 +218,15 @@ else
                         {
                             <div class="flex items-center gap-2 text-xs">
                                 <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:@GenderColor(g.Name)"></span>
-                                <span class="flex-1 text-slate-300 font-semibold truncate">@g.Name</span>
-                                <span class="font-black text-white">@g.Count.ToString("N0")</span>
+                                <span class="flex-1 text-gray-600 font-semibold truncate">@g.Name</span>
+                                <span class="font-black text-gray-900">@g.Count.ToString("N0")</span>
                             </div>
                         }
                     </div>
                 </div>
 
-                <div class="border-t border-slate-800 mt-5 pt-4">
-                    <span class="text-xs font-bold text-slate-400 block mb-3">جۆرەکانی پەیوەندی</span>
+                <div class="border-t border-gray-100 mt-5 pt-4">
+                    <span class="text-xs font-bold text-gray-400 block mb-3">جۆرەکانی پەیوەندی</span>
                     <div class="flex flex-wrap gap-1.5">
                         @foreach (var rt in _stats.RelationTypes)
                         {
@@ -237,14 +241,14 @@ else
         </div>
 
         <!-- ══════════════════════════════════════════════════════════
-             DATA QUALITY + RECENT WORDS
+             DATA QUALITY + RECENT WORDS (light cards)
         ══════════════════════════════════════════════════════════ -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
-            <!-- Data quality radar -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-5 shadow-lg">
+            <!-- Data quality -->
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
                 <div class="flex items-center gap-2 mb-4">
-                    <span class="text-sm font-bold text-white">🩺 کوالیتی داتا</span>
+                    <span class="text-sm font-bold text-gray-900">🩺 کوالیتی داتا</span>
                     <span class="relative flex w-2 h-2">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full @(HasQualityIssues ? "bg-amber-400" : "bg-emerald-400") opacity-75"></span>
                         <span class="relative inline-flex rounded-full w-2 h-2 @(HasQualityIssues ? "bg-amber-400" : "bg-emerald-400")"></span>
@@ -258,62 +262,62 @@ else
                         int pct = Pct(covered, _stats.TotalWords);
                         <div>
                             <div class="flex items-center justify-between text-xs mb-1.5">
-                                <a href="@q.Href" class="font-semibold text-slate-300 hover:text-white transition-colors">@q.Label</a>
+                                <a href="@q.Href" class="font-semibold text-gray-600 hover:text-gray-900 transition-colors">@q.Label</a>
                                 @if (q.Missing == 0)
                                 {
-                                    <span class="font-black text-emerald-400">✓ تەواو</span>
+                                    <span class="font-black text-emerald-600">✓ تەواو</span>
                                 }
                                 else
                                 {
-                                    <span class="font-black @(pct >= 80 ? "text-emerald-400" : pct >= 50 ? "text-amber-400" : "text-rose-400")">
+                                    <span class="font-black @(pct >= 80 ? "text-emerald-600" : pct >= 50 ? "text-amber-600" : "text-rose-600")">
                                         @q.Missing.ToString("N0") کەموکوڕی
                                     </span>
                                 }
                             </div>
-                            <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full @(pct >= 80 ? "bg-gradient-to-l from-emerald-500 to-teal-400" : pct >= 50 ? "bg-gradient-to-l from-amber-500 to-yellow-400" : "bg-gradient-to-l from-rose-500 to-red-400")"
+                            <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-700 @(pct >= 80 ? "bg-gradient-to-l from-emerald-500 to-teal-400" : pct >= 50 ? "bg-gradient-to-l from-amber-500 to-yellow-400" : "bg-gradient-to-l from-rose-500 to-red-400")"
                                      style="width:@pct%"></div>
                             </div>
-                            <p class="text-[10px] text-slate-500 mt-1">%@pct لە وشەکان @(q.Label)یان هەیە</p>
+                            <p class="text-[10px] text-gray-400 mt-1">%@pct لە وشەکان @(q.Label)یان هەیە</p>
                         </div>
                     }
                 </div>
             </div>
 
             <!-- Recent words -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-lg overflow-hidden xl:col-span-2">
-                <div class="flex items-center justify-between px-5 py-4 border-b border-slate-800">
-                    <span class="text-sm font-bold text-white">🕘 نوێترین وشەکان</span>
-                    <a href="/words" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">هەموو وشەکان ←</a>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden xl:col-span-2">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50/60">
+                    <span class="text-sm font-bold text-gray-900">🕘 نوێترین وشەکان</span>
+                    <a href="/words" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">هەموو وشەکان ←</a>
                 </div>
                 @if (!_stats.RecentWords.Any())
                 {
-                    <p class="text-xs text-slate-500 py-10 text-center">هێشتا هیچ وشەیەک نییە</p>
+                    <p class="text-xs text-gray-400 py-10 text-center">هێشتا هیچ وشەیەک نییە</p>
                 }
                 else
                 {
-                    <div class="divide-y divide-slate-800/70">
+                    <div class="divide-y divide-gray-50">
                         @foreach (var w in _stats.RecentWords)
                         {
-                            <div class="flex items-center gap-3 px-5 py-3 hover:bg-slate-800/40 transition-colors">
-                                <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/20 flex items-center justify-center text-sm font-black text-indigo-300">
+                            <div class="flex items-center gap-3 px-5 py-3 hover:bg-indigo-50/40 transition-colors">
+                                <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 border border-indigo-200 flex items-center justify-center text-sm font-black text-indigo-600">
                                     @(w.Kurdish.Length > 0 ? w.Kurdish[..1] : "؟")
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <div class="flex flex-wrap items-center gap-2">
-                                        <span class="text-sm font-bold text-white truncate">@w.Kurdish</span>
+                                        <span class="text-sm font-bold text-gray-900 truncate">@w.Kurdish</span>
                                         @if (!string.IsNullOrEmpty(w.SpeechPane))
                                         {
-                                            <span class="text-[10px] font-semibold px-2 py-0.5 bg-violet-500/15 text-violet-300 border border-violet-500/20 rounded-full">@w.SpeechPane</span>
+                                            <span class="text-[10px] font-semibold px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full">@w.SpeechPane</span>
                                         }
                                         @if (!string.IsNullOrEmpty(w.Category))
                                         {
-                                            <span class="text-[10px] font-medium px-2 py-0.5 bg-indigo-500/15 text-indigo-300 border border-indigo-500/20 rounded-full">@w.Category</span>
+                                            <span class="text-[10px] font-medium px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">@w.Category</span>
                                         }
                                     </div>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">@w.MeaningCount واتا</p>
+                                    <p class="text-[10px] text-gray-400 mt-0.5">@w.MeaningCount واتا</p>
                                 </div>
-                                <span class="shrink-0 text-[10px] font-semibold text-slate-500">@Ago(w.CreatedAt)</span>
+                                <span class="shrink-0 text-[10px] font-semibold text-gray-400">@Ago(w.CreatedAt)</span>
                             </div>
                         }
                     </div>
@@ -359,10 +363,11 @@ else
 
     static readonly Dictionary<string, string> GenderPalette = new()
     {
-        ["نییە"]    = "#64748b",
+        ["نییە"]    = "#94a3b8",
         ["نێر"]     = "#0ea5e9",
         ["مێ"]      = "#ec4899",
         ["بێلایەن"] = "#f59e0b",
+        ["دوولایەن"] = "#8b5cf6",
     };
 
     string GenderColor(string name) => GenderPalette.GetValueOrDefault(name, "#6366f1");
@@ -371,7 +376,7 @@ else
     {
         var genders = _stats?.Genders.Where(g => g.Count > 0).OrderByDescending(g => g.Count).ToList() ?? new();
         int total = genders.Sum(g => g.Count);
-        if (total == 0) return "#1e293b";
+        if (total == 0) return "#e5e7eb";
 
         var parts = new List<string>();
         double cursor = 0;
@@ -408,13 +413,13 @@ else
 
     string RelChipClass(string type) => type switch
     {
-        "synonym"    => "bg-emerald-500/15 text-emerald-300 border border-emerald-500/20",
-        "antonym"    => "bg-red-500/15 text-red-300 border border-red-500/20",
-        "related"    => "bg-blue-500/15 text-blue-300 border border-blue-500/20",
-        "example"    => "bg-amber-500/15 text-amber-300 border border-amber-500/20",
-        "usage"      => "bg-purple-500/15 text-purple-300 border border-purple-500/20",
-        "contextual" => "bg-cyan-500/15 text-cyan-300 border border-cyan-500/20",
-        "partof"     => "bg-orange-500/15 text-orange-300 border border-orange-500/20",
-        _            => "bg-slate-500/15 text-slate-300 border border-slate-500/20"
+        "synonym"    => "bg-emerald-100 text-emerald-700",
+        "antonym"    => "bg-red-100 text-red-700",
+        "related"    => "bg-blue-100 text-blue-700",
+        "example"    => "bg-amber-100 text-amber-700",
+        "usage"      => "bg-purple-100 text-purple-700",
+        "contextual" => "bg-cyan-100 text-cyan-700",
+        "partof"     => "bg-orange-100 text-orange-700",
+        _            => "bg-gray-100 text-gray-600"
     };
 }

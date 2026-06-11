@@ -78,20 +78,26 @@ public class WordsController : ControllerBase
         var sevenDaysAgo = now.AddDays(-7);
         var fourteenDaysAgo = now.Date.AddDays(-13);
 
+        // Same dedupe-by-spelling rule as the words list, so counts match what users see
+        var minIds = _db.Words.AsNoTracking()
+            .GroupBy(w => w.Kurdish)
+            .Select(g => g.Min(w => w.Id));
+        var words = _db.Words.AsNoTracking().Where(w => minIds.Contains(w.Id));
+
         var dto = new DashboardDto
         {
-            TotalWords = await _db.Words.CountAsync(),
+            TotalWords = await words.CountAsync(),
             TotalCategories = await _db.Categories.CountAsync(),
             TotalRelations = await _db.RelatedWords.CountAsync(),
             TotalMeanings = await _db.WordMeans.CountAsync(),
-            WordsWithoutRelations = await _db.Words.CountAsync(w => !w.OutgoingRelations.Any() && !w.IncomingRelations.Any()),
-            WordsWithoutMeanings = await _db.Words.CountAsync(w => !w.Meanings.Any()),
-            WordsWithoutCategory = await _db.Words.CountAsync(w => !w.WordCategories.Any()),
-            WordsWithoutSpeechPane = await _db.Words.CountAsync(w => !w.SpeechPanes.Any()),
-            WordsAddedLast7Days = await _db.Words.CountAsync(w => w.CreatedAt >= sevenDaysAgo)
+            WordsWithoutRelations = await words.CountAsync(w => !w.OutgoingRelations.Any() && !w.IncomingRelations.Any()),
+            WordsWithoutMeanings = await words.CountAsync(w => !w.Meanings.Any()),
+            WordsWithoutCategory = await words.CountAsync(w => !w.WordCategories.Any()),
+            WordsWithoutSpeechPane = await words.CountAsync(w => !w.SpeechPanes.Any()),
+            WordsAddedLast7Days = await words.CountAsync(w => w.CreatedAt >= sevenDaysAgo)
         };
 
-        dto.Genders = (await _db.Words
+        dto.Genders = (await words
                 .GroupBy(w => w.Gender)
                 .Select(g => new { g.Key, Count = g.Count() })
                 .ToListAsync())
@@ -117,7 +123,7 @@ public class WordsController : ControllerBase
             .OrderByDescending(g => g.Count)
             .ToListAsync();
 
-        var dailyRaw = await _db.Words
+        var dailyRaw = await words
             .Where(w => w.CreatedAt >= fourteenDaysAgo)
             .GroupBy(w => w.CreatedAt.Date)
             .Select(g => new { Date = g.Key, Count = g.Count() })
@@ -128,8 +134,7 @@ public class WordsController : ControllerBase
             .Select(d => new DailyCountDto { Date = d, Count = dailyRaw.FirstOrDefault(x => x.Date == d)?.Count ?? 0 })
             .ToList();
 
-        dto.RecentWords = (await _db.Words
-                .AsNoTracking()
+        dto.RecentWords = (await words
                 .OrderByDescending(w => w.CreatedAt).ThenByDescending(w => w.Id)
                 .Take(8)
                 .Select(w => new
