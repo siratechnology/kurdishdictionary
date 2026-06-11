@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <link rel="preload" href="/fonts/NRT-Reg.ttf" as="font" type="font/truetype" crossorigin />
-    <link rel="stylesheet" href="css/app.css" />
-    <link rel="stylesheet" href="frontend-blazor.styles.css" />
+    <link rel="stylesheet" href="css/app.css?v=@AssetVersion" />
+    <link rel="stylesheet" href="frontend-blazor.styles.css?v=@AssetVersion" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet />
 </head>
@@ -19,3 +19,9 @@
 </body>
 
 </html>
+
+@code {
+    // Busts browser CSS cache on every deploy (assembly is rewritten on each build)
+    private static readonly string AssetVersion =
+        File.GetLastWriteTimeUtc(typeof(App).Assembly.Location).Ticks.ToString();
+}
