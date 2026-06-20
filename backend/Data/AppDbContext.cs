@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<WordSpeechPane> WordSpeechPanes => Set<WordSpeechPane>();
     public DbSet<WordCategory> WordCategories => Set<WordCategory>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +56,17 @@ public class AppDbContext : DbContext
                   .WithMany(c => c.WordCategories)
                   .HasForeignKey(wc => wc.CategoryId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Action).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.EntityType).IsRequired().HasMaxLength(50);
+            entity.Property(a => a.Summary).HasMaxLength(500);
+            entity.Property(a => a.IpAddress).HasMaxLength(64);
+            entity.Property(a => a.UserAgent).HasMaxLength(512);
+            entity.HasIndex(a => a.CreatedAt);
         });
 
         modelBuilder.Entity<WordMeans>(entity =>

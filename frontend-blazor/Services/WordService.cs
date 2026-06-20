@@ -129,6 +129,9 @@ public class WordService
     public async Task DeleteWordAsync(int id) =>
         await _http.DeleteAsync($"api/words/{id}");
 
+    public async Task<PagedResultDto<AuditLogDto>?> GetAuditLogAsync(int page = 1, int pageSize = 50) =>
+        await _http.GetFromJsonAsync<PagedResultDto<AuditLogDto>>($"api/words/audit?page={page}&pageSize={pageSize}");
+
     private record SpeechTypeRaw(int Id, string Kurdish);
     private record GenderRaw(int Id, string Kurdish);
 }

@@ -218,6 +218,7 @@ public class WordsController : ControllerBase
         if (category is null) return NotFound();
 
         _db.Categories.Remove(category); // join rows cascade
+        AddAudit("DeleteCategory", "Category", id, category.Name);
         await _db.SaveChangesAsync();
         return NoContent();
     }
@@ -266,6 +267,7 @@ public class WordsController : ControllerBase
         if (link is null) return NotFound();
 
         _db.WordCategories.Remove(link);
+        AddAudit("RemoveWordFromCategory", "WordCategory", wordId, $"word {wordId} from category {id}");
         await _db.SaveChangesAsync();
         return NoContent();
     }
@@ -338,6 +340,7 @@ public class WordsController : ControllerBase
         if (link is null) return NotFound();
 
         _db.WordSpeechPanes.Remove(link);
+        AddAudit("RemoveWordFromSpeechType", "WordSpeechPane", wordId, $"word {wordId} from speech-type {typeId}");
         await _db.SaveChangesAsync();
         return NoContent();
     }
@@ -537,8 +540,57 @@ public class WordsController : ControllerBase
         var word = await _db.Words.FindAsync(id);
         if (word is null) return NotFound();
         _db.Words.Remove(word);
+        AddAudit("DeleteWord", "Word", id, word.Kurdish);
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    // GET api/words/audit  — review who deleted what, from where, when
+    [HttpGet("audit")]
+    public async Task<ActionResult<PagedResultDto<AuditLogDto>>> GetAuditLog(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50)
+    {
+        var query = _db.AuditLogs.AsNoTracking().OrderByDescending(a => a.CreatedAt);
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(a => new AuditLogDto
+            {
+                Id = a.Id,
+                Action = a.Action,
+                EntityType = a.EntityType,
+                EntityId = a.EntityId,
+                Summary = a.Summary,
+                IpAddress = a.IpAddress,
+                UserAgent = a.UserAgent,
+                CreatedAt = a.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(new PagedResultDto<AuditLogDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        });
+    }
+
+    // Records a destructive action with the caller's IP + user-agent for tracing.
+    private void AddAudit(string action, string entityType, int entityId, string? summary)
+    {
+        _db.AuditLogs.Add(new AuditLog
+        {
+            Action = action,
+            EntityType = entityType,
+            EntityId = entityId,
+            Summary = summary,
+            IpAddress = ClientInfo.GetClientIp(Request),
+            UserAgent = ClientInfo.GetUserAgent(Request),
+            CreatedAt = DateTime.UtcNow
+        });
     }
 
     // GET api/words/5/graph

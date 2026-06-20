@@ -1,0 +1,93 @@
+@page "/audit"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject WordService WordSvc
+
+<PageTitle>تۆمارەکانی سڕینەوە</PageTitle>
+
+<!-- Page header -->
+<div class="flex items-center justify-between mb-6" dir="rtl">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">تۆمارەکانی سڕینەوە</h1>
+        <p class="text-sm text-gray-400 mt-0.5">
+            هەر سڕینەوەیەک لەگەڵ IP، ئامێر و کاتدا تۆمار دەکرێت — کلیک لەسەر IP بکە بۆ زانینی شوێن
+        </p>
+    </div>
+    <button @onclick="Load"
+            class="shrink-0 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
+        ↻ نوێکردنەوە
+    </button>
+</div>
+
+@if (_loading)
+{
+    <div class="text-center text-gray-400 py-16">چاوەڕوان بە...</div>
+}
+else if (_logs is null || _logs.Items.Count == 0)
+{
+    <div class="text-center text-gray-400 py-16" dir="rtl">هیچ سڕینەوەیەک تۆمار نەکراوە.</div>
+}
+else
+{
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
+                <tr>
+                    <th class="px-4 py-3 text-left">Time (UTC)</th>
+                    <th class="px-4 py-3 text-left">Action</th>
+                    <th class="px-4 py-3 text-left">Item</th>
+                    <th class="px-4 py-3 text-left">IP / Location</th>
+                    <th class="px-4 py-3 text-left">Device / Browser</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @foreach (var log in _logs.Items)
+                {
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 whitespace-nowrap text-gray-600 font-mono text-xs">
+                            @log.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-600">@log.Action</span>
+                        </td>
+                        <td class="px-4 py-3 text-gray-700">
+                            <span class="text-gray-400">#@log.EntityId</span> @log.Summary
+                        </td>
+                        <td class="px-4 py-3 font-mono text-xs">
+                            @if (!string.IsNullOrEmpty(log.IpAddress))
+                            {
+                                <a href="@($"https://ipinfo.io/{log.IpAddress}")" target="_blank" rel="noopener"
+                                   class="text-indigo-600 hover:underline">@log.IpAddress 🔎</a>
+                            }
+                            else
+                            {
+                                <span class="text-gray-300">—</span>
+                            }
+                        </td>
+                        <td class="px-4 py-3 text-gray-500 text-xs max-w-xs truncate" title="@log.UserAgent">
+                            @log.UserAgent
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-3" dir="rtl">
+        کۆی گشتی: @_logs.TotalCount تۆمار
+    </p>
+}
+
+@code {
+    private PagedResultDto<AuditLogDto>? _logs;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    private async Task Load()
+    {
+        _loading = true;
+        StateHasChanged();
+        _logs = await WordSvc.GetAuditLogAsync(page: 1, pageSize: 100);
+        _loading = false;
+    }
+}
