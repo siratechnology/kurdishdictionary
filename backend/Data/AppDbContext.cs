@@ -1,9 +1,10 @@
 using backend.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -14,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<WordSpeechPane> WordSpeechPanes => Set<WordSpeechPane>();
     public DbSet<WordCategory> WordCategories => Set<WordCategory>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<AnalyticsEvent> AnalyticsEvents => Set<AnalyticsEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +27,23 @@ public class AppDbContext : DbContext
             entity.Property(w => w.Kurdish).IsRequired().HasMaxLength(200);
             entity.Property(w => w.Description).HasMaxLength(1000);
             entity.Property(w => w.Gender).HasDefaultValue(GrammaticalGender.None);
+
+            // SetNull, not Cascade: deleting a user must never delete the words they wrote.
+            entity.HasOne(w => w.CreatedByUser)
+                  .WithMany()
+                  .HasForeignKey(w => w.CreatedByUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            // NoAction, even though SetNull is what we semantically want: SQL Server refuses two
+            // SET NULL paths from the same table to the same principal ("may cause cycles or
+            // multiple cascade paths", error 1785). AuthController.DeleteUser clears this column
+            // by hand before deleting a user, which gets us the same result.
+            entity.HasOne(w => w.UpdatedByUser)
+                  .WithMany()
+                  .HasForeignKey(w => w.UpdatedByUserId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(w => w.CreatedByUserId);
         });
 
         // Many-to-many: Word <-> SpeechPaneType (enum-backed join table)
@@ -66,7 +85,46 @@ public class AppDbContext : DbContext
             entity.Property(a => a.Summary).HasMaxLength(500);
             entity.Property(a => a.IpAddress).HasMaxLength(64);
             entity.Property(a => a.UserAgent).HasMaxLength(512);
+            entity.Property(a => a.UserName).HasMaxLength(256);
+            entity.Property(a => a.Country).HasMaxLength(100);
+            entity.Property(a => a.City).HasMaxLength(100);
             entity.HasIndex(a => a.CreatedAt);
+            entity.HasIndex(a => a.UserId);
+            entity.HasIndex(a => new { a.EntityType, a.EntityId });
+
+            // Keep the audit row even if the user is deleted — that's the whole point of an audit trail.
+            entity.HasOne(a => a.User)
+                  .WithMany()
+                  .HasForeignKey(a => a.UserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<AnalyticsEvent>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.EventType).IsRequired().HasMaxLength(32);
+            entity.Property(e => e.Path).HasMaxLength(512);
+            entity.Property(e => e.SearchTerm).HasMaxLength(200);
+            entity.Property(e => e.SessionId).HasMaxLength(64);
+            entity.Property(e => e.Referrer).HasMaxLength(512);
+            entity.Property(e => e.IpAddress).HasMaxLength(64);
+            entity.Property(e => e.Country).HasMaxLength(100);
+            entity.Property(e => e.CountryCode).HasMaxLength(8);
+            entity.Property(e => e.City).HasMaxLength(100);
+            entity.Property(e => e.Region).HasMaxLength(100);
+            entity.Property(e => e.Isp).HasMaxLength(200);
+            entity.Property(e => e.Timezone).HasMaxLength(64);
+            entity.Property(e => e.UserAgent).HasMaxLength(512);
+            entity.Property(e => e.Browser).HasMaxLength(64);
+            entity.Property(e => e.Os).HasMaxLength(64);
+            entity.Property(e => e.DeviceType).HasMaxLength(16);
+            entity.Property(e => e.Language).HasMaxLength(32);
+
+            // The dashboard queries are all "recent events", "recent searches", "by country".
+            entity.HasIndex(e => e.CreatedAt);
+            entity.HasIndex(e => new { e.EventType, e.CreatedAt });
+            entity.HasIndex(e => e.SearchTerm);
+            entity.HasIndex(e => e.SessionId);
         });
 
         modelBuilder.Entity<WordMeans>(entity =>
@@ -78,6 +136,11 @@ public class AppDbContext : DbContext
                   .WithMany(w => w.Meanings)
                   .HasForeignKey(wm => wm.WordId)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(wm => wm.CreatedByUser)
+                  .WithMany()
+                  .HasForeignKey(wm => wm.CreatedByUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<RelatedWord>()
@@ -91,6 +154,13 @@ public class AppDbContext : DbContext
             .WithMany(w => w.IncomingRelations)
             .HasForeignKey(r => r.TargetWordId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Deleting a user must not delete the relations they authored — just orphan them.
+        modelBuilder.Entity<RelatedWord>()
+            .HasOne(r => r.CreatedByUser)
+            .WithMany()
+            .HasForeignKey(r => r.CreatedByUserId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         // ── Seed data ──────────────────────────────────────────────────────────
         var baseKurdishWords = new List<string> {

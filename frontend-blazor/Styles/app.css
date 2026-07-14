@@ -46,6 +46,23 @@ html {
   100% { transform: translateX(100%); }
 }
 
+/* ── Sidebar nav items ─────────────────────────────────────────────────
+   NavLink stamps "active" on the link for the current route; both states are
+   defined here so the markup stays a single class name. */
+.nav-item {
+  @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
+         text-slate-400 transition-colors;
+}
+.nav-item:hover {
+  @apply bg-slate-800 text-white;
+}
+.nav-item.active {
+  @apply bg-indigo-600 text-white shadow-sm shadow-indigo-900/40;
+}
+.nav-item.active:hover {
+  @apply bg-indigo-600;
+}
+
 /* ── Page fade-in on route change ──────────────────────────────────── */
 .page-enter {
   animation: page-fade-in 0.35s ease-out both;

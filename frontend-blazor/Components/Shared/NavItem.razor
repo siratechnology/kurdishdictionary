@@ -1,0 +1,16 @@
+@* One sidebar link. NavLink applies "active" for the current route; the styling below reads that class.
+   Wrapped in a label for #nav-toggle so that tapping a link on mobile also closes the drawer. *@
+
+<label for="nav-toggle" class="block">
+    <NavLink href="@Href" Match="Match" class="nav-item">
+        <span class="w-5 text-center text-base">@Icon</span>
+        <span>@Label</span>
+    </NavLink>
+</label>
+
+@code {
+    [Parameter, EditorRequired] public string Href { get; set; } = "";
+    [Parameter, EditorRequired] public string Icon { get; set; } = "";
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+}

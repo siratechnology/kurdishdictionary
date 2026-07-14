@@ -1,11 +1,20 @@
 using backend.Data;
 using backend.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.Dtos;
 
 namespace backend.Controllers;
 
+/// <summary>
+/// Reads are anonymous — the public Next.js dictionary depends on them. Every write requires a
+/// signed-in Editor or Admin, and deletes require an Admin. The audit trail is written automatically
+/// by AuditSaveChangesInterceptor, so no action here logs by hand.
+///
+/// Note the absence of a controller-level [AllowAnonymous]: it would override the [Authorize] on
+/// every action below and silently leave all the writes open to the public.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class WordsController : ControllerBase
@@ -175,6 +184,7 @@ public class WordsController : ControllerBase
 
     // POST api/words/categories
     [HttpPost("categories")]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return BadRequest("Category name is required.");
@@ -192,6 +202,7 @@ public class WordsController : ControllerBase
 
     // PUT api/words/categories/5
     [HttpPut("categories/{id:int}")]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<ActionResult<CategoryDto>> UpdateCategory(int id, [FromBody] string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return BadRequest("Category name is required.");
@@ -212,13 +223,13 @@ public class WordsController : ControllerBase
 
     // DELETE api/words/categories/5
     [HttpDelete("categories/{id:int}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> DeleteCategory(int id)
     {
         var category = await _db.Categories.FindAsync(id);
         if (category is null) return NotFound();
 
         _db.Categories.Remove(category); // join rows cascade
-        AddAudit("DeleteCategory", "Category", id, category.Name);
         await _db.SaveChangesAsync();
         return NoContent();
     }
@@ -244,6 +255,7 @@ public class WordsController : ControllerBase
 
     // POST api/words/categories/5/words/42
     [HttpPost("categories/{id:int}/words/{wordId:int}")]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<IActionResult> AddWordToCategory(int id, int wordId)
     {
         if (!await _db.Categories.AnyAsync(c => c.Id == id)) return NotFound("Category not found.");
@@ -260,6 +272,7 @@ public class WordsController : ControllerBase
 
     // DELETE api/words/categories/5/words/42
     [HttpDelete("categories/{id:int}/words/{wordId:int}")]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<IActionResult> RemoveWordFromCategory(int id, int wordId)
     {
         var link = await _db.WordCategories
@@ -267,7 +280,6 @@ public class WordsController : ControllerBase
         if (link is null) return NotFound();
 
         _db.WordCategories.Remove(link);
-        AddAudit("RemoveWordFromCategory", "WordCategory", wordId, $"word {wordId} from category {id}");
         await _db.SaveChangesAsync();
         return NoContent();
     }
@@ -315,6 +327,7 @@ public class WordsController : ControllerBase
 
     // POST api/words/speech-types/3/words/42
     [HttpPost("speech-types/{typeId:int}/words/{wordId:int}")]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<IActionResult> AddWordToSpeechType(int typeId, int wordId)
     {
         if (!Enum.IsDefined((SpeechPaneType)typeId)) return NotFound("Unknown speech pane type.");
@@ -332,6 +345,7 @@ public class WordsController : ControllerBase
 
     // DELETE api/words/speech-types/3/words/42
     [HttpDelete("speech-types/{typeId:int}/words/{wordId:int}")]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<IActionResult> RemoveWordFromSpeechType(int typeId, int wordId)
     {
         var type = (SpeechPaneType)typeId;
@@ -340,7 +354,6 @@ public class WordsController : ControllerBase
         if (link is null) return NotFound();
 
         _db.WordSpeechPanes.Remove(link);
-        AddAudit("RemoveWordFromSpeechType", "WordSpeechPane", wordId, $"word {wordId} from speech-type {typeId}");
         await _db.SaveChangesAsync();
         return NoContent();
     }
@@ -420,6 +433,7 @@ public class WordsController : ControllerBase
 
     // POST api/words
     [HttpPost]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<ActionResult<WordDto>> Create([FromBody] CreateWordDto dto)
     {
         var word = new Word
@@ -454,6 +468,7 @@ public class WordsController : ControllerBase
 
     // PUT api/words/5
     [HttpPut("{id:int}")]
+    [Authorize(Roles = Roles.AdminOrEditor)]
     public async Task<ActionResult<WordDto>> Update(int id, [FromBody] UpdateWordDto dto)
     {
         var word = await _db.Words
@@ -535,25 +550,46 @@ public class WordsController : ControllerBase
 
     // DELETE api/words/5
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> Delete(int id)
     {
         var word = await _db.Words.FindAsync(id);
         if (word is null) return NotFound();
         _db.Words.Remove(word);
-        AddAudit("DeleteWord", "Word", id, word.Kurdish);
         await _db.SaveChangesAsync();
         return NoContent();
     }
 
-    // GET api/words/audit  — review who deleted what, from where, when
+    // GET api/words/audit  — who changed what, from where, when
     [HttpGet("audit")]
+    [Authorize(Roles = Roles.Any)]
     public async Task<ActionResult<PagedResultDto<AuditLogDto>>> GetAuditLog(
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 50)
+        [FromQuery] int pageSize = 50,
+        [FromQuery] string? action = null,
+        [FromQuery] string? entityType = null,
+        [FromQuery] Guid? userId = null,
+        [FromQuery] string? search = null)
     {
-        var query = _db.AuditLogs.AsNoTracking().OrderByDescending(a => a.CreatedAt);
+        var query = _db.AuditLogs.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(action))
+            query = query.Where(a => a.Action == action);
+
+        if (!string.IsNullOrWhiteSpace(entityType))
+            query = query.Where(a => a.EntityType == entityType);
+
+        if (userId is not null)
+            query = query.Where(a => a.UserId == userId);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(a => (a.Summary != null && a.Summary.Contains(search))
+                                     || (a.UserName != null && a.UserName.Contains(search))
+                                     || (a.IpAddress != null && a.IpAddress.Contains(search)));
+
         var totalCount = await query.CountAsync();
         var items = await query
+            .OrderByDescending(a => a.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(a => new AuditLogDto
@@ -563,8 +599,13 @@ public class WordsController : ControllerBase
                 EntityType = a.EntityType,
                 EntityId = a.EntityId,
                 Summary = a.Summary,
+                Changes = a.Changes,
+                UserId = a.UserId,
+                UserName = a.UserName,
                 IpAddress = a.IpAddress,
                 UserAgent = a.UserAgent,
+                Country = a.Country,
+                City = a.City,
                 CreatedAt = a.CreatedAt
             })
             .ToListAsync();
@@ -578,19 +619,39 @@ public class WordsController : ControllerBase
         });
     }
 
-    // Records a destructive action with the caller's IP + user-agent for tracing.
-    private void AddAudit(string action, string entityType, int entityId, string? summary)
+    /// <summary>Feeds the notification bell: anything that happened since the id the client last saw.</summary>
+    // GET api/words/audit/since/{id}
+    [HttpGet("audit/since/{afterId:int}")]
+    [Authorize(Roles = Roles.Any)]
+    public async Task<ActionResult<List<AuditLogDto>>> GetAuditSince(int afterId, [FromQuery] int take = 20)
     {
-        _db.AuditLogs.Add(new AuditLog
-        {
-            Action = action,
-            EntityType = entityType,
-            EntityId = entityId,
-            Summary = summary,
-            IpAddress = ClientInfo.GetClientIp(Request),
-            UserAgent = ClientInfo.GetUserAgent(Request),
-            CreatedAt = DateTime.UtcNow
-        });
+        var query = _db.AuditLogs.AsNoTracking();
+
+        // afterId = 0 is a fresh client: hand it the latest few rather than the whole table.
+        var rows = afterId > 0
+            ? query.Where(a => a.Id > afterId).OrderByDescending(a => a.Id)
+            : query.OrderByDescending(a => a.Id);
+
+        var items = await rows
+            .Take(Math.Clamp(take, 1, 50))
+            .Select(a => new AuditLogDto
+            {
+                Id = a.Id,
+                Action = a.Action,
+                EntityType = a.EntityType,
+                EntityId = a.EntityId,
+                Summary = a.Summary,
+                Changes = a.Changes,
+                UserId = a.UserId,
+                UserName = a.UserName,
+                IpAddress = a.IpAddress,
+                Country = a.Country,
+                City = a.City,
+                CreatedAt = a.CreatedAt
+            })
+            .ToListAsync();
+
+        return Ok(items);
     }
 
     // GET api/words/5/graph

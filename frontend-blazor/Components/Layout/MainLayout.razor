@@ -1,47 +1,125 @@
 @inherits LayoutComponentBase
+@using frontend_blazor.Components.Shared
 
-<div class="min-h-screen bg-gray-50 flex flex-col">
-    <nav class="bg-white border-b border-gray-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-            <div class="flex items-center gap-6">
-                <a href="/" class="flex items-center gap-2">
-                    <span class="text-2xl">📖</span>
-                    <div>
-                        <span class="font-bold text-gray-900 text-lg leading-none block">فەرھەنگی کوردی</span>
-                        <span class="text-xs text-gray-400 leading-none">Kurdish Dictionary</span>
-                    </div>
-                </a>
-                <nav class="hidden sm:flex items-center gap-1">
-                    <a href="/"
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                        <span>📊</span><span>داشبۆرد</span>
-                    </a>
-                    <a href="/words"
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors">
-                        <span>📖</span><span>وشەکان</span>
-                    </a>
-                    <a href="/relations"
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors">
-                        <span>🕸</span><span>پەیوەندییەکان</span>
-                    </a>
-                    <a href="/taxonomy"
-                       class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-violet-50 hover:text-violet-700 transition-colors">
-                        <span>🏷</span><span>پۆل و جۆرەکان</span>
-                    </a>
-                </nav>
+@* The drawer is a pure CSS peer-toggle rather than Blazor state: the layout renders statically, so a
+   JS/Blazor toggle would be dead until the circuit connects. A checkbox works on the very first paint. *@
+
+<input type="checkbox" id="nav-toggle" class="peer hidden" aria-hidden="true" />
+
+<div class="min-h-screen bg-gray-50">
+
+    @* ── Mobile overlay: tapping anywhere outside the drawer closes it ── *@
+    <label for="nav-toggle"
+           class="fixed inset-0 z-30 hidden bg-slate-900/50 backdrop-blur-sm peer-checked:block lg:!hidden"
+           aria-label="داخستنی لیستە"></label>
+
+    @* ── Sidebar ─────────────────────────────────────────────────────────
+       Off-canvas on mobile (translated off the right edge, RTL), pinned on lg+. *@
+    <aside class="fixed inset-y-0 right-0 z-40 flex w-64 translate-x-full flex-col
+                  border-l border-slate-800 bg-slate-900 transition-transform duration-300 ease-out
+                  peer-checked:translate-x-0 lg:translate-x-0">
+
+        <div class="flex h-16 items-center gap-2.5 border-b border-slate-800 px-5">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-lg">📖</span>
+            <div class="min-w-0">
+                <p class="truncate text-sm font-bold leading-tight text-white">فەرھەنگی کوردی</p>
+                <p class="truncate text-[11px] leading-tight text-slate-500">پانێڵی بەڕێوەبردن</p>
             </div>
+            <label for="nav-toggle"
+                   class="mr-auto cursor-pointer rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white lg:hidden">
+                ✕
+            </label>
         </div>
-    </nav>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        @Body
-    </main>
+        <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+            <p class="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-600">ناوەڕۆک</p>
+
+            <NavItem Href="" Icon="📊" Label="داشبۆرد" Match="NavLinkMatch.All" />
+            <NavItem Href="words" Icon="📖" Label="وشەکان" />
+            <NavItem Href="relations" Icon="🕸" Label="پەیوەندییەکان" />
+            <NavItem Href="taxonomy" Icon="🏷" Label="پۆل و جۆرەکان" />
+
+            <p class="px-3 pb-2 pt-5 text-[11px] font-semibold uppercase tracking-wider text-slate-600">چاودێری</p>
+
+            <NavItem Href="analytics" Icon="🌍" Label="ترافیکی ماڵپەڕ" />
+            <NavItem Href="activity" Icon="🔔" Label="چالاکییەکان" />
+
+            <AuthorizeView Roles="Admin">
+                <p class="px-3 pb-2 pt-5 text-[11px] font-semibold uppercase tracking-wider text-slate-600">بەڕێوەبردن</p>
+                <NavItem Href="users" Icon="👥" Label="بەکارهێنەران" />
+            </AuthorizeView>
+        </nav>
+
+        <AuthorizeView>
+            <div class="border-t border-slate-800 p-3">
+                <div class="flex items-center gap-2.5 rounded-lg px-2 py-2">
+                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                        @Initials(context.User.Identity?.Name)
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-xs font-semibold text-white">@context.User.Identity?.Name</p>
+                        <p class="truncate text-[11px] text-slate-500">@RoleLabel(context.User)</p>
+                    </div>
+                </div>
+                <form method="post" action="/logout" class="mt-1">
+                    <AntiforgeryToken />
+                    <button type="submit"
+                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-slate-400 transition hover:bg-slate-800 hover:text-red-400">
+                        <span>🚪</span><span>دەرچوون</span>
+                    </button>
+                </form>
+            </div>
+        </AuthorizeView>
+    </aside>
+
+    @* ── Main column ─────────────────────────────────────────────────── *@
+    <div class="lg:mr-64">
+
+        <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-gray-200 bg-white/90 px-4 backdrop-blur sm:px-6">
+            <label for="nav-toggle"
+                   class="cursor-pointer rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 lg:hidden"
+                   aria-label="کردنەوەی لیستە">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </label>
+
+            <div class="flex-1"></div>
+
+            <NotificationBell @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
+
+            <AuthorizeView>
+                <span class="hidden text-sm text-gray-600 sm:inline">@context.User.Identity?.Name</span>
+                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                    @Initials(context.User.Identity?.Name)
+                </span>
+            </AuthorizeView>
+        </header>
+
+        <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+            <PasswordChangeBanner />
+            @Body
+        </main>
+    </div>
 </div>
 
 <div id="blazor-error-ui"
-     class="hidden fixed bottom-4 right-4 bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg text-sm z-50"
+     class="hidden fixed bottom-4 left-4 z-50 rounded-lg bg-red-600 px-4 py-3 text-sm text-white shadow-lg"
      data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="underline ml-2">Reload</a>
-    <span class="dismiss ml-2 cursor-pointer">✕</span>
+    هەڵەیەکی چاوەڕوان‌نەکراو ڕوویدا.
+    <a href="." class="mr-2 underline">نوێکردنەوە</a>
+    <span class="dismiss mr-2 cursor-pointer">✕</span>
 </div>
+
+@code {
+    private static string Initials(string? name) =>
+        string.IsNullOrWhiteSpace(name) ? "؟" : name.Trim()[..1].ToUpperInvariant();
+
+    private static string RoleLabel(System.Security.Claims.ClaimsPrincipal user)
+    {
+        if (user.IsInRole("Admin")) return "بەڕێوەبەر";
+        if (user.IsInRole("Editor")) return "دەستکاریکەر";
+        if (user.IsInRole("Viewer")) return "بینەر";
+        return "بەکارهێنەر";
+    }
+}

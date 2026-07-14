@@ -1,0 +1,139 @@
+@page "/login"
+@layout EmptyLayout
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+@* Static server rendering on purpose: signing in writes a cookie, and a cookie can only be written
+   while the response headers are still open. An interactive circuit has no headers left to write to. *@
+
+<PageTitle>چوونەژوورەوە — فەرھەنگی کوردی</PageTitle>
+
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-10">
+    <div class="w-full max-w-md">
+
+        <div class="text-center mb-8">
+            <div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-3xl shadow-lg shadow-indigo-900/50 mb-4">
+                📖
+            </div>
+            <h1 class="text-2xl font-bold text-white">فەرھەنگی کوردی</h1>
+            <p class="text-sm text-indigo-300/70 mt-1">پانێڵی بەڕێوەبردن</p>
+        </div>
+
+        <div class="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-7">
+            <h2 class="text-lg font-semibold text-gray-900 mb-1">بەخێربێیتەوە</h2>
+            <p class="text-sm text-gray-500 mb-6">ناوی بەکارهێنەر و وشەی نهێنی خۆت بنووسە</p>
+
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="mb-5 flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-sm text-red-700">
+                    <span>⚠️</span>
+                    <span>@_error</span>
+                </div>
+            }
+
+            <EditForm Model="Input" method="post" OnValidSubmit="SignInAsync" FormName="login">
+                <DataAnnotationsValidator />
+
+                <label class="block mb-4">
+                    <span class="block text-sm font-medium text-gray-700 mb-1.5">ناوی بەکارهێنەر</span>
+                    <InputText @bind-Value="Input.UserName" autocomplete="username" autofocus
+                               placeholder="بۆ نموونە: sirwan"
+                               class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                    <ValidationMessage For="() => Input.UserName" class="mt-1 block text-xs text-red-600" />
+                </label>
+
+                <label class="block mb-5">
+                    <span class="block text-sm font-medium text-gray-700 mb-1.5">وشەی نهێنی</span>
+                    <InputText @bind-Value="Input.Password" type="password" autocomplete="current-password"
+                               placeholder="••••••••"
+                               class="w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                    <ValidationMessage For="() => Input.Password" class="mt-1 block text-xs text-red-600" />
+                </label>
+
+                <label class="flex items-center gap-2 mb-6 cursor-pointer select-none">
+                    <InputCheckbox @bind-Value="Input.RememberMe"
+                                   class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                    <span class="text-sm text-gray-600">بۆ ماوەی حەوتوویەک بمهێڵەرەوە</span>
+                </label>
+
+                <button type="submit"
+                        class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    چوونەژوورەوە
+                </button>
+            </EditForm>
+        </div>
+
+        <p class="mt-6 text-center text-xs text-indigo-300/50">
+            Sira Technology · فەرھەنگی کوردی
+        </p>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm] private LoginDto Input { get; set; } = new();
+
+    [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
+
+    private string? _error;
+
+    private async Task SignInAsync()
+    {
+        var result = await Auth.LoginAsync(Input);
+
+        if (!result.Succeeded || result.Token is null || result.User is null)
+        {
+            _error = result.Error ?? "چوونەژوورەوە سەرکەوتوو نەبوو";
+            return;
+        }
+
+        var user = result.User;
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.Email, user.Email ?? string.Empty),
+            new("fullName", user.FullName ?? user.UserName),
+            new("mustChangePassword", user.MustChangePassword.ToString()),
+
+            // The API only trusts the JWT, so the cookie carries it. The cookie is encrypted with
+            // Data Protection, so the token is not readable by the browser.
+            new(ApiClient.TokenClaim, result.Token),
+        };
+
+        claims.AddRange(user.Roles.Select(r => new Claim(ClaimTypes.Role, r)));
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity),
+            new AuthenticationProperties
+            {
+                IsPersistent = Input.RememberMe,
+
+                // Never outlive the JWT inside it: a cookie that survives its own token would leave
+                // the user looking signed in while every API call quietly 401s.
+                ExpiresUtc = result.ExpiresAt is { } expires
+                    ? new DateTimeOffset(expires, TimeSpan.Zero)
+                    : DateTimeOffset.UtcNow.AddDays(7),
+            });
+
+        Nav.NavigateTo(SafeReturnUrl(), forceLoad: true);
+    }
+
+    /// <summary>Only ever redirect within this app — an attacker-supplied ReturnUrl must not send the user elsewhere.</summary>
+    private string SafeReturnUrl()
+    {
+        if (string.IsNullOrWhiteSpace(ReturnUrl)) return "/";
+        if (!ReturnUrl.StartsWith('/') || ReturnUrl.StartsWith("//")) return "/";
+        return ReturnUrl;
+    }
+}

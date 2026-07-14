@@ -1,5 +1,6 @@
 @page "/words"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize]
 @inject WordService WordSvc
 
 <PageTitle>وشەکان — فەرھەنگی کوردی</PageTitle>

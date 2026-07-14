@@ -6,6 +6,7 @@ import {
 import dynamic from "next/dynamic";
 import { useTheme } from "./ThemeProvider";
 import ThemeToggle from "./ThemeToggle";
+import { track } from "@/lib/analytics";
 import RichWordCard, { type WordItem } from "./RichWordCard";
 import type { UniverseGraphHandle } from "./UniverseGraph";
 
@@ -88,6 +89,17 @@ export default function DiscoveryPage() {
       setTotalCount(d.totalCount);
       setHasMore(d.items.length === GRID_SIZE && page < (d.totalPages ?? 1));
       setCurPage(page);
+
+      // Tracked here because this is the only place that knows the result count — and a search
+      // returning 0 tells us a word people want is missing from the dictionary.
+      // Skipped when appending (infinite scroll) so one search is not logged once per page.
+      if (search.trim() && !append) {
+        track({
+          eventType: "search",
+          searchTerm: search.trim(),
+          resultCount: d.totalCount,
+        });
+      }
     } finally {
       if (append) setLoadingMore(false);
       else        setInitLoading(false);

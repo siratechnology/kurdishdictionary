@@ -1,0 +1,180 @@
+@implements IDisposable
+@inject ActivityService Activity
+@inject NavigationManager Nav
+
+@* Live feed of what everyone is doing. Polls rather than pushes: the audit rows are written by the
+   backend (a different process), so this app has nothing to push from. *@
+
+<div class="relative">
+    <button type="button" @onclick="Toggle"
+            class="relative rounded-lg p-2 text-gray-600 transition hover:bg-gray-100"
+            aria-label="ئاگادارکردنەوەکان">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+        </svg>
+
+        @if (_unseen > 0)
+        {
+            <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                @(_unseen > 9 ? "9+" : _unseen.ToString())
+            </span>
+        }
+    </button>
+
+    @if (_open)
+    {
+        @* Click-away backdrop. *@
+        <div class="fixed inset-0 z-30" @onclick="Close"></div>
+
+        <div class="absolute left-0 z-40 mt-2 w-80 origin-top-left overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+            <div class="flex items-center justify-between border-b border-gray-100 px-4 py-2.5">
+                <p class="text-sm font-semibold text-gray-900">ئاگادارکردنەوەکان</p>
+                <a href="/activity" @onclick="Close" class="text-xs font-medium text-indigo-600 hover:underline">
+                    بینینی هەموو
+                </a>
+            </div>
+
+            <div class="max-h-96 overflow-y-auto">
+                @if (_items.Count == 0)
+                {
+                    <p class="px-4 py-8 text-center text-sm text-gray-400">هیچ چالاکییەک نییە</p>
+                }
+                else
+                {
+                    @foreach (var item in _items)
+                    {
+                        <div class="flex gap-3 border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-gray-50">
+                            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs @ActionStyle(item.Action)">
+                                @ActionIcon(item.Action)
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs leading-snug text-gray-800">
+                                    <span class="font-semibold">@(item.UserName ?? "نەناسراو")</span>
+                                    @ActionText(item.Action)
+                                    <span class="font-medium text-gray-900">@(item.Summary ?? EntityLabel(item.EntityType))</span>
+                                </p>
+                                <p class="mt-0.5 text-[11px] text-gray-400">@Ago(item.CreatedAt)</p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private readonly List<AuditLogDto> _items = new();
+    private Timer? _timer;
+    private int _lastSeenId;
+    private int _unseen;
+    private bool _open;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PollAsync();
+
+        // Everything already in the log at first load is history, not news.
+        _unseen = 0;
+
+        _timer = new Timer(async _ => await InvokeAsync(PollAndRenderAsync), null,
+            TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(15));
+    }
+
+    private async Task PollAndRenderAsync()
+    {
+        await PollAsync();
+        StateHasChanged();
+    }
+
+    private async Task PollAsync()
+    {
+        try
+        {
+            var fresh = await Activity.GetSinceAsync(_lastSeenId);
+            if (fresh.Count == 0) return;
+
+            // The API returns newest-first; prepend so the newest ends up on top of the list.
+            _items.InsertRange(0, fresh);
+            if (_items.Count > 30) _items.RemoveRange(30, _items.Count - 30);
+
+            _unseen += fresh.Count;
+            _lastSeenId = fresh.Max(f => f.Id);
+        }
+        catch (ApiUnauthorizedException)
+        {
+            // Session died (token expired, or the account was disabled) — stop polling and re-auth.
+            _timer?.Dispose();
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (HttpRequestException)
+        {
+            // Backend hiccup. The bell is not worth breaking the page over; try again next tick.
+        }
+    }
+
+    private void Toggle()
+    {
+        _open = !_open;
+        if (_open) _unseen = 0;
+    }
+
+    private void Close() => _open = false;
+
+    private static string ActionIcon(string action) => action switch
+    {
+        "Create" => "＋",
+        "Update" => "✎",
+        "Delete" => "🗑",
+        "Login" => "→",
+        "LoginFailed" => "⚠",
+        _ => "•",
+    };
+
+    private static string ActionStyle(string action) => action switch
+    {
+        "Create" => "bg-emerald-100 text-emerald-700",
+        "Update" => "bg-amber-100 text-amber-700",
+        "Delete" => "bg-red-100 text-red-700",
+        "LoginFailed" => "bg-red-100 text-red-700",
+        "Login" => "bg-blue-100 text-blue-700",
+        _ => "bg-gray-100 text-gray-600",
+    };
+
+    private static string ActionText(string action) => action switch
+    {
+        "Create" => "زیادیکرد",
+        "Update" => "دەستکاریی کرد",
+        "Delete" => "سڕییەوە",
+        "Login" => "چووە ژوورەوە",
+        "LoginFailed" => "هەوڵی سەرنەکەوتووی چوونەژوورەوە",
+        "CreateUser" => "بەکارهێنەرێکی زیادکرد",
+        "UpdateUser" => "بەکارهێنەرێکی دەستکاری کرد",
+        "DeleteUser" => "بەکارهێنەرێکی سڕییەوە",
+        _ => action,
+    };
+
+    private static string EntityLabel(string entityType) => entityType switch
+    {
+        "Word" => "وشەیەک",
+        "Category" => "پۆلێک",
+        "WordMeans" => "واتایەک",
+        "RelatedWord" => "پەیوەندییەک",
+        "User" => "بەکارهێنەرێک",
+        _ => entityType,
+    };
+
+    private static string Ago(DateTime utc)
+    {
+        var span = DateTime.UtcNow - utc;
+
+        if (span.TotalSeconds < 60) return "ئێستا";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes} خولەک لەمەوپێش";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours} کاتژمێر لەمەوپێش";
+        if (span.TotalDays < 30) return $"{(int)span.TotalDays} ڕۆژ لەمەوپێش";
+        return utc.ToLocalTime().ToString("yyyy-MM-dd");
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}

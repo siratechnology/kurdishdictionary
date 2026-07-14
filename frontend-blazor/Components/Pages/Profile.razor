@@ -1,0 +1,156 @@
+@page "/profile"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize]
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<PageTitle>هەژمارەکەم — فەرھەنگی کوردی</PageTitle>
+
+<h1 class="mb-6 text-2xl font-bold text-gray-900">هەژمارەکەم</h1>
+
+<div class="grid gap-4 lg:grid-cols-2">
+
+    @* ── Who am I ────────────────────────────────────────────────────── *@
+    <AuthorizeView>
+        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <h2 class="mb-4 text-sm font-bold text-gray-900">زانیاری هەژمار</h2>
+
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-400">ناوی بەکارهێنەر</dt>
+                    <dd class="font-semibold text-gray-900">@context.User.Identity?.Name</dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-400">ئیمەیل</dt>
+                    <dd class="truncate font-medium text-gray-700">
+                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+                    </dd>
+                </div>
+                <div class="flex justify-between gap-3">
+                    <dt class="text-gray-400">ڕۆڵەکان</dt>
+                    <dd class="flex flex-wrap justify-end gap-1">
+                        @foreach (var role in context.User.FindAll(System.Security.Claims.ClaimTypes.Role))
+                        {
+                            <span class="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-semibold text-indigo-700">
+                                @RoleLabel(role.Value)
+                            </span>
+                        }
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </AuthorizeView>
+
+    @* ── Change password ─────────────────────────────────────────────── *@
+    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <h2 class="mb-1 text-sm font-bold text-gray-900">گۆڕینی وشەی نهێنی</h2>
+        <p class="mb-4 text-xs text-gray-400">لانیکەم ٦ پیت، بە لانیکەم یەک ژمارە</p>
+
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">⚠️ @_error</div>
+        }
+        @if (_done)
+        {
+            <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+                ✅ وشەی نهێنی گۆڕدرا
+            </div>
+        }
+
+        <div class="space-y-3">
+            <label class="block">
+                <span class="mb-1 block text-xs font-semibold text-gray-700">وشەی نهێنی ئێستا</span>
+                <input @bind="_current" type="password" autocomplete="current-password"
+                       class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+            </label>
+
+            <label class="block">
+                <span class="mb-1 block text-xs font-semibold text-gray-700">وشەی نهێنی نوێ</span>
+                <input @bind="_new" type="password" autocomplete="new-password"
+                       class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+            </label>
+
+            <label class="block">
+                <span class="mb-1 block text-xs font-semibold text-gray-700">دووبارەکردنەوەی وشەی نهێنی نوێ</span>
+                <input @bind="_confirm" type="password" autocomplete="new-password"
+                       class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+            </label>
+
+            <button @onclick="SaveAsync" disabled="@_saving"
+                    class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50">
+                @(_saving ? "دەگۆڕدرێت..." : "گۆڕینی وشەی نهێنی")
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _current = "";
+    private string _new = "";
+    private string _confirm = "";
+    private string? _error;
+    private bool _done;
+    private bool _saving;
+
+    private async Task SaveAsync()
+    {
+        _error = null;
+        _done = false;
+
+        if (_new != _confirm)
+        {
+            _error = "وشە نهێنییە نوێکان وەک یەک نین";
+            return;
+        }
+
+        if (_new.Length < 6)
+        {
+            _error = "وشەی نهێنی دەبێت لانیکەم ٦ پیت بێت";
+            return;
+        }
+
+        _saving = true;
+
+        try
+        {
+            var result = await Auth.ChangePasswordAsync(new ChangePasswordDto
+            {
+                CurrentPassword = _current,
+                NewPassword = _new,
+            });
+
+            if (!result.Succeeded)
+            {
+                _error = result.Error ?? "گۆڕین سەرکەوتوو نەبوو";
+                return;
+            }
+
+            _done = true;
+            _current = _new = _confirm = "";
+
+            // The cookie still holds the pre-change token and the "must change password" claim.
+            // Sign in again so both are refreshed — otherwise the nag banner never goes away.
+            Nav.NavigateTo("/logout-and-return", forceLoad: true);
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (HttpRequestException)
+        {
+            _error = "ناتوانرێت پەیوەندی بە سێرڤەرەوە بکرێت";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    private static string RoleLabel(string role) => role switch
+    {
+        "Admin" => "بەڕێوەبەر",
+        "Editor" => "دەستکاریکەر",
+        "Viewer" => "بینەر",
+        _ => role,
+    };
+}

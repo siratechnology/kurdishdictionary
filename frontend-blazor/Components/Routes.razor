@@ -1,10 +1,31 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
+@using frontend_blazor.Components.Layout
+
+<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        @* AuthorizeRouteView means a page marked [Authorize] can never render for a signed-out user,
+           even if they navigate straight to its URL. *@
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+            <NotAuthorized>
+                @if (context.User.Identity?.IsAuthenticated is true)
+                {
+                    @* Signed in, but the role isn't enough. *@
+                    <Denied />
+                }
+                else
+                {
+                    <RedirectToLogin />
+                }
+            </NotAuthorized>
+            <Authorizing>
+                <div class="min-h-screen flex items-center justify-center">
+                    <div class="h-8 w-8 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-600"></div>
+                </div>
+            </Authorizing>
+        </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <LayoutView Layout="typeof(Layout.MainLayout)">
+        <LayoutView Layout="typeof(MainLayout)">
             <p class="text-center text-gray-400 mt-20 text-lg">404 — پەڕەکە نەدۆزرایەوە</p>
         </LayoutView>
     </NotFound>

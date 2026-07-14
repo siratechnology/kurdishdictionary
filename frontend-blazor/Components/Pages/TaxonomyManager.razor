@@ -1,5 +1,6 @@
 @page "/taxonomy"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize(Roles = "Admin,Editor")]
 @inject WordService WordSvc
 
 <PageTitle>پۆل و جۆرەکانی وشە</PageTitle>

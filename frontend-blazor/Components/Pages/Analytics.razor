@@ -1,0 +1,360 @@
+@page "/analytics"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize]
+@implements IDisposable
+@* Injected as AnalyticsSvc, not Analytics: a member may not share its name with the enclosing class. *@
+@inject AnalyticsService AnalyticsSvc
+@inject NavigationManager Nav
+
+<PageTitle>ترافیکی ماڵپەڕ — فەرھەنگی کوردی</PageTitle>
+
+<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">ترافیکی ماڵپەڕی گشتی</h1>
+        <p class="mt-0.5 text-sm text-gray-400">
+            کێ ماڵپەڕەکە دەکاتەوە، بۆ چی دەگەڕێت، لە کوێوە — بە شار، وڵات و ئامێرەوە
+        </p>
+    </div>
+
+    <div class="flex gap-2">
+        @foreach (var range in Ranges)
+        {
+            <button @onclick="() => SetRangeAsync(range.Days)"
+                    class="rounded-lg px-3 py-1.5 text-xs font-semibold transition
+                           @(_days == range.Days
+                             ? "bg-indigo-600 text-white"
+                             : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50")">
+                @range.Label
+            </button>
+        }
+    </div>
+</div>
+
+@if (_loading)
+{
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        @for (var i = 0; i < 4; i++)
+        {
+            <div class="skeleton h-24"></div>
+        }
+    </div>
+    <div class="skeleton mt-4 h-64"></div>
+}
+else if (_data is null)
+{
+    <div class="rounded-2xl border border-gray-100 bg-white py-16 text-center text-sm text-gray-400">
+        ناتوانرێت داتاکان بهێنرێت
+    </div>
+}
+else
+{
+    @* ── Stat tiles ──────────────────────────────────────────────────── *@
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <StatTile Label="ئێستا لە ماڵپەڕ" Value="@_data.ActiveNow.ToString()" Icon="🟢" Accent="emerald"
+                  Hint="لە ٥ خولەکی ڕابردوودا" />
+        <StatTile Label="سەردانی ئەمڕۆ" Value="@_data.VisitsToday.ToString()" Icon="👁" Accent="indigo"
+                  Hint="@($"{_data.UniqueVisitorsToday} سەردانکەری جیاواز")" />
+        <StatTile Label="گەڕانی ئەمڕۆ" Value="@_data.SearchesToday.ToString()" Icon="🔍" Accent="violet"
+                  Hint="@($"کۆی گشتی {_data.TotalSearches}")" />
+        <StatTile Label="گەڕانی بێ ئەنجام" Value="@_data.EmptySearches.ToString()" Icon="⚠️" Accent="amber"
+                  Hint="وشەی نەدۆزراوە — بۆ زیادکردن" />
+    </div>
+
+    @* ── Traffic chart ───────────────────────────────────────────────── *@
+    <div class="mt-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-sm font-bold text-gray-900">سەردان و گەڕان بە ڕۆژ</h2>
+            <div class="flex gap-3 text-[11px]">
+                <span class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
+                    <span class="text-gray-500">سەردان</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full bg-violet-400"></span>
+                    <span class="text-gray-500">گەڕان</span>
+                </span>
+            </div>
+        </div>
+
+        @* Bars in plain CSS — a chart library would be a lot of weight for one column chart. *@
+        <div class="flex h-40 items-end gap-1">
+            @{
+                var peak = Math.Max(1, _data.DailyVisits.Concat(_data.DailySearches).DefaultIfEmpty(new DailyCountDto()).Max(d => d.Count));
+            }
+            @for (var i = 0; i < _data.DailyVisits.Count; i++)
+            {
+                var visits = _data.DailyVisits[i];
+                var searches = i < _data.DailySearches.Count ? _data.DailySearches[i].Count : 0;
+
+                <div class="group relative flex flex-1 items-end gap-0.5" title="@visits.Date.ToString("yyyy-MM-dd")">
+                    <div class="flex-1 rounded-t bg-indigo-500 transition-all group-hover:bg-indigo-600"
+                         style="height: @(Percent(visits.Count, peak))%"></div>
+                    <div class="flex-1 rounded-t bg-violet-400 transition-all group-hover:bg-violet-500"
+                         style="height: @(Percent(searches, peak))%"></div>
+
+                    <div class="pointer-events-none absolute -top-14 right-1/2 z-10 hidden translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2 py-1 text-[10px] text-white group-hover:block">
+                        <p>@visits.Date.ToString("MM-dd")</p>
+                        <p>@visits.Count سەردان · @searches گەڕان</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4 grid gap-4 lg:grid-cols-2">
+
+        @* ── Top searches ────────────────────────────────────────────── *@
+        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <h2 class="mb-4 text-sm font-bold text-gray-900">🔍 زۆرترین گەڕان</h2>
+            @if (_data.TopSearches.Count == 0)
+            {
+                <p class="py-8 text-center text-sm text-gray-400">هێشتا هیچ گەڕانێک نییە</p>
+            }
+            else
+            {
+                <div class="space-y-2">
+                    @foreach (var term in _data.TopSearches.Take(10))
+                    {
+                        <div class="flex items-center gap-3">
+                            <span class="min-w-0 flex-1 truncate text-sm text-gray-800">@term.Term</span>
+                            @if (term.LastResultCount == 0)
+                            {
+                                <span class="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                                    بێ ئەنجام
+                                </span>
+                            }
+                            <div class="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100">
+                                <div class="h-full rounded-full bg-indigo-500"
+                                     style="width: @(Percent(term.Count, _data.TopSearches.Max(s => s.Count)))%"></div>
+                            </div>
+                            <span class="w-8 shrink-0 text-left text-xs font-semibold text-gray-500">@term.Count</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        @* ── Failed searches: the words worth adding ─────────────────── *@
+        <div class="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 shadow-sm">
+            <h2 class="mb-1 text-sm font-bold text-gray-900">⚠️ گەڕانی بێ ئەنجام</h2>
+            <p class="mb-4 text-xs text-gray-500">ئەم وشانە خەڵک بەدوایاندا دەگەڕێن بەڵام لە فەرھەنگدا نین</p>
+
+            @if (_data.FailedSearches.Count == 0)
+            {
+                <p class="py-8 text-center text-sm text-gray-400">هەموو گەڕانەکان ئەنجامیان هەبووە 🎉</p>
+            }
+            else
+            {
+                <div class="flex flex-wrap gap-2">
+                    @foreach (var term in _data.FailedSearches.Take(20))
+                    {
+                        <span class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-2.5 py-1.5 text-xs">
+                            <span class="font-medium text-gray-800">@term.Term</span>
+                            <span class="rounded bg-amber-100 px-1 text-[10px] font-bold text-amber-700">@term.Count</span>
+                        </span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    @* ── Breakdown grids ─────────────────────────────────────────────── *@
+    <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <BreakdownCard Title="🌍 وڵاتەکان" Items="_data.TopCountries" />
+        <BreakdownCard Title="🏙 شارەکان" Items="_data.TopCities" />
+        <BreakdownCard Title="📱 ئامێرەکان" Items="_data.Devices" />
+        <BreakdownCard Title="🌐 وێبگەڕەکان" Items="_data.Browsers" />
+    </div>
+
+    <div class="mt-4 grid gap-4 lg:grid-cols-2">
+        <BreakdownCard Title="📄 زۆرترین پەڕە" Items="_data.TopPages" />
+        <BreakdownCard Title="🔗 سەرچاوەکان" Items="_data.TopReferrers" />
+    </div>
+
+    @* ── Live visitor feed ───────────────────────────────────────────── *@
+    <div class="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div class="flex items-center gap-2 border-b border-gray-100 px-5 py-3">
+            <span class="relative flex h-2 w-2">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            </span>
+            <h2 class="text-sm font-bold text-gray-900">چالاکی زیندوو</h2>
+            <span class="text-xs text-gray-400">— هەر ١٠ چرکە نوێدەبێتەوە</span>
+        </div>
+
+        <div class="max-h-[28rem] overflow-y-auto">
+            @if (_events.Count == 0)
+            {
+                <p class="py-12 text-center text-sm text-gray-400">هێشتا هیچ سەردانێک نییە</p>
+            }
+            else
+            {
+                @foreach (var e in _events)
+                {
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-gray-50 px-5 py-3 text-xs last:border-0 hover:bg-gray-50">
+                        <span class="rounded px-1.5 py-0.5 text-[10px] font-semibold @EventStyle(e.EventType)">
+                            @EventLabel(e.EventType)
+                        </span>
+
+                        @if (e.EventType == "search" && !string.IsNullOrEmpty(e.SearchTerm))
+                        {
+                            <span class="font-semibold text-gray-900">"@e.SearchTerm"</span>
+                            <span class="@(e.ResultCount == 0 ? "text-amber-600 font-semibold" : "text-gray-400")">
+                                @(e.ResultCount == 0 ? "هیچ ئەنجامێک" : $"{e.ResultCount} ئەنجام")
+                            </span>
+                        }
+                        else if (!string.IsNullOrEmpty(e.Path))
+                        {
+                            <span class="font-mono text-gray-700">@e.Path</span>
+                        }
+
+                        <span class="mr-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-gray-400">
+                            @if (!string.IsNullOrEmpty(e.City) || !string.IsNullOrEmpty(e.Country))
+                            {
+                                <span>📍 @string.Join(", ", new[] { e.City, e.Country }.Where(x => !string.IsNullOrEmpty(x)))</span>
+                            }
+                            @if (!string.IsNullOrEmpty(e.IpAddress))
+                            {
+                                <span class="font-mono">@e.IpAddress</span>
+                            }
+                            @if (!string.IsNullOrEmpty(e.DeviceType))
+                            {
+                                <span>@DeviceIcon(e.DeviceType) @e.Browser</span>
+                            }
+                            @if (e.ScreenWidth is > 0)
+                            {
+                                <span>🖥 @(e.ScreenWidth)×@(e.ScreenHeight)</span>
+                            }
+                            <span title="@e.CreatedAt.ToString("u")">@Ago(e.CreatedAt)</span>
+                        </span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private static readonly (string Label, int Days)[] Ranges =
+    {
+        ("٧ ڕۆژ", 7),
+        ("١٤ ڕۆژ", 14),
+        ("٣٠ ڕۆژ", 30),
+    };
+
+    private AnalyticsSummaryDto? _data;
+    private readonly List<VisitorEventDto> _events = new();
+    private Timer? _timer;
+    private long _lastEventId;
+    private int _days = 14;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+
+        _timer = new Timer(async _ => await InvokeAsync(PollLiveAsync), null,
+            TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
+    }
+
+    private async Task SetRangeAsync(int days)
+    {
+        _days = days;
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        StateHasChanged();
+
+        try
+        {
+            _data = await AnalyticsSvc.GetSummaryAsync(_days);
+
+            _events.Clear();
+            _events.AddRange(_data?.RecentEvents ?? new List<VisitorEventDto>());
+            _lastEventId = _events.Count > 0 ? _events.Max(e => e.Id) : 0;
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+        catch (HttpRequestException)
+        {
+            _data = null;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task PollLiveAsync()
+    {
+        try
+        {
+            var fresh = await AnalyticsSvc.GetLiveAsync(_lastEventId);
+            if (fresh.Count == 0) return;
+
+            // Newest first at the top of the feed; keep the list bounded so a busy day
+            // doesn't grow the circuit's memory without limit.
+            _events.InsertRange(0, fresh.OrderByDescending(e => e.Id));
+            if (_events.Count > 100) _events.RemoveRange(100, _events.Count - 100);
+
+            _lastEventId = fresh.Max(e => e.Id);
+            StateHasChanged();
+        }
+        catch (ApiUnauthorizedException)
+        {
+            _timer?.Dispose();
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (HttpRequestException)
+        {
+            // Transient — the next tick will pick up whatever we missed, since we poll by id.
+        }
+    }
+
+    private static int Percent(int value, int max) =>
+        max <= 0 ? 0 : Math.Max(value > 0 ? 3 : 0, (int)(value / (double)max * 100));
+
+    private static string EventLabel(string type) => type switch
+    {
+        "page_view" => "سەردان",
+        "search" => "گەڕان",
+        "word_view" => "وشە",
+        "share" => "هاوبەشکردن",
+        _ => type,
+    };
+
+    private static string EventStyle(string type) => type switch
+    {
+        "search" => "bg-violet-100 text-violet-700",
+        "page_view" => "bg-indigo-100 text-indigo-700",
+        "word_view" => "bg-emerald-100 text-emerald-700",
+        "share" => "bg-amber-100 text-amber-700",
+        _ => "bg-gray-100 text-gray-600",
+    };
+
+    private static string DeviceIcon(string device) => device switch
+    {
+        "Mobile" => "📱",
+        "Tablet" => "📲",
+        "Desktop" => "🖥",
+        _ => "💻",
+    };
+
+    private static string Ago(DateTime utc)
+    {
+        var span = DateTime.UtcNow - utc;
+
+        if (span.TotalSeconds < 60) return "ئێستا";
+        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}خ";
+        if (span.TotalHours < 24) return $"{(int)span.TotalHours}ک";
+        return $"{(int)span.TotalDays}ڕ";
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}

@@ -9,6 +9,15 @@ services:
         ASPNETCORE_ENVIRONMENT: Production
         ASPNETCORE_URLS: http://+:8080
         ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=KurdishDictionary;User Id=kurdish_user;Password=${SQL_USER_PASSWORD};TrustServerCertificate=True;"
+        # Signs the login tokens. The app refuses to start in Production without it — a hardcoded
+        # key would let anyone mint an admin token. Rotating it logs everyone out.
+        Jwt__Key: ${JWT_KEY}
+        Jwt__ExpiryDays: 7
+        # First-run accounts. Change the passwords after the first login; the dashboard nags until you do.
+        Seed__AdminUserName: ${SEED_ADMIN_USER:-sirwan}
+        Seed__AdminEmail: ${SEED_ADMIN_EMAIL:-sirwanjaff999@gmail.com}
+        Seed__AdminPassword: ${SEED_ADMIN_PASSWORD:-Admin@123!}
+        Seed__EditorPassword: ${SEED_EDITOR_PASSWORD:-Editor@123!}
     ports:
       - "6000:8080"
     networks:

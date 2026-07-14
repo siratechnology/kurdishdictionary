@@ -1,0 +1,404 @@
+@page "/users"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize(Roles = "Admin")]
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<PageTitle>بەکارهێنەران — فەرھەنگی کوردی</PageTitle>
+
+<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900">بەکارهێنەران</h1>
+        <p class="mt-0.5 text-sm text-gray-400">بەڕێوەبردنی هەژمار، ڕۆڵ و دەستڕاگەیشتن</p>
+    </div>
+    <button @onclick="OpenCreate"
+            class="shrink-0 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
+        ＋ بەکارهێنەری نوێ
+    </button>
+</div>
+
+@if (!string.IsNullOrEmpty(_error))
+{
+    <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">⚠️ @_error</div>
+}
+@if (!string.IsNullOrEmpty(_notice))
+{
+    <div class="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">✅ @_notice</div>
+}
+
+@if (_loading)
+{
+    <div class="space-y-2">
+        @for (var i = 0; i < 5; i++)
+        {
+            <div class="skeleton h-20 w-full"></div>
+        }
+    </div>
+}
+else
+{
+    <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        @foreach (var user in _users)
+        {
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:shadow-md">
+                <div class="flex items-start gap-3">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white @AvatarColor(user.UserName)">
+                        @Initials(user.UserName)
+                    </span>
+
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5">
+                            <p class="truncate text-sm font-bold text-gray-900">@user.UserName</p>
+                            @if (!user.IsActive)
+                            {
+                                <span class="rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700">ڕاگیراو</span>
+                            }
+                        </div>
+                        <p class="truncate text-xs text-gray-400">@user.Email</p>
+
+                        <div class="mt-2 flex flex-wrap gap-1">
+                            @foreach (var role in user.Roles)
+                            {
+                                <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold @RoleStyle(role)">
+                                    @RoleLabel(role)
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <dl class="mt-3 grid grid-cols-2 gap-2 border-t border-gray-100 pt-3 text-[11px]">
+                    <div>
+                        <dt class="text-gray-400">وشەکان</dt>
+                        <dd class="font-semibold text-gray-900">@user.WordCount</dd>
+                    </div>
+                    <div>
+                        <dt class="text-gray-400">دوا چوونەژوورەوە</dt>
+                        <dd class="font-semibold text-gray-900">
+                            @(user.LastLoginAt is { } at ? at.ToLocalTime().ToString("yyyy-MM-dd") : "هەرگیز")
+                        </dd>
+                    </div>
+                </dl>
+
+                <div class="mt-3 flex gap-2">
+                    <button @onclick="() => OpenEdit(user)"
+                            class="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50">
+                        ✎ دەستکاری
+                    </button>
+                    <button @onclick="() => ConfirmDelete(user)"
+                            class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50">
+                        🗑
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@* ── Create / edit modal ──────────────────────────────────────────────── *@
+@if (_editing is not null)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h2 class="mb-5 text-lg font-bold text-gray-900">
+                @(_isNew ? "بەکارهێنەری نوێ" : $"دەستکاری {_editing.UserName}")
+            </h2>
+
+            @if (!string.IsNullOrEmpty(_modalError))
+            {
+                <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">@_modalError</div>
+            }
+
+            <div class="space-y-4">
+                @if (_isNew)
+                {
+                    <label class="block">
+                        <span class="mb-1 block text-xs font-semibold text-gray-700">ناوی بەکارهێنەر</span>
+                        <input @bind="_editing.UserName" placeholder="ahmadaziz"
+                               class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                    </label>
+                }
+
+                <label class="block">
+                    <span class="mb-1 block text-xs font-semibold text-gray-700">ئیمەیل</span>
+                    <input @bind="_editing.Email" type="email"
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                </label>
+
+                <label class="block">
+                    <span class="mb-1 block text-xs font-semibold text-gray-700">ناوی تەواو</span>
+                    <input @bind="_editing.FullName"
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                </label>
+
+                <label class="block">
+                    <span class="mb-1 block text-xs font-semibold text-gray-700">
+                        @(_isNew ? "وشەی نهێنی" : "وشەی نهێنی نوێ (بەتاڵی بهێڵەوە بۆ نەگۆڕین)")
+                    </span>
+                    <input @bind="_editing.Password" type="text" placeholder="@(_isNew ? "" : "نەگۆڕدراو")"
+                           class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                </label>
+
+                <div>
+                    <span class="mb-1.5 block text-xs font-semibold text-gray-700">ڕۆڵەکان</span>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var role in AllRoles)
+                        {
+                            var selected = _editing.Roles.Contains(role);
+                            <button type="button" @onclick="() => ToggleRole(role)"
+                                    class="rounded-lg px-3 py-1.5 text-xs font-semibold transition
+                                           @(selected ? RoleStyle(role) + " ring-2 ring-offset-1 ring-indigo-400"
+                                                      : "bg-gray-100 text-gray-500 hover:bg-gray-200")">
+                                @RoleLabel(role)
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                @if (!_isNew)
+                {
+                    <label class="flex cursor-pointer items-center gap-2">
+                        <input type="checkbox" @bind="_editing.IsActive"
+                               class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                        <span class="text-sm text-gray-700">هەژمار چالاکە</span>
+                    </label>
+                }
+            </div>
+
+            <div class="mt-6 flex gap-2">
+                <button @onclick="SaveAsync" disabled="@_saving"
+                        class="flex-1 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50">
+                    @(_saving ? "پاشەکەوت دەکرێت..." : "پاشەکەوتکردن")
+                </button>
+                <button @onclick="CloseModal" disabled="@_saving"
+                        class="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50">
+                    پاشگەزبوونەوە
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@* ── Delete confirmation ──────────────────────────────────────────────── *@
+@if (_deleting is not null)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
+        <div class="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
+            <p class="text-3xl">🗑</p>
+            <h2 class="mt-3 text-lg font-bold text-gray-900">سڕینەوەی @_deleting.UserName؟</h2>
+            <p class="mt-2 text-sm text-gray-500">
+                وشەکانی ناسڕدرێنەوە — تەنها بێ خاوەن دەبن. ئەم کردارە ناگەڕێتەوە.
+            </p>
+            <div class="mt-6 flex gap-2">
+                <button @onclick="DeleteAsync" disabled="@_saving"
+                        class="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50">
+                    بەڵێ، بیسڕەوە
+                </button>
+                <button @onclick="() => _deleting = null" disabled="@_saving"
+                        class="flex-1 rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50">
+                    پاشگەزبوونەوە
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private static readonly string[] AllRoles = { "Admin", "Editor", "Viewer" };
+
+    private List<UserDto> _users = new();
+    private bool _loading = true;
+    private bool _saving;
+    private string? _error;
+    private string? _notice;
+    private string? _modalError;
+
+    private EditModel? _editing;
+    private bool _isNew;
+    private UserDto? _deleting;
+
+    /// <summary>Backs both the create and the edit form; NewPassword is optional when editing.</summary>
+    private sealed class EditModel
+    {
+        public Guid Id { get; set; }
+        public string UserName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string? FullName { get; set; }
+        public string Password { get; set; } = "";
+        public bool IsActive { get; set; } = true;
+        public List<string> Roles { get; set; } = new();
+    }
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _error = null;
+
+        try
+        {
+            _users = await Auth.GetUsersAsync();
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+            return;
+        }
+        catch (HttpRequestException)
+        {
+            _error = "ناتوانرێت لیستی بەکارهێنەران بهێنرێت";
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void OpenCreate()
+    {
+        _isNew = true;
+        _modalError = null;
+        _editing = new EditModel { Roles = { "Editor" } };
+    }
+
+    private void OpenEdit(UserDto user)
+    {
+        _isNew = false;
+        _modalError = null;
+        _editing = new EditModel
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email ?? "",
+            FullName = user.FullName,
+            IsActive = user.IsActive,
+            Roles = new List<string>(user.Roles),
+        };
+    }
+
+    private void CloseModal()
+    {
+        _editing = null;
+        _modalError = null;
+    }
+
+    private void ToggleRole(string role)
+    {
+        if (_editing is null) return;
+
+        if (!_editing.Roles.Remove(role))
+            _editing.Roles.Add(role);
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_editing is null) return;
+
+        _saving = true;
+        _modalError = null;
+
+        try
+        {
+            AuthResultDto result;
+
+            if (_isNew)
+            {
+                result = await Auth.CreateUserAsync(new CreateUserDto
+                {
+                    UserName = _editing.UserName.Trim(),
+                    Email = _editing.Email.Trim(),
+                    FullName = _editing.FullName,
+                    Password = _editing.Password,
+                    Roles = _editing.Roles,
+                });
+            }
+            else
+            {
+                result = await Auth.UpdateUserAsync(_editing.Id, new UpdateUserDto
+                {
+                    Email = _editing.Email.Trim(),
+                    FullName = _editing.FullName,
+                    IsActive = _editing.IsActive,
+                    Roles = _editing.Roles,
+                    NewPassword = string.IsNullOrWhiteSpace(_editing.Password) ? null : _editing.Password,
+                });
+            }
+
+            if (!result.Succeeded)
+            {
+                _modalError = result.Error ?? "پاشەکەوتکردن سەرکەوتوو نەبوو";
+                return;
+            }
+
+            _notice = _isNew ? "بەکارهێنەر دروستکرا" : "بەکارهێنەر نوێکرایەوە";
+            _editing = null;
+            await LoadAsync();
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (HttpRequestException)
+        {
+            _modalError = "ناتوانرێت پەیوەندی بە سێرڤەرەوە بکرێت";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    private void ConfirmDelete(UserDto user) => _deleting = user;
+
+    private async Task DeleteAsync()
+    {
+        if (_deleting is null) return;
+
+        _saving = true;
+
+        try
+        {
+            var result = await Auth.DeleteUserAsync(_deleting.Id);
+            _error = result.Succeeded ? null : result.Error;
+            if (result.Succeeded) _notice = "بەکارهێنەر سڕدرایەوە";
+
+            _deleting = null;
+            await LoadAsync();
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    private static string Initials(string? name) =>
+        string.IsNullOrWhiteSpace(name) ? "؟" : name.Trim()[..1].ToUpperInvariant();
+
+    /// <summary>Stable per-name colour so a user keeps the same avatar tint between visits.</summary>
+    private static string AvatarColor(string name)
+    {
+        string[] palette = { "bg-indigo-600", "bg-emerald-600", "bg-amber-600", "bg-rose-600", "bg-violet-600", "bg-cyan-600" };
+        return palette[Math.Abs(name.GetHashCode()) % palette.Length];
+    }
+
+    private static string RoleStyle(string role) => role switch
+    {
+        "Admin" => "bg-red-100 text-red-700",
+        "Editor" => "bg-indigo-100 text-indigo-700",
+        "Viewer" => "bg-gray-100 text-gray-600",
+        _ => "bg-gray-100 text-gray-600",
+    };
+
+    private static string RoleLabel(string role) => role switch
+    {
+        "Admin" => "بەڕێوەبەر",
+        "Editor" => "دەستکاریکەر",
+        "Viewer" => "بینەر",
+        _ => role,
+    };
+}

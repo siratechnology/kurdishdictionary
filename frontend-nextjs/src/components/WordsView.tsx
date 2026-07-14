@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useTransition } from "react";
 import WordCard, { WordDto } from "./WordCard";
 import RelatedWordsFlow from "./RelatedWordsFlow";
+import { track } from "@/lib/analytics";
 
 interface PagedResult {
   items: WordDto[];
@@ -47,6 +48,18 @@ export default function WordsView({ initialData }: Props) {
     const json: PagedResult = await res.json();
     setData(json);
     setPage(p);
+
+    // Tracked here rather than in the input handler because this is the only place that knows how
+    // many results the term actually returned — and a search with 0 results is the single most
+    // useful thing the dashboard can show: a word the dictionary is missing.
+    // Only the first page counts, or paging through results would log the same search repeatedly.
+    if (q.trim() && p === 1) {
+      track({
+        eventType: "search",
+        searchTerm: q.trim(),
+        resultCount: json.totalCount,
+      });
+    }
   }, []);
 
   const handleSearch = (value: string) => {

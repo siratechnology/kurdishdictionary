@@ -10,6 +10,18 @@ public class Word
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    /// <summary>
+    /// The user this word belongs to. Nullable because words created before authentication
+    /// existed have no known author; those are backfilled by first letter at startup
+    /// (see WordOwnershipBackfill).
+    /// </summary>
+    public Guid? CreatedByUserId { get; set; }
+    public AppUser? CreatedByUser { get; set; }
+
+    public Guid? UpdatedByUserId { get; set; }
+    public AppUser? UpdatedByUser { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+
     public ICollection<WordSpeechPane> SpeechPanes { get; set; } = new List<WordSpeechPane>();
     public ICollection<WordCategory> WordCategories { get; set; } = new List<WordCategory>();
     public ICollection<WordMeans> Meanings { get; set; } = new List<WordMeans>();
@@ -50,6 +62,13 @@ public class RelatedWord
     public Word TargetWord { get; set; } = null!;
     public string RelationType { get; set; } = string.Empty;
     public int Weight { get; set; } = 1;
+
+    /// <summary>
+    /// Who authored this relation. Existing rows inherit the owner of the source word at startup —
+    /// a relation hanging off someone's word is work they did on that word.
+    /// </summary>
+    public Guid? CreatedByUserId { get; set; }
+    public AppUser? CreatedByUser { get; set; }
 }
 
 public class WordMeans
@@ -60,6 +79,10 @@ public class WordMeans
     public Word Word { get; set; } = null!;
     public string Meaning { get; set; } = string.Empty;
     public string? Locate { get; set; }
+
+    /// <summary>Who authored this meaning. Backfilled from the parent word's owner. See <see cref="RelatedWord.CreatedByUserId"/>.</summary>
+    public Guid? CreatedByUserId { get; set; }
+    public AppUser? CreatedByUser { get; set; }
 }
 
 public enum GrammaticalGender
