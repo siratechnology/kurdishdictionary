@@ -31,6 +31,11 @@
 
 @code {
     [Parameter, EditorRequired] public string Title { get; set; } = "";
-    [Parameter, EditorRequired] public List<NameCountDto> Items { get; set; } = new();
+
+    // Fully qualified with global::. This component's own namespace is frontend_blazor.Components.Shared,
+    // so a bare "Shared.Dtos.NameCountDto" binds "Shared" to the enclosing namespace and looks for a
+    // non-existent frontend_blazor.Components.Shared.Dtos. A clean build (e.g. the Docker image) fails
+    // on it even though an incremental local build with stale generated files does not.
+    [Parameter, EditorRequired] public List<global::Shared.Dtos.NameCountDto> Items { get; set; } = new();
     [Parameter] public int Take { get; set; } = 6;
 }
