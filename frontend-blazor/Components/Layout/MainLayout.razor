@@ -4,9 +4,11 @@
 @* The drawer is a pure CSS peer-toggle rather than Blazor state: the layout renders statically, so a
    JS/Blazor toggle would be dead until the circuit connects. A checkbox works on the very first paint. *@
 
-<input type="checkbox" id="nav-toggle" class="peer hidden" aria-hidden="true" />
-
 <div class="min-h-screen bg-gray-50">
+
+    @* The toggle must be a *sibling* of the overlay and aside below: peer-checked:* compiles to a
+       general-sibling selector (#nav-toggle:checked ~ …), so a nested checkbox would never reach them. *@
+    <input type="checkbox" id="nav-toggle" class="peer hidden" aria-hidden="true" />
 
     @* ── Mobile overlay: tapping anywhere outside the drawer closes it ── *@
     <label for="nav-toggle"
