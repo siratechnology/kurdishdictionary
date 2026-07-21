@@ -112,6 +112,42 @@ public class AuthController : ControllerBase
         });
     }
 
+    // GET api/auth/leaderboard
+    // Every signed-in user may read this — it is the dashboard's motivation board.
+    // Editors only (admins are excluded), and it exposes no personal details.
+    [HttpGet("leaderboard")]
+    [Authorize]
+    public async Task<ActionResult<List<ContributorDto>>> GetLeaderboard()
+    {
+        var editors = await _users.GetUsersInRoleAsync(Roles.Editor);
+        var admins = (await _users.GetUsersInRoleAsync(Roles.Admin)).Select(u => u.Id).ToHashSet();
+
+        var candidates = editors
+            .Where(u => u.IsActive && !admins.Contains(u.Id))
+            .ToList();
+
+        // One grouped query instead of a count per user.
+        var wordCounts = await _db.Words
+            .Where(w => w.CreatedByUserId != null)
+            .GroupBy(w => w.CreatedByUserId!.Value)
+            .Select(g => new { UserId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.UserId, x => x.Count);
+
+        var result = candidates
+            .Select(u => new ContributorDto
+            {
+                Id = u.Id,
+                UserName = u.UserName ?? string.Empty,
+                FullName = u.FullName,
+                WordCount = wordCounts.GetValueOrDefault(u.Id),
+            })
+            .OrderByDescending(c => c.WordCount)
+            .ThenBy(c => c.UserName)
+            .ToList();
+
+        return Ok(result);
+    }
+
     // ── User management (Admin only) ───────────────────────────────────────
 
     // GET api/auth/users

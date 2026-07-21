@@ -2,6 +2,7 @@
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize]
 @inject WordService WordSvc
+@inject AuthService Auth
 
 <PageTitle>داشبۆرد — فەرھەنگی کوردی</PageTitle>
 
@@ -16,6 +17,7 @@
                 <div class="skeleton h-28 rounded-2xl"></div>
             }
         </div>
+        <div class="skeleton h-80 rounded-2xl"></div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             @for (int i = 0; i < 3; i++)
             {
@@ -59,7 +61,7 @@ else
                         </span>
                         <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-200">زیندوو</span>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-white">ژووری کارگێڕی فەرھەنگ</h1>
+                    <h1 class="text-2xl sm:text-3xl font-black text-white">داشبۆردی فەرھەنگ</h1>
                     <p class="text-sm text-indigo-100 mt-1.5">
                         تێڕوانینێکی گشتی بۆ هەموو داتاکانی فەرھەنگی کوردی — وشە، واتا، پەیوەندی و پۆلەکان
                     </p>
@@ -133,6 +135,86 @@ else
                 <p class="text-xs text-rose-100 mt-1">پۆلی وشەکان</p>
             </div>
         </div>
+
+        <!-- ══════════════════════════════════════════════════════════
+             CONTRIBUTOR LEADERBOARD — editors ranked by owned words.
+             Each rank carries its own metal/gem tier styling.
+        ══════════════════════════════════════════════════════════ -->
+        @if (_editors.Count > 0)
+        {
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+
+                <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 bg-gradient-to-l from-amber-50 via-white to-white">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 to-yellow-600 text-lg shadow-md shadow-amber-200">🏆</span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-black text-gray-900">پێشەنگانی فەرھەنگ</p>
+                            <p class="text-[11px] text-gray-400">ڕیزبەندی دەستکاریکەران بەپێی ژمارەی وشەی تۆمارکراو</p>
+                        </div>
+                    </div>
+                    <div class="shrink-0 text-left">
+                        <p class="text-xl font-black text-gray-900">@_editors.Sum(u => u.WordCount).ToString("N0")</p>
+                        <p class="text-[10px] text-gray-400">@_editors.Count دەستکاریکەر</p>
+                    </div>
+                </div>
+
+                <div class="p-3 sm:p-4 space-y-2.5">
+                    @{
+                        int rank = 0;
+                        int topCount = Math.Max(1, _editors.Max(u => u.WordCount));
+                    }
+                    @foreach (var u in _editors)
+                    {
+                        rank++;
+                        var tier = TierFor(rank);
+
+                        <div class="group relative flex items-center gap-3 sm:gap-4 rounded-2xl border p-3 sm:p-3.5 transition-all duration-300 hover:-translate-y-0.5 @tier.Row @tier.Glow">
+
+                            <!-- rank -->
+                            <div class="w-8 sm:w-10 shrink-0 text-center">
+                                @if (rank == 1)
+                                {
+                                    <span class="block text-sm leading-none">👑</span>
+                                }
+                                <span class="block text-base sm:text-lg font-black leading-tight @tier.Accent">@rank</span>
+                            </div>
+
+                            <!-- avatar + tier medal -->
+                            <div class="relative shrink-0">
+                                <span class="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-gradient-to-br @tier.Metal text-base font-black text-white shadow-sm @(rank == 1 ? "ring-2 ring-offset-2 ring-amber-300" : "")">
+                                    @Initial(u.UserName)
+                                </span>
+                                <span class="absolute -bottom-1.5 -left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] shadow-sm border border-gray-100">
+                                    @tier.Icon
+                                </span>
+                            </div>
+
+                            <!-- name + tier + progress -->
+                            <div class="min-w-0 flex-1">
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                    <span class="text-sm font-black text-gray-900 truncate">
+                                        @(string.IsNullOrWhiteSpace(u.FullName) ? u.UserName : u.FullName)
+                                    </span>
+                                    <span class="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-black @tier.Chip">
+                                        @tier.Name
+                                    </span>
+                                </div>
+                                <div class="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                                    <div class="h-full rounded-full bg-gradient-to-l @tier.Metal transition-all duration-700"
+                                         style="width:@(Math.Max(4, Pct(u.WordCount, topCount)))%"></div>
+                                </div>
+                            </div>
+
+                            <!-- count -->
+                            <div class="shrink-0 text-left ps-1">
+                                <p class="text-lg sm:text-xl font-black text-gray-900 leading-none">@u.WordCount.ToString("N0")</p>
+                                <p class="text-[10px] text-gray-400 mt-1">وشە</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
 
         <!-- ══════════════════════════════════════════════════════════
              DISTRIBUTION CHARTS (light cards)
@@ -330,6 +412,7 @@ else
 
 @code {
     DashboardDto? _stats;
+    List<ContributorDto> _editors = new();
     bool _loading = true;
 
     protected override async Task OnInitializedAsync() => await Load();
@@ -339,7 +422,12 @@ else
         _loading = true;
         try { _stats = await WordSvc.GetDashboardAsync(); }
         catch { _stats = null; }
-        finally { _loading = false; }
+
+        // Visible to every signed-in user — the ranking is meant to motivate, not to audit.
+        try { _editors = await Auth.GetLeaderboardAsync(); }
+        catch { _editors = new(); }
+
+        _loading = false;
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────
@@ -361,6 +449,30 @@ else
         new("پۆل",       _stats.WordsWithoutCategory,  "/taxonomy"),
         new("جۆری وشە",  _stats.WordsWithoutSpeechPane,"/taxonomy"),
     };
+
+    // ── Leaderboard tiers ───────────────────────────────────────────────────
+    // Ten ranked states, saturated and glowing at the top, muted and flat at the
+    // bottom — so the ladder reads as a hierarchy even before you read a number.
+    record Tier(string Name, string Icon, string Metal, string Chip, string Row, string Accent, string Glow);
+
+    static readonly Tier[] Tiers =
+    {
+        new("ئەڵماس",   "💎", "from-cyan-400 to-sky-600",      "bg-cyan-50 text-cyan-700 border-cyan-200",       "border-cyan-200 bg-gradient-to-l from-cyan-50 via-sky-50/40 to-white",       "text-cyan-600",   "shadow-lg shadow-cyan-100"),
+        new("پلاتین",   "🔷", "from-violet-400 to-indigo-600", "bg-violet-50 text-violet-700 border-violet-200", "border-violet-200 bg-gradient-to-l from-violet-50 via-indigo-50/40 to-white", "text-violet-600", "shadow-lg shadow-violet-100"),
+        new("زێڕ",      "🥇", "from-amber-300 to-yellow-600",  "bg-amber-50 text-amber-700 border-amber-200",    "border-amber-200 bg-gradient-to-l from-amber-50 via-yellow-50/40 to-white",   "text-amber-600",  "shadow-lg shadow-amber-100"),
+        new("زیو",      "🥈", "from-slate-300 to-slate-500",   "bg-slate-50 text-slate-600 border-slate-200",    "border-slate-200 bg-gradient-to-l from-slate-50 to-white",                    "text-slate-500",  "shadow-md shadow-slate-100"),
+        new("برۆنز",    "🥉", "from-orange-400 to-amber-700",  "bg-orange-50 text-orange-700 border-orange-200", "border-orange-200 bg-gradient-to-l from-orange-50 to-white",                  "text-orange-600", "shadow-md shadow-orange-100"),
+        new("مس",       "🔶", "from-rose-400 to-rose-600",     "bg-rose-50 text-rose-700 border-rose-200",       "border-rose-200 bg-gradient-to-l from-rose-50 to-white",                      "text-rose-500",   "shadow-sm"),
+        new("پۆڵا",     "🔩", "from-sky-400 to-blue-600",      "bg-sky-50 text-sky-700 border-sky-200",          "border-sky-200 bg-gradient-to-l from-sky-50 to-white",                        "text-sky-600",    "shadow-sm"),
+        new("ئەلمنیۆم", "⬜", "from-zinc-300 to-zinc-500",     "bg-zinc-50 text-zinc-600 border-zinc-200",       "border-zinc-200 bg-white",                                                    "text-zinc-500",   "shadow-sm"),
+        new("ئاسن",     "⚙️", "from-stone-400 to-stone-600",   "bg-stone-50 text-stone-600 border-stone-200",    "border-stone-200 bg-white",                                                   "text-stone-500",  ""),
+        new("قوڕقوشم",  "▫️", "from-gray-400 to-gray-600",     "bg-gray-50 text-gray-500 border-gray-200",       "border-gray-200 bg-white",                                                    "text-gray-400",   ""),
+    };
+
+    static Tier TierFor(int rank) => Tiers[Math.Clamp(rank, 1, Tiers.Length) - 1];
+
+    static string Initial(string? name) =>
+        string.IsNullOrWhiteSpace(name) ? "؟" : name.Trim()[..1].ToUpperInvariant();
 
     static readonly Dictionary<string, string> GenderPalette = new()
     {

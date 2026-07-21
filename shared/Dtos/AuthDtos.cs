@@ -42,6 +42,18 @@ public class UserDto
     public int WordCount { get; set; }
 }
 
+/// <summary>
+/// Public-to-every-signed-in-user slice of a user: just enough to render the
+/// contributor leaderboard, with no email, IP or account flags attached.
+/// </summary>
+public class ContributorDto
+{
+    public Guid Id { get; set; }
+    public string UserName { get; set; } = string.Empty;
+    public string? FullName { get; set; }
+    public int WordCount { get; set; }
+}
+
 public class CreateUserDto
 {
     [Required] public string UserName { get; set; } = string.Empty;

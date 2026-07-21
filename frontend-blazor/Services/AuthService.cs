@@ -48,6 +48,15 @@ public class AuthService
                ?? new AuthResultDto { Succeeded = false };
     }
 
+    /// <summary>Editor-only contributor ranking — readable by any signed-in user.</summary>
+    public async Task<List<ContributorDto>> GetLeaderboardAsync()
+    {
+        var http = await _api.CreateAsync();
+        var response = await http.GetAsync("api/auth/leaderboard");
+        response.EnsureAuthorizedAndSuccess();
+        return await response.Content.ReadFromJsonAsync<List<ContributorDto>>() ?? new();
+    }
+
     public async Task<List<UserDto>> GetUsersAsync()
     {
         var http = await _api.CreateAsync();
