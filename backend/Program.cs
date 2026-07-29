@@ -1,6 +1,7 @@
 using System.Text;
 using backend.Data;
 using backend.Data.Models;
+using backend.Hubs;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,11 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 
+// Pushes every audited write to the admin clients — AuditSaveChangesInterceptor broadcasts through
+// IActivityBroadcaster the moment its rows commit. Singleton, so a scoped interceptor can hold it.
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IActivityBroadcaster, ActivityBroadcaster>();
+
 builder.Services.AddHttpClient<IGeoLocationService, GeoLocationService>(client =>
 {
     // A slow geo provider must not hold up an analytics write.
@@ -107,6 +113,25 @@ builder.Services
             // Default is 5 minutes of leeway; a token is expired when it says it is.
             ClockSkew = TimeSpan.Zero,
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // A browser cannot set headers on a WebSocket handshake, so SignalR falls back to
+                // passing the token in the query string. Accepted only on the hub path — anywhere
+                // else it would put credentials into request logs and referrers.
+                var token = context.Request.Query["access_token"];
+
+                if (!string.IsNullOrEmpty(token) &&
+                    context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = token;
+                }
+
+                return Task.CompletedTask;
+            },
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -137,6 +162,7 @@ app.UseCors(PublicSiteCors);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<ActivityHub>("/hubs/activity");
 
 using (var scope = app.Services.CreateScope())
 {

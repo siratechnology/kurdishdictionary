@@ -74,6 +74,8 @@ builder.Services.AddScoped<WordService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AnalyticsService>();
 builder.Services.AddScoped<ActivityService>();
+// Scoped: one hub connection per circuit, shared by every component on it.
+builder.Services.AddScoped<ActivityStream>();
 
 // ── Authentication ────────────────────────────────────────────────────────
 // The cookie is the session; the JWT it carries is what the API checks. Both last a week, so a

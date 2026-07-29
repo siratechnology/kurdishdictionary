@@ -1,6 +1,7 @@
 using System.Text.Json;
 using backend.Data.Models;
 using backend.Services;
+using Shared.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -18,6 +19,7 @@ namespace backend.Data;
 public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly ICurrentUser _user;
+    private readonly IActivityBroadcaster _broadcaster;
 
     /// <summary>Entities we log. Anything not listed (AuditLog, AnalyticsEvent, Identity tables) is ignored.</summary>
     private static readonly HashSet<Type> Audited = new()
@@ -35,7 +37,11 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
     private readonly List<PendingAudit> _pending = new();
     private bool _writingAudits;
 
-    public AuditSaveChangesInterceptor(ICurrentUser user) => _user = user;
+    public AuditSaveChangesInterceptor(ICurrentUser user, IActivityBroadcaster broadcaster)
+    {
+        _user = user;
+        _broadcaster = broadcaster;
+    }
 
     private sealed record PendingAudit(EntityEntry Entry, AuditLog Log, bool NeedsKeyAfterSave);
 
@@ -77,6 +83,10 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
             {
                 _writingAudits = false;
             }
+
+            // Only now do the rows have their ids, which clients need to de-duplicate against what
+            // they already hold. Broadcasting earlier would push rows nobody could reconcile.
+            await _broadcaster.BroadcastAsync(logs.Select(ToDto).ToList(), ct);
         }
 
         return await base.SavedChangesAsync(eventData, result, ct);
@@ -157,6 +167,26 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
             _pending.Add(new PendingAudit(entry, log, entry.State == EntityState.Added));
         }
     }
+
+    /// <summary>
+    /// Shapes a row the same way <c>GET api/words/audit/since</c> does — including leaving UserAgent
+    /// off — so a client cannot tell whether an entry arrived by push or by catch-up poll.
+    /// </summary>
+    private static AuditLogDto ToDto(AuditLog log) => new()
+    {
+        Id = log.Id,
+        Action = log.Action,
+        EntityType = log.EntityType,
+        EntityId = log.EntityId,
+        Summary = log.Summary,
+        Changes = log.Changes,
+        UserId = log.UserId,
+        UserName = log.UserName,
+        IpAddress = log.IpAddress,
+        Country = log.Country,
+        City = log.City,
+        CreatedAt = log.CreatedAt,
+    };
 
     /// <summary>Field-level before/after, as JSON, for the activity feed to render.</summary>
     private static string? BuildDiff(EntityEntry entry)

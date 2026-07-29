@@ -4,6 +4,7 @@
 @implements IAsyncDisposable
 @inject WordService WordSvc
 @inject AuthService Auth
+@inject ActivityStream Stream
 
 <PageTitle>داشبۆرد — فەرھەنگی کوردی</PageTitle>
 
@@ -433,29 +434,57 @@ else
     DateTime? _updatedAt;
 
     // The dashboard aggregates work done by *other* editors, so it goes stale the moment someone else
-    // saves a word. Re-pulling on a timer and pushing the diff down the open circuit means the numbers
-    // move on their own — no reload, and only the changed nodes go over the wire.
-    static readonly TimeSpan RefreshInterval = TimeSpan.FromSeconds(20);
+    // saves. The backend pushes every committed write down the activity hub, so the numbers move on
+    // their own — no polling, no reload, and only the changed DOM nodes cross the circuit.
     readonly CancellationTokenSource _cts = new();
+
+    // A bulk import fires one push per row. Collapsing them into a single re-pull keeps a 200-word
+    // paste from queueing 200 dashboard aggregations.
+    static readonly TimeSpan Debounce = TimeSpan.FromMilliseconds(600);
+    CancellationTokenSource? _debounce;
 
     protected override async Task OnInitializedAsync()
     {
         await Load();
-        _ = AutoRefreshLoopAsync();   // deliberately not awaited: it runs for the life of the page
+
+        Stream.Received += OnActivityAsync;
+        Stream.Reconnected += OnReconnectedAsync;
+        await Stream.StartAsync();
     }
 
-    async Task AutoRefreshLoopAsync()
+    /// <summary>Every audited write touches the totals, so anything that arrives is worth a re-pull.</summary>
+    Task OnActivityAsync(IReadOnlyList<AuditLogDto> entries)
     {
-        using var timer = new PeriodicTimer(RefreshInterval);
-        try
+        DebouncedRefresh();
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Pushes sent while the socket was down are gone for good — re-pull to catch up.</summary>
+    Task OnReconnectedAsync()
+    {
+        DebouncedRefresh();
+        return Task.CompletedTask;
+    }
+
+    void DebouncedRefresh()
+    {
+        _debounce?.Cancel();
+        _debounce?.Dispose();
+        _debounce = CancellationTokenSource.CreateLinkedTokenSource(_cts.Token);
+        var token = _debounce.Token;
+
+        _ = Task.Run(async () =>
         {
-            while (await timer.WaitForNextTickAsync(_cts.Token))
+            try
+            {
+                await Task.Delay(Debounce, token);
                 await InvokeAsync(RefreshAsync);
-        }
-        catch (OperationCanceledException)
-        {
-            // Navigated away — nothing to clean up beyond the timer's using.
-        }
+            }
+            catch (OperationCanceledException)
+            {
+                // Superseded by a newer push, or the page went away.
+            }
+        }, token);
     }
 
     /// <summary>
@@ -505,8 +534,12 @@ else
 
     public async ValueTask DisposeAsync()
     {
+        Stream.Received -= OnActivityAsync;
+        Stream.Reconnected -= OnReconnectedAsync;
+
         await _cts.CancelAsync();
         _cts.Dispose();
+        _debounce?.Dispose();
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────

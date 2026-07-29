@@ -1,9 +1,11 @@
-@implements IDisposable
+@implements IAsyncDisposable
 @inject ActivityService Activity
+@inject ActivityStream Stream
 @inject NavigationManager Nav
 
-@* Live feed of what everyone is doing. Polls rather than pushes: the audit rows are written by the
-   backend (a different process), so this app has nothing to push from. *@
+@* Live feed of what everyone is doing, pushed from the backend's activity hub the instant a write
+   commits. The one poll left is the catch-up after a reconnect: SignalR does not replay what it
+   dropped, so the gap has to be closed by asking for everything after the last id we hold. *@
 
 <div class="relative">
     <button type="button" @onclick="Toggle"
@@ -66,7 +68,6 @@
 
 @code {
     private readonly List<AuditLogDto> _items = new();
-    private Timer? _timer;
     private int _lastSeenId;
     private int _unseen;
     private bool _open;
@@ -78,14 +79,43 @@
         // Everything already in the log at first load is history, not news.
         _unseen = 0;
 
-        _timer = new Timer(async _ => await InvokeAsync(PollAndRenderAsync), null,
-            TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(15));
+        Stream.Received += OnActivityAsync;
+        Stream.Reconnected += OnReconnectedAsync;
+        await Stream.StartAsync();
     }
+
+    /// <summary>A batch straight off the hub — no round-trip needed, the rows are already here.</summary>
+    private async Task OnActivityAsync(IReadOnlyList<AuditLogDto> entries)
+    {
+        await InvokeAsync(() =>
+        {
+            // The catch-up poll and the push can overlap on the same rows; ids settle it.
+            var fresh = entries.Where(e => e.Id > _lastSeenId)
+                               .OrderByDescending(e => e.Id)
+                               .ToList();
+            if (fresh.Count == 0) return;
+
+            Merge(fresh);
+            StateHasChanged();
+        });
+    }
+
+    private async Task OnReconnectedAsync() => await InvokeAsync(PollAndRenderAsync);
 
     private async Task PollAndRenderAsync()
     {
         await PollAsync();
         StateHasChanged();
+    }
+
+    /// <summary>Newest on top, capped at 30 — the bell is a glance, the full list lives at /activity.</summary>
+    private void Merge(List<AuditLogDto> fresh)
+    {
+        _items.InsertRange(0, fresh);
+        if (_items.Count > 30) _items.RemoveRange(30, _items.Count - 30);
+
+        _unseen += fresh.Count;
+        _lastSeenId = fresh.Max(f => f.Id);
     }
 
     private async Task PollAsync()
@@ -96,16 +126,11 @@
             if (fresh.Count == 0) return;
 
             // The API returns newest-first; prepend so the newest ends up on top of the list.
-            _items.InsertRange(0, fresh);
-            if (_items.Count > 30) _items.RemoveRange(30, _items.Count - 30);
-
-            _unseen += fresh.Count;
-            _lastSeenId = fresh.Max(f => f.Id);
+            Merge(fresh);
         }
         catch (ApiUnauthorizedException)
         {
-            // Session died (token expired, or the account was disabled) — stop polling and re-auth.
-            _timer?.Dispose();
+            // Session died (token expired, or the account was disabled) — re-auth.
             Nav.NavigateTo("/login", forceLoad: true);
         }
         catch (HttpRequestException)
@@ -176,5 +201,10 @@
         return utc.ToLocalTime().ToString("yyyy-MM-dd");
     }
 
-    public void Dispose() => _timer?.Dispose();
+    public ValueTask DisposeAsync()
+    {
+        Stream.Received -= OnActivityAsync;
+        Stream.Reconnected -= OnReconnectedAsync;
+        return ValueTask.CompletedTask;
+    }
 }

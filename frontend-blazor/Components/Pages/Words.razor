@@ -1,7 +1,9 @@
 @page "/words"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize]
+@implements IAsyncDisposable
 @inject WordService WordSvc
+@inject ActivityStream Stream
 
 <PageTitle>وشەکان — فەرھەنگی کوردی</PageTitle>
 
@@ -232,17 +234,109 @@ else
     bool _deleting;
     CancellationTokenSource? _searchCts;
 
-    protected override async Task OnInitializedAsync() =>
+    // ── Live updates ────────────────────────────────────────────────────────
+    // The backend pushes every committed write down the activity hub, so a word another editor adds
+    // shows up here on its own. Only rows this grid actually displays are worth reacting to.
+    static readonly HashSet<string> GridEntities = new()
+    {
+        "Word", "WordMeans", "RelatedWord", "WordCategory", "WordSpeechPane", "Category",
+    };
+
+    static readonly TimeSpan Debounce = TimeSpan.FromMilliseconds(600);
+    readonly CancellationTokenSource _cts = new();
+    CancellationTokenSource? _liveDebounce;
+
+    /// <summary>Set when a push landed while the editor was open — applied once it closes.</summary>
+    bool _refreshPending;
+
+    protected override async Task OnInitializedAsync()
+    {
         await Task.WhenAll(LoadWords(), LoadCategories());
 
-    async Task LoadWords()
+        Stream.Received += OnActivityAsync;
+        Stream.Reconnected += OnReconnectedAsync;
+        await Stream.StartAsync();
+    }
+
+    Task OnActivityAsync(IReadOnlyList<AuditLogDto> entries)
     {
-        _loading = true;
+        if (entries.Any(e => GridEntities.Contains(e.EntityType)))
+            ScheduleLiveRefresh();
+
+        return Task.CompletedTask;
+    }
+
+    Task OnReconnectedAsync()
+    {
+        ScheduleLiveRefresh();
+        return Task.CompletedTask;
+    }
+
+    void ScheduleLiveRefresh()
+    {
+        // Reloading under an open editor would swap the row out from beneath whoever is typing in it.
+        // Hold the refresh and let CloseModal/SaveComplete apply it.
+        if (_showModal || _deletingWord is not null)
+        {
+            _refreshPending = true;
+            return;
+        }
+
+        // A bulk edit fires one push per row; collapse the burst into a single reload.
+        _liveDebounce?.Cancel();
+        _liveDebounce?.Dispose();
+        _liveDebounce = CancellationTokenSource.CreateLinkedTokenSource(_cts.Token);
+        var token = _liveDebounce.Token;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(Debounce, token);
+                await InvokeAsync(async () =>
+                {
+                    await LoadWordsSilently();
+                    await LoadCategories();
+                    StateHasChanged();
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                // Superseded by a newer push, or the page went away.
+            }
+        }, token);
+    }
+
+    // Kept parameterless so it still binds directly to @bind:after — a method group with an optional
+    // argument will not convert to the delegate the directive expects.
+    Task LoadWords() => LoadWordsCore(silent: false);
+
+    /// <summary>
+    /// Reloads without raising the skeleton. Dropping the grid to placeholders every time somebody
+    /// else saves a word would make it unusable, so live refreshes swap the rows in underneath.
+    /// </summary>
+    Task LoadWordsSilently() => LoadWordsCore(silent: true);
+
+    async Task LoadWordsCore(bool silent)
+    {
+        if (!silent) _loading = true;
+
         var result = await WordSvc.GetWordsAsync(_currentPage, PageSize, _search, _selectedCategory);
         _words = result?.Items ?? new();
         _totalCount = result?.TotalCount ?? 0;
         _totalPages = result?.TotalPages ?? 1;
         _loading = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        Stream.Received -= OnActivityAsync;
+        Stream.Reconnected -= OnReconnectedAsync;
+
+        await _cts.CancelAsync();
+        _cts.Dispose();
+        _liveDebounce?.Dispose();
+        _searchCts?.Dispose();
     }
 
     async Task LoadCategories() =>
@@ -274,17 +368,37 @@ else
 
     void OpenAdd() { _editingWord = null; _showModal = true; }
     void OpenEdit(WordDto w) { _editingWord = w; _showModal = true; }
-    void CloseModal() => _showModal = false;
+    async Task CloseModal()
+    {
+        _showModal = false;
+        await ApplyPendingRefresh();
+    }
+
+    /// <summary>Runs the reload that was held back while the editor had the screen.</summary>
+    async Task ApplyPendingRefresh()
+    {
+        if (!_refreshPending) return;
+        _refreshPending = false;
+
+        await LoadWordsSilently();
+        await LoadCategories();
+    }
 
     async Task OnSaved()
     {
         _showModal = false;
         _currentPage = 1;
+        // This reload subsumes anything the hub pushed while the editor was open.
+        _refreshPending = false;
         await Task.WhenAll(LoadWords(), LoadCategories());
     }
 
     void ConfirmDelete(WordDto w) => _deletingWord = w;
-    void CancelDelete() => _deletingWord = null;
+    async Task CancelDelete()
+    {
+        _deletingWord = null;
+        await ApplyPendingRefresh();
+    }
 
     async Task ExecuteDelete()
     {
@@ -293,6 +407,7 @@ else
         await WordSvc.DeleteWordAsync(_deletingWord.Id);
         _deletingWord = null;
         _deleting = false;
+        _refreshPending = false;
         await Task.WhenAll(LoadWords(), LoadCategories());
     }
 
