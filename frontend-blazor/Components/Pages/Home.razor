@@ -1,6 +1,7 @@
 @page "/"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize]
+@implements IAsyncDisposable
 @inject WordService WordSvc
 @inject AuthService Auth
 
@@ -60,6 +61,20 @@ else
                             <span class="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-300"></span>
                         </span>
                         <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-200">زیندوو</span>
+
+                        @if (_updatedAt is { } updated)
+                        {
+                            <span class="text-[11px] font-medium text-indigo-200/80" dir="ltr">
+                                @updated.ToString("HH:mm:ss")
+                            </span>
+                        }
+
+                        <button @onclick="RefreshAsync" disabled="@_refreshing" type="button"
+                                title="نوێکردنەوە"
+                                class="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-0.5 text-[11px] font-bold text-white transition-colors hover:bg-white/25 disabled:opacity-50">
+                            <span class="@(_refreshing ? "inline-block animate-spin" : "")">⟳</span>
+                            نوێکردنەوە
+                        </button>
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-white">داشبۆردی فەرھەنگ</h1>
                     <p class="text-sm text-indigo-100 mt-1.5">
@@ -414,8 +429,65 @@ else
     DashboardDto? _stats;
     List<ContributorDto> _editors = new();
     bool _loading = true;
+    bool _refreshing;
+    DateTime? _updatedAt;
 
-    protected override async Task OnInitializedAsync() => await Load();
+    // The dashboard aggregates work done by *other* editors, so it goes stale the moment someone else
+    // saves a word. Re-pulling on a timer and pushing the diff down the open circuit means the numbers
+    // move on their own — no reload, and only the changed nodes go over the wire.
+    static readonly TimeSpan RefreshInterval = TimeSpan.FromSeconds(20);
+    readonly CancellationTokenSource _cts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+        _ = AutoRefreshLoopAsync();   // deliberately not awaited: it runs for the life of the page
+    }
+
+    async Task AutoRefreshLoopAsync()
+    {
+        using var timer = new PeriodicTimer(RefreshInterval);
+        try
+        {
+            while (await timer.WaitForNextTickAsync(_cts.Token))
+                await InvokeAsync(RefreshAsync);
+        }
+        catch (OperationCanceledException)
+        {
+            // Navigated away — nothing to clean up beyond the timer's using.
+        }
+    }
+
+    /// <summary>
+    /// Re-pulls in place. Unlike <see cref="Load"/> it never raises the skeleton, so the numbers tick
+    /// over under the user instead of the page collapsing to placeholders every 20 seconds.
+    /// </summary>
+    async Task RefreshAsync()
+    {
+        if (_refreshing) return;
+        _refreshing = true;
+        StateHasChanged();
+
+        try
+        {
+            var stats = await WordSvc.GetDashboardAsync();
+            var editors = await Auth.GetLeaderboardAsync();
+
+            // Assigned together so a half-updated dashboard never renders.
+            _stats = stats;
+            _editors = editors;
+            _updatedAt = DateTime.Now;
+        }
+        catch
+        {
+            // A failed poll keeps the last good numbers on screen rather than blanking the page.
+        }
+        finally
+        {
+            _refreshing = false;
+            StateHasChanged();
+        }
+    }
 
     async Task Load()
     {
@@ -427,7 +499,14 @@ else
         try { _editors = await Auth.GetLeaderboardAsync(); }
         catch { _editors = new(); }
 
+        _updatedAt = DateTime.Now;
         _loading = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _cts.CancelAsync();
+        _cts.Dispose();
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────

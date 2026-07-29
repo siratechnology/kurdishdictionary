@@ -35,6 +35,10 @@ services:
       ASPNETCORE_URLS: http://+:8080
     ports:
       - "6001:8080"
+    volumes:
+      # Data Protection key ring. Without it the keys are regenerated inside every new container,
+      # which signs every user out and invalidates their antiforgery tokens on each redeploy.
+      - blazor-keys:/keys
     depends_on:
       - backend
     networks:
@@ -57,6 +61,9 @@ services:
     networks:
       - kurdish-net
     restart: unless-stopped
+
+volumes:
+  blazor-keys:
 
 networks:
   kurdish-net:

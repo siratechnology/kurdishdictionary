@@ -81,7 +81,16 @@
 
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
+    /// <summary>Set when the form was submitted with a token older than the session it belonged to.</summary>
+    [SupplyParameterFromQuery] private string? Expired { get; set; }
+
     private string? _error;
+
+    protected override void OnInitialized()
+    {
+        if (Expired == "1")
+            _error = "ماوەی چوونەژوورەوەکەت تەواو بوو. تکایە دووبارە هەوڵ بدەرەوە.";
+    }
 
     private async Task SignInAsync()
     {
