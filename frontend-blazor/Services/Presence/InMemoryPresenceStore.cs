@@ -203,6 +203,18 @@ public class InMemoryPresenceStore : IPresenceStore
         if (moved) Notify();
     }
 
+    public void MarkDirty(IEnumerable<Guid> userIds)
+    {
+        foreach (var id in userIds)
+        {
+            if (!_entries.TryGetValue(id, out var entry)) continue;
+            lock (entry) entry.Dirty = true;
+        }
+
+        // Deliberately no Notify: nothing about the person changed, only our record of whether we
+        // have told the database about them. Waking every circuit for that would be noise.
+    }
+
     public IReadOnlyCollection<PresenceSnapshot> DrainDirty()
     {
         var dirty = new List<PresenceSnapshot>();

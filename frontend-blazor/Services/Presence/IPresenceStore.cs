@@ -98,6 +98,15 @@ public interface IPresenceStore
     IReadOnlyCollection<PresenceSnapshot> DrainDirty();
 
     /// <summary>
+    /// Puts rows back in the dirty set after a failed flush.
+    ///
+    /// DrainDirty clears the flag as it reads, so a flush that then failed dropped those rows on
+    /// the floor while the log claimed they would be retried on the next tick. They were not:
+    /// nothing marks them dirty again until the person moves. This makes the promise true.
+    /// </summary>
+    void MarkDirty(IEnumerable<Guid> userIds);
+
+    /// <summary>
     /// Re-checks everyone's status and raises <see cref="Changed"/> if any of them moved.
     ///
     /// Status is DERIVED from a timestamp, so going بێ‌چالاکی is the one transition that happens

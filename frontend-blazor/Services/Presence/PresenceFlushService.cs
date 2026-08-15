@@ -63,6 +63,12 @@ public class PresenceFlushService : BackgroundService
         {
             // Presence is a convenience. If the API is down the live view still works from memory,
             // and losing a last-seen timestamp is not worth taking the app down for.
+            //
+            // Put them back first, though. DrainDirty cleared the flags on the way out, so without
+            // this the "retried on the next tick" below was simply false — the rows were dropped
+            // and nothing marked them again until the person moved.
+            _store.MarkDirty(dirty.Select(r => r.UserId));
+
             _log.LogWarning(ex, "Presence flush failed; {Count} rows will be retried on the next tick", dirty.Count);
         }
     }
