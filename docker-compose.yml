@@ -39,6 +39,12 @@ services:
     build:
       context: .
       dockerfile: frontend-blazor/Dockerfile
+      args:
+        # Telerik UI for Blazor comes from the authenticated Telerik feed; without these the
+        # image build fails at restore with NU1101. Kept in .env rather than inline so the
+        # licence credentials are not committed.
+        TELERIK_USER: ${TELERIK_USER}
+        TELERIK_PASS: ${TELERIK_PASS}
     container_name: kurdish-blazor
     environment:
       ASPNETCORE_ENVIRONMENT: Production
