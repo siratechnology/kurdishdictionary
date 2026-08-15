@@ -20,6 +20,11 @@ services:
         Seed__EditorPassword: ${SEED_EDITOR_PASSWORD:-Editor@123!}
         # Root for every upload type — see the bind mount below.
         Uploads__Root: /uploads
+        # Shared secret for the web tier's presence flush. Unset, PresenceApi.FlushAsync returns
+        # early without a word, which is why UserPresences was empty on the server: «دوایین جار»
+        # never survived a restart, and there was no way to see the live presence state from
+        # outside the process when it misbehaved.
+        Internal__ApiKey: ${INTERNAL_API_KEY}
     ports:
       - "6000:8080"
     volumes:
@@ -49,6 +54,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
+      # Must match the backend's — both ends of the presence flush read the same setting.
+      Internal__ApiKey: ${INTERNAL_API_KEY}
     ports:
       - "6001:8080"
     volumes:

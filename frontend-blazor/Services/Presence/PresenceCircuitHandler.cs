@@ -67,7 +67,10 @@ public class PresenceCircuitHandler : CircuitHandler
     {
         // A reconnect after a dropped socket. The circuit was retained, so this is the same person
         // returning rather than a new arrival.
-        if (_userId is { } id) _store.Touch(id);
+        //
+        // MarkReconnected, not Touch: Touch bumped the clock but left the disconnected flag set,
+        // so coming back never actually undid going away.
+        if (_userId is { } id) _store.MarkReconnected(id);
         return Task.CompletedTask;
     }
 

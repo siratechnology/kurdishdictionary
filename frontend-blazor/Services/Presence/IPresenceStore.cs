@@ -66,6 +66,19 @@ public interface IPresenceStore
     /// <summary>A circuit closed. Records LastSeenAt; the row stays so «دوایین جار» can be shown.</summary>
     void MarkOffline(Guid userId);
 
+    /// <summary>
+    /// The socket came back. Undoes <see cref="MarkDisconnected"/>.
+    ///
+    /// This has to be its own call. Touch was doing the job and could not: it bumps the activity
+    /// clock but never cleared the disconnected flag, which made that flag a ONE-WAY LATCH. One
+    /// dropped socket — a phone sleeping, wifi blinking, an idle timeout at the proxy — and the
+    /// person was pinned to بێ‌چالاکی for the rest of the session. They still saw everyone else,
+    /// because their own strip reads the store; nobody who signed in afterwards could see THEM,
+    /// because their entry never came back to چالاک. Only a full reload cleared it, by opening a
+    /// new circuit and going through MarkOnline.
+    /// </summary>
+    void MarkReconnected(Guid userId);
+
     /// <summary>Bumps LastActivityAt. Called from the throttled client heartbeat, at most every 30s.</summary>
     void Touch(Guid userId, string? currentPage = null);
 

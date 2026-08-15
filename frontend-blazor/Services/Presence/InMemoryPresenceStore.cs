@@ -126,12 +126,31 @@ public class InMemoryPresenceStore : IPresenceStore
         Notify();
     }
 
+    public void MarkReconnected(Guid userId)
+    {
+        if (!_entries.TryGetValue(userId, out var entry)) return;
+
+        lock (entry)
+        {
+            entry.Connected = true;
+            entry.LastActivityAt = DateTime.UtcNow;
+            entry.Dirty = true;
+        }
+
+        Notify();
+    }
+
     public void Touch(Guid userId, string? currentPage = null)
     {
         if (!_entries.TryGetValue(userId, out var entry)) return;
 
         lock (entry)
         {
+            // A heartbeat cannot arrive over a dead socket — receiving one IS proof the
+            // connection is up. Restoring the flag here as well as in MarkReconnected means a
+            // missed OnConnectionUpAsync costs one heartbeat interval rather than the session.
+            entry.Connected = true;
+
             entry.LastActivityAt = DateTime.UtcNow;
             if (currentPage is not null) entry.CurrentPage = currentPage;
             entry.Dirty = true;
