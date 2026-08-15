@@ -24,17 +24,19 @@ public class TaxonomyAdminController : ControllerBase
     private readonly TaxonomyTreeService _tree;
     private readonly OptionsTreeService _options;
     private readonly MergeService _merge;
+    private readonly PartOfSpeechReassignService _reassign;
     private readonly AppDbContext _db;
     private readonly ICurrentUser _user;
 
     public TaxonomyAdminController(
         TaxonomyAdminService admin, TaxonomyTreeService tree, OptionsTreeService options,
-        MergeService merge, AppDbContext db, ICurrentUser user)
+        MergeService merge, PartOfSpeechReassignService reassign, AppDbContext db, ICurrentUser user)
     {
         _admin = admin;
         _tree = tree;
         _options = options;
         _merge = merge;
+        _reassign = reassign;
         _db = db;
         _user = user;
     }
@@ -480,6 +482,75 @@ public class TaxonomyAdminController : ControllerBase
     {
         if (_user.UserId is not { } userId) return Unauthorized();
         return Ok(await _merge.UndoAsync(sourceValueId, userId, ct));
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Bulk part-of-speech re-assignment
+    //
+    // The counterpart to AddPartOfSpeech below. Creating one takes a sentence; filling it took the
+    // station and two and a half thousand keystrokes, so a new بەشی ئاخاوتن sat at ٠ وشە and the
+    // taxonomy could be corrected while the data could not.
+    //
+    // Every one of these answers InvalidOperationException as a 400 carrying the message rather
+    // than letting it escape as a 500 — the service's refusals are written for the person reading
+    // the screen, and a 500 has no body to put them in.
+    // ═══════════════════════════════════════════════════════════════════════
+
+    [HttpGet("parts-of-speech/reassign/preview")]
+    [Authorize(Roles = Roles.LinguisticOwner)]
+    public async Task<ActionResult<PartOfSpeechReassignPreviewDto>> PreviewReassign(
+        [FromQuery] int from, [FromQuery] int to, CancellationToken ct)
+    {
+        try
+        {
+            return Ok(await _reassign.PreviewAsync(from, to, ct));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("parts-of-speech/reassign/recent")]
+    [Authorize(Roles = Roles.LinguisticOwner)]
+    public async Task<ActionResult<List<PartOfSpeechReassignRunDto>>> RecentReassignments(
+        CancellationToken ct) =>
+        Ok(await _reassign.RecentAsync(ct));
+
+    public record ReassignRequest(int FromId, int ToId, string Reason);
+
+    [HttpPost("parts-of-speech/reassign")]
+    [Authorize(Roles = Roles.LinguisticOwner)]
+    public async Task<ActionResult<PartOfSpeechReassignResultDto>> Reassign(
+        [FromBody] ReassignRequest body, CancellationToken ct)
+    {
+        if (_user.UserId is not { } userId) return Unauthorized();
+
+        try
+        {
+            return Ok(await _reassign.ExecuteAsync(body.FromId, body.ToId, userId, body.Reason, ct));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("parts-of-speech/reassign/undo")]
+    [Authorize(Roles = Roles.LinguisticOwner)]
+    public async Task<ActionResult<PartOfSpeechReassignResultDto>> UndoReassign(
+        [FromQuery] int from, [FromQuery] DateTime at, CancellationToken ct)
+    {
+        if (_user.UserId is not { } userId) return Unauthorized();
+
+        try
+        {
+            return Ok(await _reassign.UndoAsync(from, at, userId, ct));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     public record ConditionRequest(int? RequiresValueId);

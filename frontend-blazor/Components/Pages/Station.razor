@@ -80,10 +80,39 @@
     }
     else if (_sense is null)
     {
+        @* Two completely different situations wore this one sentence.
+           «Everything is classified» is a finished job; «the walk found nothing» is a fault — and
+           told apart, one of them has an obvious next action while the other needs reporting. The
+           counts come from the server precisely because the page cannot tell on its own. *@
         <div class="card flex flex-col items-center gap-3 py-20 text-center">
-            <Icon Name="check" Class="h-10 w-10 text-green" />
-            <p class="text-sm text-ink-1">هیچ مانایەک بۆ کارکردن نەماوە</p>
-            <a href="/queue" class="btn-secondary mt-1">کەمووکوڕی وشەکان</a>
+            @if (_onlyUnclassified && _walkTotal > 0)
+            {
+                <Icon Name="check" Class="h-10 w-10 text-green" />
+                <p class="text-sm text-ink-1">هەموو مانایەک پۆلێنکراوە</p>
+                <p class="max-w-md text-11 text-ink-2">
+                    <bdi>@Ku.N(_walkTotal)</bdi> مانا هەیە، هیچیان بێ بەشی ئاخاوتن نەماوە.
+                    پاڵێوەری «تەنها پۆلێننەکراوەکان» لاببە بۆ گەڕان بەناو هەموویاندا.
+                </p>
+                <button @onclick="ClearFilter" class="btn-primary mt-1">پیشاندانی هەموو مانایەک</button>
+            }
+            else if (_walkTotal == 0)
+            {
+                @* Not a celebration. An empty dictionary is not a completed one, and a green tick
+                   here sent somebody looking for work that the screen had simply failed to find. *@
+                <span class="hatch h-10 w-10 rounded-full border border-line"></span>
+                <p class="text-sm text-ink-1">هیچ مانایەک نەدۆزرایەوە</p>
+                <p class="max-w-md text-11 text-ink-2">
+                    ئەمە کۆتایی کار نییە — وێستگەکە هیچ مانایەکی نەدۆزییەوە. ئەگەر وشە لە
+                    فەرهەنگەکەدا هەن، ئەوە کێشەیەکە و پێویستە ڕاپۆرت بکرێت.
+                </p>
+                <a href="/queue" class="btn-secondary mt-1">کەمووکوڕی وشەکان</a>
+            }
+            else
+            {
+                <Icon Name="check" Class="h-10 w-10 text-green" />
+                <p class="text-sm text-ink-1">هیچ مانایەک بۆ کارکردن نەماوە</p>
+                <a href="/queue" class="btn-secondary mt-1">کەمووکوڕی وشەکان</a>
+            }
         </div>
     }
     else
@@ -274,6 +303,12 @@
     bool _loading = true;
     bool _saving;
     bool _onlyUnclassified;
+
+    /// <summary>
+    /// Senses the walk can see with no filter. Fetched only when the walk has nothing to show, so
+    /// the empty state can say which kind of empty it is.
+    /// </summary>
+    int _walkTotal;
     bool _preventDefault;
 
     string? _savedMessage;
@@ -448,8 +483,20 @@
             if (_userId is { } uid && _sense.HeldBy is null)
                 await Presence.EnterSenseAsync(uid, _sense.SenseId);
         }
+        else
+        {
+            // Only when there is nothing to show, and only to explain that. Two counts on a screen
+            // that is otherwise doing nothing is cheaper than a person guessing at an empty page.
+            (_walkTotal, _) = await StationSvc.GetCountsAsync();
+        }
 
         _loading = false;
+    }
+
+    async Task ClearFilter()
+    {
+        _onlyUnclassified = false;
+        await Load(1);
     }
 
     async Task SaveAndAdvance()

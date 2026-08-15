@@ -49,6 +49,18 @@ public class StationService
         return await BuildAsync(senseId, position, total, userId, ct);
     }
 
+    /// <summary>
+    /// How much work the walk can see, with and without the filter.
+    ///
+    /// Exists so an empty station can say WHY it is empty. «هیچ مانایەک بۆ کارکردن نەماوە» is true
+    /// of two completely different situations — every sense is already classified, or the walk
+    /// found nothing at all — and the first is a finished job while the second is a fault. Told
+    /// apart by these two numbers and by nothing else the screen has access to.
+    /// </summary>
+    public async Task<(int Total, int Unclassified)> CountsAsync(CancellationToken ct = default) =>
+        (await Ordered(onlyUnclassified: false).CountAsync(ct),
+         await Ordered(onlyUnclassified: true).CountAsync(ct));
+
     public async Task<StationSenseDto?> GetBySenseAsync(int senseId, Guid userId, CancellationToken ct = default)
     {
         var query = Ordered(onlyUnclassified: false);

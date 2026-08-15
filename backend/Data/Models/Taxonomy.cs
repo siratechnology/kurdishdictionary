@@ -273,6 +273,23 @@ public class Sense : ISoftDeletable
     public int? PartOfSpeechId { get; set; }
     public PartOfSpeech? PartOfSpeech { get; set; }
 
+    /// <summary>
+    /// Set when a bulk re-assignment moved this sense off one part of speech and onto another,
+    /// so that move can be put back. Null for a sense a person classified by hand.
+    ///
+    /// It has to live on the SENSE rather than on the part of speech, because "everything that was
+    /// on ناو is now on هاوەڵناو" does not survive the target already having senses of its own —
+    /// an undo would sweep those up too. This says which rows moved, and nothing else moved.
+    ///
+    /// The same shape as <see cref="FeatureValue.MergedIntoValueId"/> on a value merge, and kept
+    /// for the same reason: dropping it once the undo window closes would make the operation
+    /// permanent the moment the UI stopped offering to reverse it.
+    /// </summary>
+    public int? ReassignedFromPartOfSpeechId { get; set; }
+
+    /// <summary>When the re-assignment above happened. Groups one bulk run apart from the next.</summary>
+    public DateTime? ReassignedAt { get; set; }
+
     public int? DomainId { get; set; }
     public Domain? Domain { get; set; }
 

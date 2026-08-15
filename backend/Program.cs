@@ -80,6 +80,7 @@ builder.Services.AddScoped<backend.Services.Lexicon.ContributorCreditService>();
 builder.Services.AddScoped<backend.Services.Lexicon.TaxonomyAdminService>();
 builder.Services.AddScoped<backend.Services.Lexicon.TaxonomyTreeService>();
 builder.Services.AddScoped<backend.Services.Lexicon.MergeService>();
+builder.Services.AddScoped<backend.Services.Lexicon.PartOfSpeechReassignService>();
 builder.Services.AddScoped<backend.Services.Lexicon.StationService>();
 builder.Services.AddScoped<ContributionEventInterceptor>();
 

@@ -159,6 +159,72 @@ public class TaxonomyAdminService
         SendAsync(HttpMethod.Post, "api/taxonomy-admin/merge",
             new { SourceValueId = source, TargetValueId = target, Reason = reason });
 
+    /// <summary>
+    /// What moving every sense off one بەشی ئاخاوتن and onto another would do. Writes nothing.
+    /// Returns the server's refusal message instead of a preview when it will not do it.
+    /// </summary>
+    public async Task<(PartOfSpeechReassignPreviewDto? Preview, string? Error)> PreviewReassignAsync(
+        int fromId, int toId)
+    {
+        var http = await _api.CreateAsync();
+        var response = await http.GetAsync(
+            $"api/taxonomy-admin/parts-of-speech/reassign/preview?from={fromId}&to={toId}");
+
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return (null, "دەسەڵاتت نییە بۆ ئەم کردارە.");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var message = (await response.Content.ReadAsStringAsync()).Trim('"');
+            return (null, string.IsNullOrWhiteSpace(message) ? "پێشبینین سەرنەکەوت." : message);
+        }
+
+        return (await response.Content.ReadFromJsonAsync<PartOfSpeechReassignPreviewDto>(), null);
+    }
+
+    /// <summary>Runs still inside the undo window. Empty — not an error — for anyone who cannot undo.</summary>
+    public async Task<List<PartOfSpeechReassignRunDto>> RecentReassignmentsAsync()
+    {
+        var http = await _api.CreateAsync();
+        var response = await http.GetAsync("api/taxonomy-admin/parts-of-speech/reassign/recent");
+
+        if (!response.IsSuccessStatusCode) return new();
+        return await response.Content.ReadFromJsonAsync<List<PartOfSpeechReassignRunDto>>() ?? new();
+    }
+
+    public Task<(PartOfSpeechReassignResultDto? Result, string? Error)> ReassignAsync(
+        int fromId, int toId, string reason) =>
+        RunReassignAsync(HttpMethod.Post, "api/taxonomy-admin/parts-of-speech/reassign",
+            new { FromId = fromId, ToId = toId, Reason = reason });
+
+    /// <summary>Puts one run back. <paramref name="at"/> names the run — a later one is not touched.</summary>
+    public Task<(PartOfSpeechReassignResultDto? Result, string? Error)> UndoReassignAsync(
+        int fromId, DateTime at) =>
+        RunReassignAsync(HttpMethod.Post,
+            $"api/taxonomy-admin/parts-of-speech/reassign/undo?from={fromId}&at={at:O}", null);
+
+    private async Task<(PartOfSpeechReassignResultDto?, string?)> RunReassignAsync(
+        HttpMethod method, string url, object? body)
+    {
+        var http = await _api.CreateAsync();
+
+        var request = new HttpRequestMessage(method, url);
+        if (body is not null) request.Content = JsonContent.Create(body);
+
+        var response = await http.SendAsync(request);
+
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+            return (null, "دەسەڵاتت نییە بۆ ئەم کردارە.");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var message = (await response.Content.ReadAsStringAsync()).Trim('"');
+            return (null, string.IsNullOrWhiteSpace(message) ? "کردارەکە سەرنەکەوت." : message);
+        }
+
+        return (await response.Content.ReadFromJsonAsync<PartOfSpeechReassignResultDto>(), null);
+    }
+
     /// <summary>Returns null on success, or the server's message on refusal.</summary>
     private async Task<string?> SendAsync(HttpMethod method, string url, object? body)
     {

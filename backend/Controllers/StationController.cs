@@ -46,6 +46,17 @@ public class StationController : ControllerBase
     }
 
     /// <summary>
+    /// What the walk can see, so an empty screen can say why it is empty rather than only that it
+    /// is. Cheap — two counts — and only fetched when there is nothing to show.
+    /// </summary>
+    [HttpGet("counts")]
+    public async Task<ActionResult<object>> Counts(CancellationToken ct)
+    {
+        var (total, unclassified) = await _station.CountsAsync(ct);
+        return Ok(new { total, unclassified });
+    }
+
+    /// <summary>
     /// Where this person left off, or 1 if they have never been here.
     ///
     /// Resolved from the stored ANCHOR rather than the stored number: the walk is an index into an

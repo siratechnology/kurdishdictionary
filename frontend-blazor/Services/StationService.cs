@@ -46,6 +46,28 @@ public class StationService
         catch { /* See above. */ }
     }
 
+    /// <summary>
+    /// What the walk can see. Only asked for when it has nothing to show, so an empty screen can
+    /// tell the difference between a finished job and a walk that found nothing.
+    /// </summary>
+    public async Task<(int Total, int Unclassified)> GetCountsAsync()
+    {
+        try
+        {
+            var http = await _api.CreateAsync();
+            var counts = await http.GetFromJsonAsync<StationCounts>("api/station/counts");
+            return (counts?.Total ?? 0, counts?.Unclassified ?? 0);
+        }
+        catch
+        {
+            // The screen is already showing an empty state; failing to explain it must not
+            // replace that with an error.
+            return (0, 0);
+        }
+    }
+
+    private record StationCounts(int Total, int Unclassified);
+
     public async Task<StationSenseDto?> GetAtAsync(int position, bool onlyUnclassified)
     {
         var http = await _api.CreateAsync();

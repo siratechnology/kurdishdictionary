@@ -82,6 +82,24 @@
         </div>
     }
 
+    @* ── Undo for a bulk move ─────────────────────────────────────────────────
+       Kept on the page rather than in a toast. A toast is gone in four seconds, and "I have just
+       moved two thousand senses onto the wrong بەشی ئاخاوتن" is a realisation that arrives about a
+       minute later, usually after a refresh. Read from the senses themselves, so it survives one. *@
+    @foreach (var run in _recentRuns)
+    {
+        <div class="mb-3 flex flex-wrap items-center gap-2 rounded-card border border-line bg-page px-4 py-3 text-sm text-ink-1">
+            <Icon Name="alert" Class="h-4 w-4 shrink-0 text-ink-3" />
+            <span>
+                <bdi>@Ku.N(run.SenseCount)</bdi> مانا لە «@run.FromName» چوونە «@run.ToName»
+            </span>
+            <button type="button" @onclick="() => UndoRun(run)"
+                    class="btn-secondary ms-auto py-1.5 text-11">
+                گەڕاندنەوە
+            </button>
+        </div>
+    }
+
     @if (_loading)
     {
         <div class="grid gap-4 xl:grid-cols-[1.6fr_1fr]">
@@ -108,6 +126,19 @@
                     <span class="pill pill-ok" title="ئەو وشانەی ئەم بەشی ئاخاوتنیان هەیە">
                         <bdi>@Ku.N(_tree.WordCount)</bdi> وشە
                     </span>
+
+                    @* Right beside the count, because the count is what sends anyone looking for
+                       this. A بەشی ئاخاوتن that was just created reads ٠ وشە, and until now the
+                       only way off zero was the station — one sense at a time, a few thousand
+                       times. The taxonomy could be corrected and the data could not. *@
+                    @if (_canEdit)
+                    {
+                        <button type="button" @onclick="OpenReassign"
+                                class="btn-secondary py-1.5 text-11"
+                                title="گواستنەوەی هەموو مانایەکی بەشێکی ئاخاوتنی تر بۆ ئێرە">
+                            هێنانی مانا لە بەشێکی تر
+                        </button>
+                    }
 
                     @* The shape of this part of speech, in words.
                        DERIVED from the tree, never stored. A saved "type" field would be a second
@@ -522,6 +553,102 @@
             <TelerikButton OnClick="@(() => _addGroupOpen = false)">پاشگەز</TelerikButton>
         </DialogButtons>
     </TelerikDialog>
+
+    @* ── Bulk re-assignment ───────────────────────────────────────────────────
+       Preview first, always. The sense count is the easy half; the half that decides whether this
+       is safe is how many stored grammatical answers cannot come along, because axes belong to a
+       part of speech and the target does not ask the same questions. That number is shown before
+       the button that does it, never after. *@
+    <TelerikDialog @bind-Visible="_reassignOpen"
+                   Title="@($"هێنانی مانا بۆ «{_tree?.PartOfSpeechName}»")" Width="600px">
+        <DialogContent>
+            <div class="space-y-4 text-start">
+
+                <p class="text-sm text-ink-2">
+                    هەموو مانایەکی بەشێکی ئاخاوتنی هەڵبژێردراو دەگوازرێتەوە بۆ
+                    «<span class="font-medium text-ink-1">@_tree?.PartOfSpeechName</span>».
+                    بەشە کۆنەکە بەتاڵ دەبێتەوە.
+                </p>
+
+                <label class="block">
+                    <span class="field-label">مانایەکان لە کوێوە بێن؟</span>
+                    <select @onchange="OnReassignSourceChanged" class="field">
+                        <option value="0" selected="@(_reassignFromId == 0)">— هەڵبژێرە —</option>
+                        @foreach (var part in _parts.Where(p => p.Id != _partOfSpeechId))
+                        {
+                            <option value="@part.Id" selected="@(_reassignFromId == part.Id)">
+                                @part.NameKu (@Ku.N(part.WordCount) وشە)
+                            </option>
+                        }
+                    </select>
+                </label>
+
+                @if (_reassignBusy)
+                {
+                    <p class="text-11 text-ink-2">دەپشکنرێت…</p>
+                }
+                else if (_reassignError is { } error)
+                {
+                    <div class="rounded-chip border border-line bg-danger-tint px-3 py-2.5 text-sm text-ink-1">
+                        @error
+                    </div>
+                }
+                else if (_reassignPreview is { } preview)
+                {
+                    <div class="space-y-2.5 rounded-chip border border-line-soft bg-page p-3">
+                        <p class="text-sm text-ink-1">@preview.Summary</p>
+
+                        <p class="text-11 text-ink-2">
+                            <bdi>@Ku.N(preview.WordsAffected)</bdi> وشە دەگرێتەوە
+                        </p>
+
+                        @if (preview.SampleWords.Count > 0)
+                        {
+                            <p class="text-11 text-ink-3">
+                                بۆ نموونە: @string.Join("، ", preview.SampleWords)
+                            </p>
+                        }
+
+                        @* The one number that can lose somebody's work. Warn-toned and spelled out
+                           by axis name, because "12 answers will be cleared" is not a decision
+                           anybody can make without knowing answers to WHAT. *@
+                        @if (preview.FeaturesDropped > 0)
+                        {
+                            <div class="rounded-chip border border-line bg-warn-tint px-3 py-2.5">
+                                <p class="text-sm text-ink-1">
+                                    <bdi>@Ku.N(preview.FeaturesDropped)</bdi> وەڵامی ڕێزمانی
+                                    دەسڕدرێتەوە — «@_tree?.PartOfSpeechName» ئەم پرسیارانە ناکات:
+                                    @string.Join("، ", preview.DroppedAxisNames)
+                                </p>
+                                <p class="mt-1 text-11 text-ink-2">
+                                    بە گەڕاندنەوە دەگەڕێنەوە.
+                                </p>
+                            </div>
+                        }
+                    </div>
+
+                    <label class="block">
+                        @* Required by the endpoint, not only by this form. Changing what a few
+                           thousand words are is a linguistic decision and the ledger keeps the
+                           reason next to it. *@
+                        <span class="field-label">هۆکار — پێویستە</span>
+                        <TelerikTextArea @bind-Value="_reassignReason" Width="100%" Rows="2"
+                                         Placeholder="بۆچی ئەم گواستنەوەیە دەکرێت؟" />
+                    </label>
+                }
+            </div>
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="ConfirmReassign"
+                           Enabled="@(_reassignPreview is { SensesToMove: > 0 }
+                                      && !string.IsNullOrWhiteSpace(_reassignReason)
+                                      && !_reassignBusy)"
+                           ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                گواستنەوە
+            </TelerikButton>
+            <TelerikButton OnClick="@(() => _reassignOpen = false)">پاشگەز</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
 </TelerikScope>
 
 @code {
@@ -560,6 +687,17 @@
     /// clicking to reveal what was just built.
     /// </summary>
     bool _previewAsTeacher;
+
+    // ── Bulk re-assignment ──────────────────────────────────────────────────
+    bool _reassignOpen;
+    bool _reassignBusy;
+    int _reassignFromId;
+    string _reassignReason = "";
+    PartOfSpeechReassignPreviewDto? _reassignPreview;
+    string? _reassignError;
+
+    /// <summary>Runs still inside the undo window. Empty for anyone who cannot undo them.</summary>
+    List<PartOfSpeechReassignRunDto> _recentRuns = new();
 
     // ── Selection-mode dialog ───────────────────────────────────────────────
     bool _selectionOpen;
@@ -614,6 +752,9 @@
         var overview = await Taxonomy.GetOverviewAsync();
         _parts = overview?.PartsOfSpeech ?? new();
 
+        // Empty for anyone who cannot undo, so the banner simply never renders for them.
+        if (_canEdit) _recentRuns = await Taxonomy.RecentReassignmentsAsync();
+
         _partOfSpeechId = PartOfSpeechId ?? _parts.FirstOrDefault()?.Id ?? 0;
         await Load();
     }
@@ -639,6 +780,105 @@
     {
         _partOfSpeechId = partId;
         _previewSelection.Clear();
+        await Load();
+    }
+
+    // ── Bulk re-assignment ──────────────────────────────────────────────────
+
+    void OpenReassign()
+    {
+        _reassignFromId = 0;
+        _reassignReason = "";
+        _reassignPreview = null;
+        _reassignError = null;
+        _reassignOpen = true;
+    }
+
+    /// <summary>
+    /// Previews on every change of source rather than behind a «پێشبینین» button.
+    /// The preview is the whole point — a confirm dialog whose consequences are one more click
+    /// away is a confirm dialog people click through.
+    /// </summary>
+    async Task OnReassignSourceChanged(ChangeEventArgs e)
+    {
+        _reassignFromId = int.TryParse(e.Value?.ToString(), out var id) ? id : 0;
+        _reassignPreview = null;
+        _reassignError = null;
+
+        if (_reassignFromId == 0) return;
+
+        _reassignBusy = true;
+
+        try
+        {
+            var (preview, error) = await Taxonomy.PreviewReassignAsync(_reassignFromId, _partOfSpeechId);
+            _reassignPreview = preview;
+            _reassignError = error;
+
+            if (preview is { SensesToMove: 0 })
+                _reassignError = "ئەم بەشەی ئاخاوتن هیچ مانایەکی نییە بۆ گواستنەوە.";
+        }
+        finally
+        {
+            _reassignBusy = false;
+        }
+    }
+
+    async Task ConfirmReassign()
+    {
+        if (_reassignPreview is null || string.IsNullOrWhiteSpace(_reassignReason)) return;
+
+        _reassignBusy = true;
+
+        try
+        {
+            var (result, error) = await Taxonomy.ReassignAsync(
+                _reassignFromId, _partOfSpeechId, _reassignReason);
+
+            if (error is not null || result is null)
+            {
+                Toast.Error(error ?? "گواستنەوەکە سەرنەکەوت.");
+                return;
+            }
+
+            _reassignOpen = false;
+
+            Toast.Success(result.FeaturesDropped > 0
+                ? $"{Ku.N(result.SensesMoved)} مانا گوازرایەوە، {Ku.N(result.FeaturesDropped)} وەڵام سڕایەوە"
+                : $"{Ku.N(result.SensesMoved)} مانا گوازرایەوە");
+
+            await ReloadAfterReassign();
+        }
+        finally
+        {
+            _reassignBusy = false;
+        }
+    }
+
+    async Task UndoRun(PartOfSpeechReassignRunDto run)
+    {
+        var (result, error) = await Taxonomy.UndoReassignAsync(run.FromId, run.At);
+
+        if (error is not null || result is null)
+        {
+            Toast.Error(error ?? "گەڕاندنەوەکە سەرنەکەوت.");
+            return;
+        }
+
+        Toast.Success($"{Ku.N(result.SensesMoved)} مانا گەڕێندرایەوە بۆ «{run.FromName}»");
+        await ReloadAfterReassign();
+    }
+
+    /// <summary>
+    /// Both counts on the chip strip moved — the source lost senses and the target gained them —
+    /// so the overview is re-fetched, not just the open tree.
+    /// </summary>
+    async Task ReloadAfterReassign()
+    {
+        var overview = await Taxonomy.GetOverviewAsync();
+        _parts = overview?.PartsOfSpeech ?? _parts;
+
+        _recentRuns = await Taxonomy.RecentReassignmentsAsync();
         await Load();
     }
 
