@@ -18,8 +18,18 @@ services:
         Seed__AdminEmail: ${SEED_ADMIN_EMAIL:-sirwanjaff999@gmail.com}
         Seed__AdminPassword: ${SEED_ADMIN_PASSWORD:-Admin@123!}
         Seed__EditorPassword: ${SEED_EDITOR_PASSWORD:-Editor@123!}
+        # Root for every upload type — see the bind mount below.
+        Uploads__Root: /uploads
     ports:
       - "6000:8080"
+    volumes:
+      # BIND MOUNT to the host's own upload folder (/root/uploads/jinzar), not a docker-managed
+      # volume: the folder already exists on the server, is visible to the operator, and is
+      # backed up with the rest of the host. A named volume would bury the files under
+      # /var/lib/docker where nothing else can reach them.
+      #
+      # This is the root for every upload type; the app creates its own subfolders inside.
+      - ${UPLOAD_ROOT:-/root/uploads/jinzar}:/uploads
     networks:
       - kurdish-net
       - greenschool_default
