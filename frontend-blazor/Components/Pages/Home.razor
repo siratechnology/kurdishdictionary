@@ -249,6 +249,12 @@ else
                     </a>
                 </div>
 
+                @* EVERY column carries an explicit Width, including the two that look like they
+                   could flex. Telerik only turns on horizontal scrolling once all widths are
+                   known; with even one column unsized it fits the table to the container instead
+                   and squashes the rest, which on a phone crushes five columns into ~360px and
+                   leaves nothing to pan. The widths total 750px, so narrow screens scroll and
+                   wide ones distribute the slack across the columns. *@
                 <TelerikGrid Data="@_stats.RecentWords" Sortable="true" Height="340px" Class="dash-grid">
                     <GridColumns>
                         <GridColumn Field="@nameof(RecentWordDto.Kurdish)" Title="وشە" Width="200px">
@@ -262,7 +268,7 @@ else
                                 </div>
                             </Template>
                         </GridColumn>
-                        <GridColumn Field="@nameof(RecentWordDto.SpeechPane)" Title="جۆری وشە">
+                        <GridColumn Field="@nameof(RecentWordDto.SpeechPane)" Title="جۆری وشە" Width="150px">
                             <Template>
                                 @{ var w = (RecentWordDto)context; }
                                 @if (string.IsNullOrWhiteSpace(w.SpeechPane))
@@ -275,7 +281,7 @@ else
                                 }
                             </Template>
                         </GridColumn>
-                        <GridColumn Field="@nameof(RecentWordDto.Category)" Title="پۆل">
+                        <GridColumn Field="@nameof(RecentWordDto.Category)" Title="پۆل" Width="150px">
                             <Template>
                                 @{ var w = (RecentWordDto)context; }
                                 <span class="text-ink-2">@(string.IsNullOrWhiteSpace(w.Category) ? "—" : w.Category)</span>
@@ -325,7 +331,11 @@ else
                             <div class="relative flex w-full flex-1 items-end">
                                 @if (d.Count > 0 && d.Count == PeakCount)
                                 {
-                                    <span class="absolute -top-1 start-1/2 -translate-x-1/2 rounded-chip px-1.5 py-0.5 text-11 text-white"
+                                    @* Centred with inset-x-0 + mx-auto, not start-1/2 + a negative
+                                       translate. `transform` is physical while `start` is logical,
+                                       so that pairing centres in LTR and pushes the badge a full
+                                       half-width off the bar in RTL — which is every screen here. *@
+                                    <span class="absolute inset-x-0 -top-1 mx-auto w-fit rounded-chip px-1.5 py-0.5 text-11 text-white"
                                           style="background: var(--grad-chart);">
                                         <bdi>@Ku.N(d.Count)</bdi>
                                     </span>
