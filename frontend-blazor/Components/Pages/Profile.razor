@@ -27,10 +27,15 @@
             <h2 class="card-title">وێنەی پرۆفایل</h2>
         </div>
 
-        <div class="flex flex-wrap items-center gap-5">
+        @* Stacked and centred on a phone, side by side from sm up.
+           The picker cannot simply wrap: a 96px circle plus Telerik's drop zone is wider than a
+           360px screen, and a flex row would push the zone off the edge rather than move it to
+           the next line — its intrinsic width does not shrink. See `.avatar-picker` in app.css. *@
+        <div class="avatar-picker flex flex-col items-center gap-4 text-center
+                    sm:flex-row sm:items-center sm:gap-5 sm:text-start">
             <Avatar Url="@_me?.AvatarUrl" Name="@(_me?.FullName ?? _me?.UserName)" Size="96" />
 
-            <div class="min-w-0 flex-1">
+            <div class="w-full min-w-0 flex-1">
                 <p class="text-sm text-ink-2">
                     وێنەکە دەبڕدرێت بۆ چوارگۆشە و بچووک دەکرێتەوە بۆ ٥١٢ پیکسڵ.
                 </p>
@@ -38,7 +43,8 @@
                     JPG، PNG یان WEBP — زۆرترین قەبارە <bdi>5</bdi> مێگابایت
                 </p>
 
-                <div class="mt-4 flex flex-wrap items-center gap-2">
+                <div class="mt-4 flex flex-col items-stretch gap-2
+                            sm:flex-row sm:flex-wrap sm:items-center">
                     @* Telerik's FileSelect rather than a raw InputFile: it gives the drag target,
                        the per-file error slot and the disabled state for free, and it matches the
                        buttons on every other screen. *@
@@ -239,11 +245,11 @@
 
         try
         {
-            // OpenReadStream needs an explicit ceiling — the default is 512KB and a phone photo
-            // trips it long before the server ever sees the file.
-            await using var stream = file.Stream;
+            // Read the whole file off the circuit FIRST, then post it — see PickedFile for why
+            // handing the browser's live stream to HttpClient is what made this fail at random.
+            var bytes = await PickedFile.ReadAsync(file, MaxBytes);
 
-            var result = await Auth.UploadAvatarAsync(stream, file.Name, "application/octet-stream");
+            var result = await Auth.UploadAvatarAsync(bytes, file.Name);
 
             if (!result.Succeeded)
             {
@@ -258,9 +264,17 @@
         {
             Nav.NavigateTo("/login", forceLoad: true);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
-            Toast.Error($"ناردنی وێنە سەرکەوتوو نەبوو: {ex.Message}");
+            // Already written for a reader — the size and empty-file checks in PickedFile.
+            Toast.Error(ex.Message);
+        }
+        catch (Exception)
+        {
+            // Everything else is a broken connection to either the browser or the API, and the
+            // exception text for those is English plumbing ("Response status code does not
+            // indicate success: 500") that only ever confused whoever read it off the screen.
+            Toast.Error("ناردنی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵبدەوە.");
         }
         finally
         {
@@ -285,9 +299,13 @@
             _me = result.User;
             Toast.Success("وێنەکە لابرا");
         }
-        catch (Exception ex)
+        catch (ApiUnauthorizedException)
         {
-            Toast.Error($"لابردنی وێنە سەرکەوتوو نەبوو: {ex.Message}");
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (Exception)
+        {
+            Toast.Error("لابردنی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵبدەوە.");
         }
         finally
         {

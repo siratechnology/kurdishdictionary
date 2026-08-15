@@ -128,14 +128,19 @@
                 {
                     @* Only on edit. A new user has no row yet, so there is nothing to attach a
                        file to — the picture is set on the second pass, after Save. *@
-                    <div class="flex items-center gap-4 rounded-chip border border-line-soft bg-page p-3">
+                    @* Same responsive rule as the profile page: the drop zone will not shrink, so
+                       below sm the row becomes a column instead of overflowing the dialog. *@
+                    <div class="avatar-picker flex flex-col items-center gap-4 rounded-chip border
+                                border-line-soft bg-page p-3 text-center
+                                sm:flex-row sm:items-center sm:text-start">
                         <Avatar Url="@_editingAvatarUrl" Name="@_editing.UserName" Size="56" />
 
-                        <div class="min-w-0 flex-1">
+                        <div class="w-full min-w-0 flex-1">
                             <p class="mb-2 text-11 text-ink-3">
                                 JPG، PNG یان WEBP — زۆرترین قەبارە <bdi>5</bdi> مێگابایت
                             </p>
-                            <div class="flex flex-wrap items-center gap-2">
+                            <div class="flex flex-col items-stretch gap-2
+                                        sm:flex-row sm:flex-wrap sm:items-center">
                                 <TelerikFileSelect Multiple="false"
                                                    AllowedExtensions="@AllowedExtensions"
                                                    MaxFileSize="@MaxAvatarBytes"
@@ -422,8 +427,10 @@
 
         try
         {
-            await using var stream = file.Stream;
-            var result = await Auth.UploadUserAvatarAsync(_editing.Id, stream, file.Name);
+            // Drained off the circuit before the POST starts — see PickedFile.
+            var bytes = await PickedFile.ReadAsync(file, MaxAvatarBytes);
+
+            var result = await Auth.UploadUserAvatarAsync(_editing.Id, bytes, file.Name);
 
             if (!result.Succeeded)
             {
@@ -441,9 +448,13 @@
         {
             Nav.NavigateTo("/login", forceLoad: true);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
-            Toast.Error($"ناردنی وێنە سەرکەوتوو نەبوو: {ex.Message}");
+            Toast.Error(ex.Message);
+        }
+        catch (Exception)
+        {
+            Toast.Error("ناردنی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵبدەوە.");
         }
         finally
         {
@@ -470,9 +481,13 @@
             Toast.Success("وێنەکە لابرا");
             await LoadAsync();
         }
-        catch (Exception ex)
+        catch (ApiUnauthorizedException)
         {
-            Toast.Error($"لابردنی وێنە سەرکەوتوو نەبوو: {ex.Message}");
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (Exception)
+        {
+            Toast.Error("لابردنی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵبدەوە.");
         }
         finally
         {

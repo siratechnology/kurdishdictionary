@@ -740,6 +740,69 @@ input::-ms-reveal {
   box-shadow: 0 0 0 1px var(--green);
 }
 
+/* FileSelect ---------------------------------------------------------- */
+/* The picture picker on هەژمارەکەم and in the user dialog.
+
+   Kendo's upload is built as a fixed-width block: the drop zone carries a min-width, and the
+   selected-file row lays the name, the size and the status icon out on one line that is allowed
+   to grow. Neither shrinks. Inside a flex row on a 360px phone that is not a wrapped layout, it
+   is a widget hanging off the edge of the card with the page scrolling sideways to reach it.
+
+   Scoped to .avatar-picker rather than applied to every .k-upload — this is what the picker in a
+   narrow column needs, not a global opinion about Telerik's component. */
+.avatar-picker .k-upload {
+  /* min-width:0 is the load-bearing one. A flex item defaults to min-width:auto, which refuses to
+     go below the content's intrinsic width no matter what width you set on it. */
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  border-radius: 12px;
+  border-color: var(--border);
+  background: var(--card);
+  font-family: var(--font-main);
+}
+
+/* From sm up the row has the space again, so the zone goes back to hugging its button. */
+@media (min-width: 640px) {
+  .avatar-picker .k-upload { width: auto; }
+}
+
+.avatar-picker .k-dropzone {
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--page);
+  border-color: var(--border);
+}
+
+/* The hint beside the button ("drop files here") is the first thing to sacrifice — the button
+   says what to do, and on a phone there is nothing to drop. */
+.avatar-picker .k-dropzone-hint {
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.avatar-picker .k-file,
+.avatar-picker .k-file-info,
+.avatar-picker .k-file-name-size-wrapper {
+  min-width: 0;
+}
+
+/* A photo off a phone is called something like "IMG_20260815_143012_1.jpg", which is wider than
+   the card. One line, ellipsis, and the full name is still in the title attribute. */
+.avatar-picker .k-file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--text-1);
+}
+
+.avatar-picker .k-file-size,
+.avatar-picker .k-file-validation-message {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
 /* Notifications ------------------------------------------------------- */
 .k-notification { border-radius: 12px; font-size: 14px; }
 .k-notification-success { background: var(--green-deep); border-color: var(--green-deep); }

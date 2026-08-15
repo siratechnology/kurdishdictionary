@@ -3,6 +3,16 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# SkiaSharp, which crops and re-encodes every profile picture, is a NATIVE library, and the build
+# in SkiaSharp.NativeAssets.Linux links against fontconfig. The aspnet image is Debian slim and
+# does not ship it, so libSkiaSharp cannot be loaded at all: the first SKBitmap.Decode throws
+# DllNotFoundException, and the upload endpoint answers with a bare 500. Nothing in the managed
+# build is wrong, which is exactly why this is easy to chase in the wrong place — it works on a
+# Windows dev machine, where the native asset comes from the Win32 package instead.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libfontconfig1 \
+    && rm -rf /var/lib/apt/lists/*
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["backend/backend.csproj", "backend/"]

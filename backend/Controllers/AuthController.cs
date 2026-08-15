@@ -18,19 +18,22 @@ public class AuthController : ControllerBase
     private readonly ITokenService _tokens;
     private readonly ICurrentUser _current;
     private readonly AppDbContext _db;
+    private readonly ILogger<AuthController> _log;
 
     public AuthController(
         UserManager<AppUser> users,
         RoleManager<AppRole> roles,
         ITokenService tokens,
         ICurrentUser current,
-        AppDbContext db)
+        AppDbContext db,
+        ILogger<AuthController> log)
     {
         _users = users;
         _roles = roles;
         _tokens = tokens;
         _current = current;
         _db = db;
+        _log = log;
     }
 
     // POST api/auth/login
@@ -169,6 +172,14 @@ public class AuthController : ControllerBase
         {
             // Thrown by AvatarService for everything the user can fix — too big, not an image.
             return Ok(Fail(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            // Anything left is ours, not theirs. Letting it escape produces a 500, and a 500 has
+            // no body — the screen can only say "internal error", which is the least useful thing
+            // an upload button can say. Log the truth, answer with a sentence.
+            _log.LogError(ex, "Avatar upload failed for {User}", user.UserName);
+            return Ok(Fail("ناردنی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵبدەوە."));
         }
 
         var previous = user.AvatarFile;
@@ -395,6 +406,12 @@ public class AuthController : ControllerBase
         catch (InvalidOperationException ex)
         {
             return Ok(Fail(ex.Message));
+        }
+        catch (Exception ex)
+        {
+            // Same reasoning as the self-service route above: never answer an upload with a 500.
+            _log.LogError(ex, "Avatar upload failed for {User}", user.UserName);
+            return Ok(Fail("ناردنی وێنە سەرکەوتوو نەبوو. دووبارە هەوڵبدەوە."));
         }
 
         var previous = user.AvatarFile;

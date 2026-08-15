@@ -119,25 +119,81 @@ public class AvatarService
 
         // Buffered because SkiaSharp needs to seek, and the request stream cannot.
         using var buffer = new MemoryStream();
-        await upload.CopyToAsync(buffer, ct);
+
+        try
+        {
+            await upload.CopyToAsync(buffer, ct);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // A body that stops arriving half way — phone losing signal mid-upload — surfaces
+            // here, and it is the caller's problem to retry, not a fault in this server.
+            _log.LogWarning(ex, "Avatar upload body could not be read to the end");
+            throw new InvalidOperationException("ناردنی وێنەکە تەواو نەبوو. دووبارە هەوڵبدەوە.");
+        }
+
         buffer.Position = 0;
 
-        using var original = SKBitmap.Decode(buffer);
-        if (original is null)
-            throw new InvalidOperationException("ئەمە وێنەیەکی دروست نییە.");
+        if (buffer.Length == 0)
+            throw new InvalidOperationException("فایلەکە بەتاڵە.");
 
-        using var square = CropSquare(original);
-        using var image = SKImage.FromBitmap(square);
-        using var encoded = image.Encode(SKEncodedImageFormat.Jpeg, JpegQuality)
-            ?? throw new InvalidOperationException("وێنەکە نەتوانرا پرۆسێس بکرێت.");
+        var jpeg = Encode(buffer);
 
         var name = $"{Guid.NewGuid():N}.jpg";
         var path = Path.Combine(_folder, name);
 
-        await using (var file = File.Create(path))
-            encoded.SaveTo(file);
+        try
+        {
+            await File.WriteAllBytesAsync(path, jpeg, ct);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // A missing mount or a read-only one. The user cannot fix it, so say so plainly
+            // rather than letting it read as "your picture is bad".
+            _log.LogError(ex, "Could not write an avatar into {Folder}", _folder);
+            throw new InvalidOperationException("وێنەکە نەتوانرا پاشەکەوت بکرێت. پەیوەندی بە بەڕێوەبەرەوە بکە.");
+        }
 
         return name;
+    }
+
+    /// <summary>
+    /// Decode → square → re-encode, with every failure turned into a sentence the user can act on.
+    ///
+    /// Everything in here is native SkiaSharp, and native code fails in ways that are not
+    /// <see cref="InvalidOperationException"/>: a HEIC renamed to .jpg decodes to null, a truncated
+    /// file throws inside the codec, and a container without libfontconfig1 cannot load
+    /// libSkiaSharp at all and throws DllNotFoundException on the very first call. Uncaught, all
+    /// three leave the controller as a bare 500 — which tells the person holding the phone nothing
+    /// and tells us nothing either, because a 500 carries no message.
+    ///
+    /// So the real exception goes to the log, and the caller gets something readable.
+    /// </summary>
+    private byte[] Encode(Stream image)
+    {
+        try
+        {
+            using var original = SKBitmap.Decode(image)
+                ?? throw new InvalidOperationException("ئەمە وێنەیەکی دروست نییە.");
+
+            using var square = CropSquare(original);
+            using var bitmap = SKImage.FromBitmap(square);
+            using var encoded = bitmap.Encode(SKEncodedImageFormat.Jpeg, JpegQuality)
+                ?? throw new InvalidOperationException("وێنەکە نەتوانرا پرۆسێس بکرێت.");
+
+            return encoded.ToArray();
+        }
+        catch (InvalidOperationException)
+        {
+            // Already carries a message written for the user — do not bury it.
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "Avatar image processing failed");
+            throw new InvalidOperationException(
+                "وێنەکە نەتوانرا پرۆسێس بکرێت. وێنەیەکی JPG یان PNG تاقی بکەرەوە.");
+        }
     }
 
     /// <summary>Best-effort cleanup of the file a user just replaced. Never throws.</summary>

@@ -68,16 +68,11 @@ public class AuthService
     /// it stores, so a rejection here is a real answer ("that is not an image", "too large") and
     /// nothing the browser claims about the file is trusted.
     /// </summary>
-    public async Task<AuthResultDto> UploadAvatarAsync(Stream content, string fileName, string contentType)
+    public async Task<AuthResultDto> UploadAvatarAsync(byte[] content, string fileName)
     {
         var http = await _api.CreateAsync();
 
-        using var form = new MultipartFormDataContent();
-        using var file = new StreamContent(content);
-        file.Headers.ContentType = new MediaTypeHeaderValue(contentType);
-
-        // The name is sent because the multipart format wants one; the server discards it.
-        form.Add(file, "file", fileName);
+        using var form = AvatarForm(content, fileName);
 
         var response = await http.PostAsync("api/auth/me/avatar", form);
         response.EnsureAuthorizedAndSuccess();
@@ -95,14 +90,11 @@ public class AuthService
     }
 
     /// <summary>Admin-only: set another user's picture. Same validation as the self-service route.</summary>
-    public async Task<AuthResultDto> UploadUserAvatarAsync(Guid userId, Stream content, string fileName)
+    public async Task<AuthResultDto> UploadUserAvatarAsync(Guid userId, byte[] content, string fileName)
     {
         var http = await _api.CreateAsync();
 
-        using var form = new MultipartFormDataContent();
-        using var file = new StreamContent(content);
-        file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-        form.Add(file, "file", fileName);
+        using var form = AvatarForm(content, fileName);
 
         var response = await http.PostAsync($"api/auth/users/{userId}/avatar", form);
         response.EnsureAuthorizedAndSuccess();
@@ -117,6 +109,32 @@ public class AuthService
         response.EnsureAuthorizedAndSuccess();
         return await response.Content.ReadFromJsonAsync<AuthResultDto>()
                ?? new AuthResultDto { Succeeded = false };
+    }
+
+    /// <summary>
+    /// The multipart body for either avatar route.
+    ///
+    /// The bytes arrive already in memory rather than as the browser's stream, and that is the
+    /// point: a ByteArrayContent has a known length, so the request goes out with a Content-Length
+    /// instead of chunked, and it can be sent a second time if the connection has to be retried.
+    /// Handing HttpClient the live browser stream instead tied the upload to the API to the speed
+    /// of the phone still sending it over the circuit, and a stall on that side truncated the body
+    /// the API was reading — which the API could only report as a failure to parse the form.
+    /// </summary>
+    private static MultipartFormDataContent AvatarForm(byte[] content, string fileName)
+    {
+        var form = new MultipartFormDataContent();
+        var file = new ByteArrayContent(content);
+
+        // The server decodes the bytes to decide what this is, so the declared type is a
+        // formality — but the multipart part needs one, and octet-stream is the honest answer
+        // for something we have not inspected either.
+        file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+        // The name is sent because the multipart format wants one; the server discards it.
+        form.Add(file, "file", fileName);
+
+        return form;
     }
 
     /// <summary>Editor-only contributor ranking — readable by any signed-in user.</summary>
