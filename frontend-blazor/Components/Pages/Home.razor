@@ -239,7 +239,12 @@ else
            a dashboard whose sections you have to click to reach is one that gets read once. *@
         <div class="grid items-start gap-4 xl:grid-cols-12">
 
-            <section class="card xl:col-span-8">
+            @* min-w-0 is load-bearing, not tidiness. A grid item defaults to min-width:auto, so it
+               refuses to shrink below its content — and the grid below is deliberately 750px wide.
+               Without this the track grows to 750px, pushes <main> past the viewport, and the whole
+               DOCUMENT scrolls sideways: in RTL that drags the page off to the left and leaves the
+               cards clipped. With it the track shrinks and the grid scrolls inside itself instead. *@
+            <section class="card min-w-0 xl:col-span-8">
                 <div class="mb-4 flex items-center gap-2.5">
                     <span class="card-badge"><Icon Name="book" Class="h-4 w-4" /></span>
                     <h2 class="card-title">نوێترین وشەکان</h2>
@@ -311,7 +316,7 @@ else
                 </TelerikGrid>
             </section>
 
-            <section class="card xl:col-span-4">
+            <section class="card min-w-0 xl:col-span-4">
                 <div class="mb-4 flex items-center gap-2.5">
                     <span class="card-badge card-badge-chart"><Icon Name="chart" Class="h-4 w-4" /></span>
                     <h2 class="card-title">چالاکی هەفتانە</h2>

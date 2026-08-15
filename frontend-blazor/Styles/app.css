@@ -286,8 +286,16 @@ input, select, textarea, button { font: inherit; }
 
 /* ── Cards ──────────────────────────────────────────────────────────────
    No shadows anywhere. The border does the work, which is why it had to get darker. */
+/* min-w-0 is here rather than per-card, because forgetting it is silent until it is
+   catastrophic. A card is nearly always a flex or grid item, and those default to
+   min-width:auto — they refuse to shrink below their content. One wide child (a Telerik grid
+   with fixed column widths, a long unbroken string, a preformatted block) then widens the
+   track, widens <main>, and makes the whole DOCUMENT scroll sideways. In RTL that drags the
+   page off to the left and clips every card, which reads as "the layout is broken" rather
+   than "one table is too wide". With min-width:0 the card shrinks and the wide child scrolls
+   inside its own container, which is where the overflow belongs. */
 .card {
-  @apply rounded-card border border-line bg-card p-5;
+  @apply min-w-0 rounded-card border border-line bg-card p-5;
 }
 .card-title {
   @apply text-15 font-medium text-ink-1;
