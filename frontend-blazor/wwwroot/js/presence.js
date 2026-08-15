@@ -11,10 +11,24 @@
 window.kurdishPresence = (() => {
     const THROTTLE_MS = 30_000;
 
+    // A tick while the tab is VISIBLE, independent of input.
+    //
+    // Input alone was too strict a test. Reading a definition, comparing two entries, thinking —
+    // none of it moves a pointer, so after two minutes the server stopped hearing anything and
+    // dropped the person to بێ‌چالاکی while they were sitting there looking at the screen. The
+    // effect was one-way and looked broken: they still saw everyone who arrived after them,
+    // because an arrival broadcasts, but nobody arriving later could see THEM.
+    //
+    // Visibility is what keeps this honest. A hidden tab does not tick, so the laptop closed on a
+    // desk and the phone in a pocket still fall out of «چالاک» on their own — which is the case
+    // the original input-only rule existed to catch.
+    const TICK_MS = 60_000;
+
     let dotNetRef = null;
     let activeToken = null;
     let lastSent = 0;
     let listening = false;
+    let timer = null;
 
     function report(reason) {
         if (!dotNetRef) return;
@@ -59,6 +73,14 @@ window.kurdishPresence = (() => {
                 document.addEventListener('keydown', () => report('key'), { passive: true });
                 document.addEventListener('click', () => report('click'), { passive: true });
                 document.addEventListener('visibilitychange', onVisibility);
+            }
+
+            // One interval for the document, not one per tracker — navigation replaces the
+            // tracker several times a session and each would otherwise leave a timer behind.
+            if (!timer) {
+                timer = setInterval(() => {
+                    if (document.visibilityState === 'visible') report('tick');
+                }, TICK_MS);
             }
 
             // Arriving on a page IS activity, and it must not wait out the throttle left over

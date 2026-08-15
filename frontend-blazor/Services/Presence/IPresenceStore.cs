@@ -83,4 +83,15 @@ public interface IPresenceStore
 
     /// <summary>Rows whose LastActivityAt has moved since the last flush, for the 60s DB write.</summary>
     IReadOnlyCollection<PresenceSnapshot> DrainDirty();
+
+    /// <summary>
+    /// Re-checks everyone's status and raises <see cref="Changed"/> if any of them moved.
+    ///
+    /// Status is DERIVED from a timestamp, so going بێ‌چالاکی is the one transition that happens
+    /// because time passed rather than because somebody did something — and an event-driven store
+    /// has nothing to announce it with. Without this the face strip kept showing people who had
+    /// gone quiet until an unrelated write happened to refresh it, so two colleagues looking at the
+    /// same moment saw different lists.
+    /// </summary>
+    void SweepStatuses();
 }

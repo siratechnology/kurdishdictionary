@@ -1,7 +1,9 @@
 namespace frontend_blazor.Services.Presence;
 
 /// <summary>
-/// Writes LastActivityAt to the database every 60 seconds, and once more on shutdown.
+/// Writes LastActivityAt to the database every 60 seconds, and once more on shutdown. Also sweeps
+/// presence statuses on the way past — see <see cref="IPresenceStore.SweepStatuses"/>: going quiet
+/// is the one transition nobody triggers, so something has to come along and notice it.
 ///
 /// Not on every heartbeat. A heartbeat is at most one per user per 30 seconds, which sounds cheap
 /// until you multiply it by every signed-in teacher for every hour of every day — an endless
@@ -31,7 +33,12 @@ public class PresenceFlushService : BackgroundService
         try
         {
             while (await timer.WaitForNextTickAsync(ct))
+            {
+                // Before the write: the sweep may mark rows dirty, and doing it first means those
+                // land in this flush rather than waiting a further minute for the next one.
+                _store.SweepStatuses();
                 await FlushAsync(ct);
+            }
         }
         catch (OperationCanceledException)
         {

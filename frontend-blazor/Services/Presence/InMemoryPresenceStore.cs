@@ -27,6 +27,9 @@ public class InMemoryPresenceStore : IPresenceStore
         public bool Connected = true;
         public int? CurrentSenseId;
         public bool Dirty;
+
+        /// <summary>What subscribers were last told. Lets the sweep notify only on a real move.</summary>
+        public PresenceStatus? LastBroadcast;
     }
 
     private readonly ConcurrentDictionary<Guid, Entry> _entries = new();
@@ -159,6 +162,27 @@ public class InMemoryPresenceStore : IPresenceStore
 
     public int ActiveCount() =>
         _entries.Values.Count(e => StatusOf(e) == PresenceStatus.Active);
+
+    public void SweepStatuses()
+    {
+        var moved = false;
+
+        foreach (var entry in _entries.Values)
+        {
+            lock (entry)
+            {
+                var now = StatusOf(entry);
+                if (entry.LastBroadcast == now) continue;
+
+                entry.LastBroadcast = now;
+                moved = true;
+            }
+        }
+
+        // One notification for the whole sweep. Ten people going quiet together is still one
+        // change to the list every subscriber is holding.
+        if (moved) Notify();
+    }
 
     public IReadOnlyCollection<PresenceSnapshot> DrainDirty()
     {
