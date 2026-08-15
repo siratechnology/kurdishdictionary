@@ -704,6 +704,46 @@ input::-ms-reveal {
 .k-window {
   border-radius: 18px;
   border-color: var(--border);
+
+  /* Every dialog in the app carries a fixed pixel Width — 420px through 820px — because that is
+     what reads well on a desktop and Telerik offers no responsive alternative. On a 390px phone
+     all eleven of them hang off the screen.
+
+     Capped here rather than on each one: max-width only bites when the viewport is narrower, so
+     the desktop sizes stay exactly as designed, and the next dialog somebody adds is responsive
+     without having to remember. */
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);   /* dvh excludes the phone's address bar; vh above is the fallback */
+}
+
+/* When a dialog runs out of height it is the CONTENT that should scroll, not the page behind it —
+   which on a phone is what happens otherwise: the dialog is clipped and the body scrolls under it,
+   so the save button is somewhere nobody can reach. */
+.k-dialog-content,
+.k-window-content {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Kendo lays the action row out as a nowrap flex row. Two Kurdish labels plus a destructive
+   button do not fit in 366px, and the last one goes off the end rather than onto a second line. */
+.k-dialog-actions,
+.k-window-actions {
+  flex-wrap: wrap;
+}
+
+/* A long title and the close button compete for one line; without this the title wins and pushes
+   the × out of the dialog. */
+.k-dialog-titlebar,
+.k-window-titlebar {
+  gap: 8px;
+}
+.k-dialog-title,
+.k-window-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .k-dialog-titlebar,
 .k-window-titlebar {

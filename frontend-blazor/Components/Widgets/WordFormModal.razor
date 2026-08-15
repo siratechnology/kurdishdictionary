@@ -68,11 +68,29 @@
                     }
                 </label>
 
+                @* Optional, and always has been — nothing on either side of the wire rejects a
+                   word without one. It did not SAY so, which is a different problem and the one
+                   people actually hit: an unmarked field beside a starred one reads as required,
+                   so words waited on a پۆل nobody needed to choose. *@
                 <label class="block">
-                    <span class="field-label">پۆلەکان</span>
+                    <span class="field-label">
+                        پۆلەکان
+                        <span class="text-ink-3">— ئارەزوومەندانە</span>
+                    </span>
                     <TelerikMultiSelect Data="@_allCategories" @bind-Value="SelectedCategoryIds"
                                         TextField="@nameof(CategoryDto.Name)" ValueField="@nameof(CategoryDto.Id)"
                                         Filterable="true" Placeholder="پۆل هەڵبژێرە…" Width="100%" />
+
+                    @if (Classification.PartOfSpeechId is not null && SelectedCategoryIds.Count == 0)
+                    {
+                        @* Said out loud rather than left implicit, because the consequence is real
+                           and belongs with the decision: the word saves, and the dashboard counts
+                           it unfinished until somebody adds a پۆل. *@
+                        <span class="mt-1 block text-11 text-ink-3">
+                            بەشی ئاخاوتن دیاریکراوە — پۆل پێویست نییە. وشەکە پاشەکەوت دەبێت،
+                            بەڵام تا پۆلێکی نەبێت وەک تەواونەکراو دەژمێردرێت.
+                        </span>
+                    }
                 </label>
             </div>
 
