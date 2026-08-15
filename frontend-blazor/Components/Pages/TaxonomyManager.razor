@@ -1,5 +1,5 @@
 @* Moved off /taxonomy, which is now the schema tree. Nothing here changed — this is the
-   membership manager (which words are in which پۆل, which carry which جۆری وشە) and it is
+   membership manager (which words are in which پۆل, which carry which بەشی ئاخاوتن) and it is
    still the only screen that does that job. *@
 @page "/taxonomy/manage"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
@@ -108,7 +108,7 @@
                          SelectedItems="@_selectedPanes"
                          SelectedItemsChanged="@(async (IEnumerable<SpeechPaneStatDto> items) => await OnSpeechPaneSelected(items))">
                 <GridColumns>
-                    <GridColumn Field="@nameof(SpeechPaneStatDto.Kurdish)" Title="جۆری وشە" />
+                    <GridColumn Field="@nameof(SpeechPaneStatDto.Kurdish)" Title="بەشی ئاخاوتن" />
                     <GridColumn Field="@nameof(SpeechPaneStatDto.WordCount)" Title="وشە" Width="110px">
                         <Template>
                             @{ var s = (SpeechPaneStatDto)context; }
@@ -145,7 +145,7 @@
                 </span>
                 <div class="min-w-0">
                     <span class="block truncate text-20 font-medium leading-tight text-ink-1">@SelectionName</span>
-                    <span class="text-xs text-ink-2">@(_tab == Tab.Categories ? "پۆل" : "جۆری وشە")</span>
+                    <span class="text-xs text-ink-2">@(_tab == Tab.Categories ? "پۆل" : "بەشی ئاخاوتن")</span>
                 </div>
                 <span class="pill pill-muted ms-auto shrink-0">
                     <bdi>@Ku.N(_membersTotal)</bdi> وشە

@@ -197,14 +197,21 @@ public class WordsController : ControllerBase
             WordsWithoutCategory = await words.CountAsync(w => !w.WordCategories.Any()),
             WordsWithoutSpeechPane = await words.CountAsync(w => !w.SpeechPanes.Any()),
 
-            // Words that pass ALL THREE checks, counted per word rather than inferred from the
-            // three gap totals — which cannot be done, because they overlap in unknown ways.
+            // Words that pass ALL THREE checks, counted per word rather than inferred from the gap
+            // totals — which cannot be done, because they overlap in unknown ways.
             //
             // The dashboard dial used to take total minus the WORST single gap. That is an upper
-            // bound, not a count: on the current data it reads ٩٢٪ where the true figure is ٨٤٪,
-            // because the 240 words with no پۆل are not the same 210 with no جۆری وشە. The gap
-            // grows with the overlap, so the dial was most wrong exactly when the work was most
-            // scattered.
+            // bound, not a count: the 240 words with no پۆل are not the same 210 with no بەشی
+            // ئاخاوتن. The gap grows with the overlap, so the dial was most wrong exactly when the
+            // work was most scattered.
+            //
+            // پەیوەندی is deliberately NOT a fourth condition, and this is the second time that
+            // decision has been made. A word with no هاوواتا, دژواتا or بەشێک لە is arguably not
+            // finished — but RelatedWords is empty, all 3,696 of them, so adding it would move the
+            // dial from ٨٥٪ to ٠٪ and hold it there until the first relation is entered. A
+            // headline number that cannot move is one people stop reading. The gap is already
+            // visible: the پەیوەندی tile shows zero in a danger state, which is where a metric
+            // nobody has started on belongs. Revisit once relations are being entered.
             WordsComplete = await words.CountAsync(w =>
                 w.Meanings.Any() && w.WordCategories.Any() && w.SpeechPanes.Any()),
             WordsAddedLast7Days = await words.CountAsync(w => w.CreatedAt >= sevenDaysAgo)

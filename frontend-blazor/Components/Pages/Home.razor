@@ -75,16 +75,16 @@ else
             @* ── Column 1: what the dictionary looks like ───────────────── *@
             <div class="flex flex-col gap-4">
 
-                @* The dial is completeness, not a single table's coverage: a word counts as
-                   done when it has a meaning, a class and a part of speech, which is what
-                   "finished" means to the teachers. *@
+                @* The dial is completeness, not a single table's coverage: a word counts as done
+                   when it has a واتا, a پۆل and a بەشی ئاخاوتن, which is what "finished" means to
+                   the teachers. پەیوەندی is not a fourth condition — see WordsComplete for why. *@
                 @* The caption reads ON from the number above it — «٨٤٪ لە وشەکان تەواون» — rather
                    than standing alone. As a bare sentence under a percentage, «وشەکان تەواون»
                    asserts that the words ARE complete, directly contradicting the figure it sits
                    under; the subtitle then had to carry the whole explanation and did not. *@
                 <HeroGauge Ratio="@Completeness"
                            Title="تەواوی فەرهەنگ"
-                           Subtitle="وشەیەک تەواوە کە واتا و پۆل و جۆری وشەی هەبێت"
+                           Subtitle="وشەیەک تەواوە کە واتا و پۆل و بەشی ئاخاوتنی هەبێت"
                            Caption="@($"لە {Ku.N(_stats.TotalWords)} وشە تەواون")"
                            Delta="@Ku.Delta(_stats.WordsAddedLast7Days)"
                            Icon="book" />
@@ -277,7 +277,7 @@ else
                                 </div>
                             </Template>
                         </GridColumn>
-                        <GridColumn Field="@nameof(RecentWordDto.SpeechPane)" Title="جۆری وشە" Width="150px">
+                        <GridColumn Field="@nameof(RecentWordDto.SpeechPane)" Title="بەشی ئاخاوتن" Width="150px">
                             <Template>
                                 @{ var w = (RecentWordDto)context; }
                                 @if (string.IsNullOrWhiteSpace(w.SpeechPane))
@@ -582,7 +582,7 @@ else
                 list.Add(new("وشە بەبێ واتا", "وشەی بەبێ هیچ واتایەک", _stats.WordsWithoutMeanings, "/words", "book"));
 
             if (_stats.WordsWithoutSpeechPane > 0)
-                list.Add(new("وشە بەبێ جۆری وشە", "ناو، کردار… دیاری نەکراوە", _stats.WordsWithoutSpeechPane, "/queue", "tag"));
+                list.Add(new("وشە بەبێ بەشی ئاخاوتن", "ناو، کردار… دیاری نەکراوە", _stats.WordsWithoutSpeechPane, "/queue", "tag"));
 
             if (_stats.WordsWithoutCategory > 0)
                 list.Add(new("وشە بەبێ پۆل", "بواری بەکارهێنان دیاری نەکراوە", _stats.WordsWithoutCategory, "/taxonomy/manage", "tag"));
