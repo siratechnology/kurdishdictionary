@@ -26,13 +26,13 @@
 
 <PageHeader Title="ژینزار" Subtitle="@Subtitle">
     <Actions>
+        @* Named the same as the sidebar item and the screen's own heading. "ستەیشن" was a third
+           name for one place, and a button that does not say where it goes is a button people do
+           not press. *@
         <a href="/station" class="btn-primary">
             <Icon Name="sparkle" Class="h-4 w-4" />
-            دەستپێکردنی ستەیشن
+            ڕێکخستنەوەی وشەکان
         </a>
-        <button @onclick="RefreshAsync" disabled="@_refreshing" class="btn-secondary">
-            @(_refreshing ? "نوێدەبێتەوە…" : "نوێکردنەوە")
-        </button>
     </Actions>
 </PageHeader>
 
@@ -78,10 +78,14 @@ else
                 @* The dial is completeness, not a single table's coverage: a word counts as
                    done when it has a meaning, a class and a part of speech, which is what
                    "finished" means to the teachers. *@
+                @* The caption reads ON from the number above it — «٨٤٪ لە وشەکان تەواون» — rather
+                   than standing alone. As a bare sentence under a percentage, «وشەکان تەواون»
+                   asserts that the words ARE complete, directly contradicting the figure it sits
+                   under; the subtitle then had to carry the whole explanation and did not. *@
                 <HeroGauge Ratio="@Completeness"
                            Title="تەواوی فەرهەنگ"
-                           Subtitle="وشە بە واتا و پۆل و جۆری وشەوە"
-                           Caption="وشەکان تەواون"
+                           Subtitle="وشەیەک تەواوە کە واتا و پۆل و جۆری وشەی هەبێت"
+                           Caption="@($"لە {Ku.N(_stats.TotalWords)} وشە تەواون")"
                            Delta="@Ku.Delta(_stats.WordsAddedLast7Days)"
                            Icon="book" />
 
@@ -392,10 +396,23 @@ else
 
     /// <summary>Sits under the page title; carries the live-refresh time rather than a "زیندوو" badge.</summary>
     string Subtitle => _stale
-        ? "ژمارەکان گۆڕاون — نوێی بکەرەوە"
+        ? "ژمارەکان نوێ دەکرێنەوە…"
         : _updatedAt is { } t
             ? $"دوایین نوێکردنەوە {Ku.Sub(t.ToString("HH:mm"))}"
             : "پوختەی فەرهەنگ و ئەو کارەی ماوە";
+
+    /// <summary>
+    /// Floor between automatic re-pulls.
+    ///
+    /// The nudge used to be a subtitle telling the reader to press نوێکردنەوە, which is the right
+    /// design while that button exists and a dead end once it does not. So the page now pulls for
+    /// itself — but no faster than this, because the original objection still stands: on a busy
+    /// afternoon the hub fires every few seconds, and every one of those is a six-way aggregate
+    /// re-rendering under somebody who is reading it.
+    /// </summary>
+    static readonly TimeSpan RefreshFloor = TimeSpan.FromSeconds(30);
+
+    DateTime _lastRefresh = DateTime.MinValue;
 
     // The dashboard aggregates work done by *other* editors, so it goes stale the moment someone else
     // saves. The backend pushes every committed write down the activity hub, so we hear about it
@@ -420,17 +437,26 @@ else
     /// re-pulls is a six-way aggregate. The notification bell still arrives instantly, because
     /// that one IS worth knowing about the moment it happens.
     /// </summary>
-    Task OnActivityAsync(IReadOnlyList<AuditLogDto> entries)
-    {
-        _stale = true;
-        return InvokeAsync(StateHasChanged);
-    }
+    Task OnActivityAsync(IReadOnlyList<AuditLogDto> entries) => MarkStaleAsync();
 
     /// <summary>Pushes sent while the socket was down are gone for good, so the totals may be stale.</summary>
-    Task OnReconnectedAsync()
+    Task OnReconnectedAsync() => MarkStaleAsync();
+
+    /// <summary>
+    /// Notes that the figures are behind and brings them up to date, at most once per
+    /// <see cref="RefreshFloor"/>. Inside the floor the flag simply stays set, and the next write
+    /// after it expires collects everything that happened in between — the aggregate is a snapshot,
+    /// so a later pull subsumes every earlier one it skipped.
+    /// </summary>
+    async Task MarkStaleAsync()
     {
         _stale = true;
-        return InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged);
+
+        if (DateTime.UtcNow - _lastRefresh < RefreshFloor) return;
+        _lastRefresh = DateTime.UtcNow;
+
+        await InvokeAsync(RefreshAsync);
     }
 
     /// <summary>
@@ -527,21 +553,12 @@ else
     /// relations table they would peg the whole dictionary near zero and the dial would stop
     /// moving as people work, which is the one thing it has to do.
     ///
-    /// Counted as the worst of the three rather than an average, so a gap cannot be hidden by
-    /// two full columns.
+    /// Counted per word by the server, because the three gaps overlap and no arithmetic on them
+    /// recovers the answer. This used to be total minus the worst single gap — an upper bound that
+    /// read ٩٢٪ against a true ٨٤٪, and was furthest out precisely when the missing work was
+    /// spread across different words rather than piled on the same ones.
     /// </summary>
-    double Completeness
-    {
-        get
-        {
-            var total = _stats!.TotalWords;
-            if (total <= 0) return 0;
-
-            var worst = Math.Max(_stats.WordsWithoutMeanings,
-                        Math.Max(_stats.WordsWithoutCategory, _stats.WordsWithoutSpeechPane));
-            return Ratio(total - worst, total);
-        }
-    }
+    double Completeness => Ratio(_stats!.WordsComplete, _stats.TotalWords);
 
     static double Ratio(int part, int total) => total <= 0 ? 0 : Math.Clamp(part / (double)total, 0, 1);
 

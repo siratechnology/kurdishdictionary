@@ -11,6 +11,14 @@ public class DashboardDto
     public int WordsWithoutMeanings { get; set; }
     public int WordsWithoutCategory { get; set; }
     public int WordsWithoutSpeechPane { get; set; }
+
+    /// <summary>
+    /// Words holding a meaning AND a category AND a part of speech — the dial's numerator.
+    ///
+    /// Sent as its own count because it cannot be derived from the three gaps above: they overlap,
+    /// and by an amount only the rows know. Any arithmetic on them gives a bound, not an answer.
+    /// </summary>
+    public int WordsComplete { get; set; }
     public int WordsAddedLast7Days { get; set; }
 
     public List<NameCountDto> Genders { get; set; } = new();

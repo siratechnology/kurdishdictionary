@@ -196,6 +196,17 @@ public class WordsController : ControllerBase
             WordsWithoutMeanings = await words.CountAsync(w => !w.Meanings.Any()),
             WordsWithoutCategory = await words.CountAsync(w => !w.WordCategories.Any()),
             WordsWithoutSpeechPane = await words.CountAsync(w => !w.SpeechPanes.Any()),
+
+            // Words that pass ALL THREE checks, counted per word rather than inferred from the
+            // three gap totals — which cannot be done, because they overlap in unknown ways.
+            //
+            // The dashboard dial used to take total minus the WORST single gap. That is an upper
+            // bound, not a count: on the current data it reads ٩٢٪ where the true figure is ٨٤٪,
+            // because the 240 words with no پۆل are not the same 210 with no جۆری وشە. The gap
+            // grows with the overlap, so the dial was most wrong exactly when the work was most
+            // scattered.
+            WordsComplete = await words.CountAsync(w =>
+                w.Meanings.Any() && w.WordCategories.Any() && w.SpeechPanes.Any()),
             WordsAddedLast7Days = await words.CountAsync(w => w.CreatedAt >= sevenDaysAgo)
         };
 
