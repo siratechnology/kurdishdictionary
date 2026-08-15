@@ -55,13 +55,50 @@
                    how words end up filed under whatever heading was already on the list. *@
                 <label class="block">
                     <span class="field-label">بەشی فەرهەنگ <span class="text-danger">*</span></span>
-                    <TelerikComboBox Data="@_sections" Value="@SectionName"
-                                     ValueChanged="@((string v) => OnSectionChanged(v))"
-                                     ValueExpression="@(() => SectionName)"
-                                     TextField="@nameof(DictionarySectionDto.NameKu)"
-                                     ValueField="@nameof(DictionarySectionDto.NameKu)"
-                                     AllowCustom="true" Filterable="true" ClearButton="true"
-                                     Placeholder="بەشی فەرهەنگ هەڵبژێرە یان بنووسە…" Width="100%" />
+                    @* A DropDownList rather than a ComboBox, at the team's instruction.
+                       Picking and typing are two controls now instead of one: a ComboBox is an
+                       editable text box, so it cannot be a plain list, and the ability to enter a
+                       بەشی فەرهەنگ that does not exist yet had to keep working. The «+» flips the
+                       field into a text box and back. *@
+                    @if (_typingSection)
+                    {
+                        <span class="flex items-center gap-2">
+                            <TelerikTextBox Value="@SectionName"
+                                            ValueChanged="@((string v) => OnSectionChanged(v))"
+                                            ValueExpression="@(() => SectionName)"
+                                            DebounceDelay="200"
+                                            Placeholder="ناوی بەشی نوێ بنووسە…" Width="100%" />
+
+                            <button type="button" @onclick="StopTypingSection"
+                                    class="btn-secondary shrink-0 px-2.5 py-1.5 text-11"
+                                    title="گەڕانەوە بۆ لیست">
+                                لیست
+                            </button>
+                        </span>
+
+                        <span class="mt-1 block text-11 text-ink-3">
+                            بەشە نوێیەکە لە کاتی پاشەکەوتکردندا دروست دەبێت.
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="flex items-center gap-2">
+                            <TelerikDropDownList Data="@_sections" Value="@SectionName"
+                                                 ValueChanged="@((string v) => OnSectionChanged(v))"
+                                                 ValueExpression="@(() => SectionName)"
+                                                 TextField="@nameof(DictionarySectionDto.NameKu)"
+                                                 ValueField="@nameof(DictionarySectionDto.NameKu)"
+                                                 Filterable="true"
+                                                 DefaultText="بەشی فەرهەنگ هەڵبژێرە…" Width="100%" />
+
+                            <button type="button" @onclick="StartTypingSection"
+                                    class="btn-secondary shrink-0 px-2.5 py-1.5 text-11"
+                                    title="بەشێکی نوێ بنووسە">
+                                + نوێ
+                            </button>
+                        </span>
+                    }
+
                     @if (MissingSection)
                     {
                         <span class="field-error">بەشی فەرهەنگ پێویستە</span>
@@ -520,6 +557,30 @@
     /// where it is created — so typing a new section never blocks on a round trip, and a section
     /// is never created for a word the user then abandons.
     /// </summary>
+    /// <summary>
+    /// True while the field is a text box for a brand-new بەشی فەرهەنگ rather than the list.
+    ///
+    /// Resolving the typed name against <see cref="_sections"/> anyway, in OnSectionChanged, is
+    /// what stops this creating a duplicate: type the name of a section that already exists and it
+    /// binds to that one, exactly as picking it would have.
+    /// </summary>
+    bool _typingSection;
+
+    void StartTypingSection()
+    {
+        _typingSection = true;
+        OnSectionChanged(null);
+    }
+
+    void StopTypingSection()
+    {
+        _typingSection = false;
+
+        // A half-typed name must not survive the switch back — the list is the source of truth
+        // again, and leaving it set would save a section nobody chose.
+        if (SectionId is null) OnSectionChanged(null);
+    }
+
     void OnSectionChanged(string? name)
     {
         SectionName = string.IsNullOrWhiteSpace(name) ? null : name.Trim();
