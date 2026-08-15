@@ -7,6 +7,11 @@
   <ItemGroup>
     <!-- Client for the backend's ActivityHub — this app listens, it does not host that hub. -->
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.*" />
+
+    <!-- Telerik UI for Blazor, from the local commercial feed "last telerik"
+         (C:\Telerik Lasted Version). NOT on nuget.org — a machine without that NuGet source
+         registered cannot restore this project. -->
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="6.0.0" />
   </ItemGroup>
 
   <PropertyGroup>

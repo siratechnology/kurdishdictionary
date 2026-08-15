@@ -1,0 +1,305 @@
+@page "/taxonomy"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize]
+@inject TaxonomyAdminService Taxonomy
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+<PageTitle>نەخشەی ژینزار</PageTitle>
+
+@* The whole Kurdish schema as one RADIAL mind map.
+
+   ژینزار sits at the centre; the ٧ بەشی ئاخاوتن ring it; تەوەر → نرخ → تەوەر continue outward
+   with no depth limit. Each limb owns an angular wedge sized by how much is in it, so the map's
+   silhouette is the information: ناو takes a broad shallow arc, کار a narrow one running three
+   rings deep.
+
+   ── Why the layout is ours and not a library's ──
+   The admin ships no graph library, and the thing that was actually broken in the first attempt
+   was TEXT ANCHORING — labels riding high in their pills, counts reordered by the bidi algorithm.
+   Every one of those fixes is a property of how the labels are drawn, so a library would have to
+   be fought on exactly the axis it abstracts away, plus npm bundling, a JS interop module, and
+   the tokens/RTL/NRT integration rewritten in JS. The layout itself is forty lines of polar
+   arithmetic. See the label block below for the four rules that make it legible.
+
+   Read-only on purpose: editing lives in ڕێکخستن, and a screen that both explains a structure
+   and changes it does neither well. *@
+
+<PageHeader Title="نەخشەی ژینزار" Subtitle="@Subtitle" />
+
+@if (_loading)
+{
+    <div class="card flex flex-col items-center gap-3 py-20 text-center">
+        <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+        <p class="text-sm text-ink-2">نەخشەکە بار دەبێت…</p>
+    </div>
+}
+else if (_root is null || !_root.Children.Any())
+{
+    <div class="card py-20 text-center">
+        <p class="text-sm text-ink-1">هێشتا هیچ بەشێکی ئاخاوتن ڕێکنەخراوە</p>
+        <a href="/settings/tree" class="mt-2 inline-block text-xs text-green hover:underline">ڕێکخستنی پێکهاتە</a>
+    </div>
+}
+else
+{
+    <div class="card mb-3 flex flex-wrap items-center gap-1.5 px-4 py-3">
+        <span class="me-1 text-11 text-ink-3">بەشەکانی ئاخاوتن:</span>
+
+        @foreach (var limb in _root.Children)
+        {
+            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-11"
+                  style="@ChipStyle(limb.Family)">
+                <span class="h-2 w-2 rounded-full" style="background: @Line(limb.Family);"></span>
+                @limb.Label
+                @* Already formatted when the node was built — Ku.N here would be a second pass. *@
+                <bdi class="opacity-70">@limb.Count</bdi>
+            </span>
+        }
+
+        @* No zoom buttons: d3.zoom owns the wheel and drag-to-pan, and a pair of Blazor buttons
+           beside it would be a second source of truth for the same transform. *@
+        <div class="ms-auto flex items-center gap-1.5">
+            <button @onclick="() => SetDepth(1)" class="@DepthClass(1)">بەشەکان</button>
+            <button @onclick="() => SetDepth(2)" class="@DepthClass(2)">تەوەرەکان</button>
+            <button @onclick="() => SetDepth(9)" class="@DepthClass(9)">هەمووی</button>
+        </div>
+    </div>
+
+    @* D3 owns everything inside this element.
+
+       Blazor must not touch it — no @key, no child content, nothing that would make the diff
+       algorithm want to reconcile a subtree D3 is mutating. The two would fight and the loser
+       is whichever ran last. Blazor's job here is the data and the controls; the drawing is
+       entirely on the other side of the interop boundary. *@
+    <div class="card map-canvas p-0" @ref="_host"></div>
+
+    <p class="mt-3 text-11 leading-relaxed text-ink-3">
+        کلیک لەسەر گرێیەک بەشەکانی ژێری دەکاتەوە یان دایدەخات · بە جوڵەی مشک زووم بکە،
+        بیکێشە بۆ جوڵاندن، گرێیەکیش دەتوانرێت بکێشرێت · ژمارەکان ژمارەی <span class="text-ink-2">وشە</span>ن،
+        وەک هەموو شوێنێکی تر لە بەرنامەکەدا. دەستکاری لە
+        <a href="/settings/tree" class="text-green hover:underline">ڕێکخستن</a>دا دەکرێت.
+    </p>
+}
+
+@code {
+    ElementReference _host;
+
+    List<TaxonomyTreeDto> _trees = new();
+
+    /// <summary>Carries the only trustworthy totals — see TaxonomyOverviewDto.TotalWords.</summary>
+    TaxonomyOverviewDto? _overview;
+
+    MapNode? _root;
+    bool _loading = true;
+    int _depth = 2;
+
+    /// <summary>Set once the host element exists and D3 has drawn into it.</summary>
+    bool _drawn;
+
+    /// <summary>
+    /// A node as the JS side wants it: label, count and the three colours already resolved.
+    ///
+    /// Colour is decided HERE rather than in the script because the palette is a set of CSS custom
+    /// properties owned by the design system, and a second copy of that mapping in JavaScript is a
+    /// copy that drifts. The script receives «var(--pos-3-bg)» and never learns what amethyst is.
+    /// </summary>
+    public sealed class MapNode
+    {
+        public string Key { get; set; } = "";
+        public string Label { get; set; } = "";
+        public string? Count { get; set; }
+        public string Kind { get; set; } = "";
+        public string Line { get; set; } = "";
+        public string Bg { get; set; } = "";
+        public string Ink { get; set; } = "";
+
+        public List<MapNode> Children { get; set; } = new();
+
+        [System.Text.Json.Serialization.JsonIgnore]
+        public int Family { get; set; }
+    }
+
+    string Subtitle
+    {
+        get
+        {
+            if (_root is null) return "…";
+
+            var axes = Ku.N(_trees.Sum(t => t.Axes.Count));
+            var options = Ku.N(_trees.Sum(t => CountValues(t.Axes)));
+            var parts = Ku.N(_root.Children.Count);
+
+            // Totals come from the overview, never from summing the seven columns: a word carrying
+            // two parts of speech sits in two of them, so the sum is the size of nothing.
+            var coverage = _overview is { TotalWords: > 0 } o
+                ? $" · {Ku.N(o.ClassifiedWords)} لە {Ku.N(o.TotalWords)} وشە پۆلێنکراوە"
+                : "";
+
+            return $"{parts} بەشی ئاخاوتن · {axes} تەوەری سەرەکی · {options} بژاردە{coverage}";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _overview = await Taxonomy.GetOverviewAsync();
+
+            // Sequential rather than Task.WhenAll: these all go through one scoped ApiClient on a
+            // Blazor circuit, and seven concurrent calls through it is a race for no gain.
+            foreach (var part in _overview?.PartsOfSpeech.OrderBy(p => p.SortOrder)
+                                 ?? Enumerable.Empty<TaxonomyPartOfSpeechDto>())
+            {
+                var tree = await Taxonomy.GetTreeAsync(part.Id);
+                if (tree is not null) _trees.Add(tree);
+            }
+
+            Build();
+        }
+        catch
+        {
+            // The page says "nothing configured" rather than showing an error card: on a taxonomy
+            // that ships empty the two look the same to a reader, and the settings link is the
+            // useful thing either way.
+        }
+        finally { _loading = false; }
+    }
+
+    /// <summary>
+    /// Draws once the element exists.
+    ///
+    /// It cannot happen in OnInitialized: @ref is only populated after the component has rendered,
+    /// so the host would be a null reference. Guarded by _drawn so a re-render from anything else
+    /// on the page cannot tear down and rebuild a diagram somebody has panned.
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_drawn || _root is null || _loading) return;
+
+        _drawn = true;
+        await Draw();
+    }
+
+    async Task Draw()
+    {
+        if (_root is null) return;
+
+        try
+        {
+            await JS.InvokeVoidAsync("schemaMap.render", _host, _root, new { openDepth = _depth });
+        }
+        catch (JSDisconnectedException)
+        {
+            // The circuit went away mid-call. Nothing to recover — the page is gone.
+        }
+    }
+
+    async Task SetDepth(int depth)
+    {
+        _depth = depth;
+        await Draw();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try { await JS.InvokeVoidAsync("schemaMap.dispose"); }
+        catch (JSDisconnectedException) { }
+        catch (InvalidOperationException) { /* Prerender, or already torn down. */ }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Model → map
+    // ═══════════════════════════════════════════════════════════════════════
+
+    void Build()
+    {
+        _root = new MapNode
+        {
+            Key = "root",
+            Label = "ژینزار",
+            Kind = "root",
+            Family = 0,
+            // The dictionary's own size. Summing the limbs would double-count any word carrying
+            // two parts of speech, and the trunk is not the sum of its branches.
+            Count = _overview is { TotalWords: > 0 } o ? Ku.N(o.TotalWords) : null,
+        };
+        Paint(_root, 0);
+
+        var family = 1;
+
+        foreach (var tree in _trees)
+        {
+            var limb = new MapNode
+            {
+                Key = $"pos-{tree.PartOfSpeechId}",
+                Label = tree.PartOfSpeechName,
+                Kind = "pos",
+                Family = family,
+                Count = Ku.N(tree.WordCount),
+            };
+            Paint(limb, family);
+
+            foreach (var axis in tree.Axes) limb.Children.Add(AxisNode(axis, limb.Key, family));
+
+            _root.Children.Add(limb);
+            family = family % 7 + 1;
+        }
+    }
+
+    MapNode AxisNode(TaxonomyTreeAxisDto axis, string parentKey, int family)
+    {
+        var node = new MapNode
+        {
+            Key = $"{parentKey}/axis-{axis.AxisId}",
+            Label = axis.NameKu,
+            Kind = "axis",
+            Family = family,
+            Count = axis.UsageCount > 0 ? Ku.N(axis.UsageCount) : null,
+        };
+        Paint(node, family);
+
+        foreach (var value in axis.Values)
+        {
+            var vn = new MapNode
+            {
+                Key = $"{node.Key}/val-{value.ValueId}",
+                Label = value.NameKu,
+                Kind = "value",
+                Family = family,
+                Count = Ku.N(value.WordCount),
+            };
+            Paint(vn, family);
+
+            // A value that opens further questions is itself a branch — the recursion, with no
+            // ceiling: PartOfSpeechAxis.RequiresValueId chains as deep as the data goes.
+            foreach (var child in value.Children)
+                vn.Children.Add(AxisNode(child, vn.Key, family));
+
+            node.Children.Add(vn);
+        }
+
+        return node;
+    }
+
+    /// <summary>Resolves the family's three tokens onto the node. Values keep a white fill so a
+    /// leaf reads as an option rather than as another branch.</summary>
+    static void Paint(MapNode n, int family)
+    {
+        n.Line = $"var(--pos-{family}-line)";
+        n.Ink = $"var(--pos-{family}-ink)";
+        n.Bg = n.Kind == "value" ? "var(--card)" : $"var(--pos-{family}-bg)";
+    }
+
+    static int CountValues(List<TaxonomyTreeAxisDto> axes) =>
+        axes.Sum(a => a.Values.Count + a.Values.Sum(v => CountValues(v.Children)));
+
+    static string ChipStyle(int family) =>
+        $"background: var(--pos-{family}-bg); color: var(--pos-{family}-ink);";
+
+    static string Line(int family) => $"var(--pos-{family}-line)";
+
+    string DepthClass(int depth) => _depth == depth
+        ? "rounded-full bg-green-deep px-2.5 py-1 text-11 text-white"
+        : "rounded-full border border-line bg-card px-2.5 py-1 text-11 text-ink-2 transition-colors hover:bg-page";
+}

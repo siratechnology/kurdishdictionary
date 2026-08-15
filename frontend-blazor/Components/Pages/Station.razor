@@ -1,0 +1,623 @@
+@page "/station"
+@page "/station/{Position:int}"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize(Roles = "Admin,Editor")]
+@implements IAsyncDisposable
+@* Injected as StationSvc, not Station: a member may not share its name with the enclosing class. *@
+@inject StationService StationSvc
+@inject PresenceService Presence
+@inject AuthenticationStateProvider Auth
+@inject NavigationManager Nav
+@inject ActivityStream Stream
+@inject Toast Toast
+
+<PageTitle>ستەیشن — ژینزار</PageTitle>
+
+@* The station: one sense at a time, from the first word to the last.
+
+   Keyboard-first by design. A teacher classifying four thousand senses with a mouse is doing four
+   thousand round trips between keyboard and pointer; digits pick values, Enter saves and advances,
+   Esc releases the claim. The shortcuts are printed on the controls rather than hidden in help. *@
+
+<div class="mx-auto max-w-3xl" @onkeydown="OnKeyDown" @onkeydown:preventDefault="_preventDefault" tabindex="0" @ref="_root">
+
+    @* ── Progress ────────────────────────────────────────────────────────── *@
+    <div class="mb-5 flex flex-wrap items-center gap-3">
+        <div class="min-w-0">
+            <h1 class="text-28 font-medium text-ink-1">ڕێکخستنەوەی وشەکان</h1>
+            @* Counted in WORDS, matching every other screen. The walk still steps sense by sense,
+               so a word with several senses holds this number still while «مانای ٢ لە ٣» moves —
+               which is honest about both units instead of picking one and being wrong. *@
+            <p class="mt-1 text-sm text-ink-2">
+                @if (_sense is not null)
+                {
+                    <text>وشەی </text>
+                    <bdi>@Ku.N(_sense.WordPosition)</bdi>
+                    <text> لە </text>
+                    <bdi>@Ku.N(_sense.WordTotal)</bdi>
+                    @if (_sense.SenseCount > 1)
+                    {
+                        <text> · مانای </text>
+                        <bdi>@Ku.N(_sense.SenseIndex)</bdi>
+                        <text> لە </text>
+                        <bdi>@Ku.N(_sense.SenseCount)</bdi>
+                    }
+                }
+                else
+                {
+                    <text>هیچ مانایەک نەماوە</text>
+                }
+            </p>
+        </div>
+
+        <div class="ms-auto flex items-center gap-2">
+            <label class="flex cursor-pointer select-none items-center gap-2 text-xs text-ink-2">
+                <input type="checkbox" checked="@_onlyUnclassified" @onchange="ToggleFilter"
+                       class="h-4 w-4 rounded border-line text-green-deep focus:ring-green" />
+                تەنها پۆلێننەکراوەکان
+            </label>
+            <button @onclick="Previous" disabled="@(_sense is null || _sense.Position <= 1)"
+                    class="btn-secondary py-1.5 text-xs disabled:opacity-40">پێشتر</button>
+            <button @onclick="Next" disabled="@(_sense is null || _sense.Position >= _sense.Total)"
+                    class="btn-secondary py-1.5 text-xs disabled:opacity-40">دواتر</button>
+        </div>
+    </div>
+
+    @if (_sense is not null)
+    {
+        <div class="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-page">
+            <div class="h-full rounded-full bg-green transition-all duration-300"
+                 style="width:@(_sense.WordTotal == 0 ? 0 : (int)(_sense.WordPosition * 100.0 / _sense.WordTotal))%"></div>
+        </div>
+    }
+
+    @if (_loading)
+    {
+        <div class="space-y-4">
+            <div class="skeleton h-40 rounded-card"></div>
+            <div class="skeleton h-64 rounded-card"></div>
+        </div>
+    }
+    else if (_sense is null)
+    {
+        <div class="card flex flex-col items-center gap-3 py-20 text-center">
+            <Icon Name="check" Class="h-10 w-10 text-green" />
+            <p class="text-sm text-ink-1">هیچ مانایەک بۆ کارکردن نەماوە</p>
+            <a href="/queue" class="btn-secondary mt-1">کەمووکوڕی وشەکان</a>
+        </div>
+    }
+    else
+    {
+        @if (_sense.HeldBy is { } holder)
+        {
+            @* Concurrency control, not oversight — it names the person so you go and ask them. *@
+            <div class="mb-4 flex items-center gap-2 rounded-card border border-line bg-warn-tint px-4 py-3 text-sm text-ink-1">
+                <Icon Name="alert" Class="h-4 w-4 shrink-0 text-warn" />
+                <span><span class="font-medium">@holder</span> ئێستا لەسەر ئەم وشەیە کار دەکات</span>
+            </div>
+        }
+
+        @if (_structureChanged)
+        {
+            @* Non-blocking, in the flow of the page. Never a modal: a dialog that steals focus
+               mid-typing is precisely how a remote change destroys somebody's sentence. *@
+            <div class="mb-4 flex flex-wrap items-center gap-2 rounded-card border border-line bg-warn-tint px-4 py-3 text-sm text-ink-1">
+                <Icon Name="alert" Class="h-4 w-4 shrink-0 text-warn" />
+                <span>ئەدمین بژاردەکانی ئەم بەشە گۆڕی. ئەوەی نووسیوتە هێشتا لێرەیە.</span>
+
+                <span class="ms-auto flex items-center gap-2">
+                    <button @onclick="SaveAndAdvance" class="btn-primary py-1.5 text-xs">پاشەکەوت</button>
+                    <button @onclick="ApplyStructureChange" class="btn-secondary py-1.5 text-xs">
+                        فۆرمی نوێ — ئەوەی پاشەکەوت نەکراوە دەڕوات
+                    </button>
+                </span>
+            </div>
+        }
+
+        @* ── The word ────────────────────────────────────────────────────── *@
+        <section class="card mb-4">
+            <div class="flex flex-wrap items-baseline gap-3">
+                <h2 class="text-34 font-medium text-ink-1">@_sense.Word</h2>
+                <span class="rounded-full bg-page px-2.5 py-1 text-11 text-ink-2">@StateLabel(_sense.WorkflowState)</span>
+                @if (_sense.DomainName is { } domain)
+                {
+                    <span class="rounded-full bg-green-tint px-2.5 py-1 text-11 text-on-tint">@domain</span>
+                }
+            </div>
+
+            <label class="mt-4 block">
+                <span class="field-label">پێناسە</span>
+                <textarea @bind="_definition" rows="2" class="field resize-none text-base"></textarea>
+            </label>
+
+            <label class="mt-3 block">
+                <span class="field-label">
+                    نموونەی بەکارهێنان
+                    <span class="text-ink-3">— هەموو مانایەک پێویستی پێیەتی</span>
+                </span>
+                <textarea @bind="_example" @ref="_exampleRef" rows="2"
+                          placeholder="وشەکە لە ڕستەیەکدا بەکاربهێنە…"
+                          class="field resize-none"></textarea>
+            </label>
+
+            <div class="mt-3">
+                <span class="field-label">بەشی ئاخاوتن</span>
+                <div class="flex flex-wrap gap-1.5">
+                    @foreach (var part in _options.Parts)
+                    {
+                        <button type="button" @onclick="() => SetPartOfSpeech(part.Id)"
+                                class="@(_sense.PartOfSpeechId == part.Id
+                                         ? "rounded-full bg-green-deep px-3.5 py-2 text-sm font-medium text-white"
+                                         : "rounded-full bg-page px-3.5 py-2 text-sm text-ink-2 transition-colors hover:bg-green-tint hover:text-on-tint")">
+                            @part.NameKu
+                        </button>
+                    }
+                </div>
+            </div>
+        </section>
+
+        @* ── Axes ────────────────────────────────────────────────────────────
+           Only the axes that apply right now. A conditional axis whose condition is unmet is
+           ABSENT — never rendered disabled, never greyed out. *@
+        @if (_sense.PartOfSpeechId is null)
+        {
+            <section class="card mb-4">
+                <p class="text-sm text-ink-2">بەشی ئاخاوتن هەڵبژێرە تا تەوەرە ڕێزمانییەکان دەربکەون.</p>
+            </section>
+        }
+        else if (_sense.Axes.Count == 0)
+        {
+            @* Day one: the taxonomy ships empty and this is correct, not broken. *@
+            <section class="card mb-4">
+                <p class="text-sm text-ink-2">هیچ تەوەرێکی ڕێزمانی بۆ ئەم بەشی ئاخاوتنە ڕێکنەخراوە.</p>
+                <a href="/settings/tree" class="mt-2 inline-block text-xs text-green hover:underline">ڕێکخستنی تەوەرەکان</a>
+            </section>
+        }
+        else
+        {
+            @* The axes come back DEPTH-FIRST: each one is immediately followed by the groups its
+               answers opened, and AxisField indents and labels by the parent value it hangs off. A
+               flat render would make two child groups of one multi-select axis indistinguishable. *@
+            <section class="card mb-4 space-y-4">
+                @foreach (var axis in _sense.Axes)
+                {
+                    <AxisField Axis="axis"
+                               ShowName="@ShowAxisName(axis)"
+                               ShowDigits="@(axis.AxisId == FocusedAxisId)"
+                               Notice="@NoticeFor(axis.AxisId)"
+                               OnPick="OnPick"
+                               OnNotApplicable="@(a => OpenNotApplicable(a.AxisId, a.Name))" />
+                }
+            </section>
+        }
+
+        @* ── What is still missing ───────────────────────────────────────── *@
+        @if (_sense.Issues.Count > 0)
+        {
+            <section class="card mb-4 border-line bg-warn-tint">
+                <div class="space-y-1">
+                    @foreach (var issue in _sense.Issues)
+                    {
+                        <p class="flex items-start gap-2 text-xs text-ink-1">
+                            <Icon Name="alert" Class="mt-0.5 h-3.5 w-3.5 shrink-0 text-warn" />
+                            @issue
+                        </p>
+                    }
+                </div>
+            </section>
+        }
+
+        @* ── Actions ─────────────────────────────────────────────────────── *@
+        <div class="flex flex-wrap items-center gap-2">
+            <button @onclick="SaveAndAdvance" disabled="@_saving" class="btn-primary disabled:opacity-50">
+                <Icon Name="check" Class="h-4 w-4" />
+                @(_saving ? "پاشەکەوت…" : "پاشەکەوت و دواتر")
+                <span class="ms-1 rounded-chip bg-green px-1.5 py-0.5 text-11">Enter</span>
+            </button>
+
+            <button @onclick="Skip" class="btn-secondary">
+                تێپەڕاندن
+                <span class="ms-1 rounded-chip border border-line px-1.5 py-0.5 text-11">Esc</span>
+            </button>
+
+            @if (_savedMessage is { } message)
+            {
+                <span class="flex items-center gap-1.5 text-xs text-on-tint">
+                    <Icon Name="check" Class="h-3.5 w-3.5" />
+                    @message
+                </span>
+            }
+        </div>
+    }
+</div>
+
+@* ── Escape-hatch dialog: the note is not optional ───────────────────────── *@
+@if (_notApplicableAxisId is { } naAxis)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
+        <div class="w-full max-w-md rounded-card bg-card p-6 shadow-shell">
+            <h3 class="text-15 font-medium text-ink-1">«@_notApplicableAxisName» بۆ ئەم وشە کار ناکات</h3>
+            <p class="mt-1 text-xs text-ink-2">
+                ئەم مانایە دەچێتە ڕیزی کێشەدار — ئەوە بنەمای پێداچوونەوەی تاکسۆنۆمییەکەیە، نە ڕەتکردنەوە.
+            </p>
+
+            <label class="mt-4 block">
+                <span class="field-label">هۆکار — پێویستە</span>
+                <textarea @bind="_notApplicableNote" rows="3" class="field resize-none"
+                          placeholder="بۆچی ئەم تەوەرە بۆ ئەم وشە کار ناکات؟"></textarea>
+            </label>
+
+            @if (_notApplicableError is { } error)
+            {
+                <p class="field-error">@error</p>
+            }
+
+            <div class="mt-5 flex gap-2">
+                <button @onclick="() => ConfirmNotApplicable(naAxis)" class="btn-primary flex-1 justify-center">
+                    تۆمارکردن
+                </button>
+                <button @onclick="CloseNotApplicable" class="btn-secondary">پاشگەز</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int? Position { get; set; }
+
+    StationSenseDto? _sense;
+    StationOptions _options = new(new(), new());
+
+    string _definition = "";
+    string _example = "";
+
+    bool _loading = true;
+    bool _saving;
+    bool _onlyUnclassified;
+    bool _preventDefault;
+
+    string? _savedMessage;
+    int? _notApplicableAxisId;
+    string _notApplicableAxisName = "";
+    string _notApplicableNote = "";
+    string? _notApplicableError;
+
+    ElementReference _root;
+    ElementReference _exampleRef;
+    Guid? _userId;
+
+    int _position = 1;
+
+    /// <summary>
+    /// Digits address the FIRST unanswered axis. Numbering every axis at once would mean twelve
+    /// shortcuts to remember; one axis at a time means the digit always does the obvious thing.
+    /// </summary>
+    /// <summary>
+    /// A part of speech with exactly ONE first-level group does not need that group labelled: the
+    /// part of speech is the question, and the dropdown is its answer. Under کار, printing
+    /// «دەمژمێر» above the only dropdown labels something the teacher just chose.
+    ///
+    /// ناو has five at the first level, so every one of them keeps its name — without it you could
+    /// not tell ژمارە from ڕەگەز. Sub-groups always keep theirs.
+    /// </summary>
+    bool ShowAxisName(StationAxisDto axis) =>
+        axis.Depth > 0 || _sense is null || _sense.Axes.Count(a => a.Depth == 0) > 1;
+
+    int? FocusedAxisId =>
+        _sense?.Axes.FirstOrDefault(a => a.SelectedValueId is null && !a.IsNotApplicable)?.AxisId
+        ?? _sense?.Axes.FirstOrDefault()?.AxisId;
+
+    // ── The hazard real-time creates ────────────────────────────────────────
+    //
+    // A teacher is midway through filling an axis and an admin deactivates or re-parents it. Naive
+    // re-rendering destroys their unsaved input, which is a worse outcome than them working from a
+    // form that is thirty seconds out of date.
+    //
+    // So a remote change NEVER replaces the form. It marks the axes that moved with an inline
+    // notice, raises a non-blocking toast, and the structural change is applied on the next save or
+    // an explicit discard — nothing else.
+
+    /// <summary>Axis id → the notice to show inline on that axis. Never a modal.</summary>
+    readonly Dictionary<int, string> _remoteNotices = new();
+
+    /// <summary>True once a remote change is waiting to be applied to this form.</summary>
+    bool _structureChanged;
+
+    string? NoticeFor(int axisId) => _remoteNotices.GetValueOrDefault(axisId);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+        Guid.TryParse(
+            state.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id);
+        _userId = id;
+
+        Stream.TaxonomyChanged += OnTaxonomyChanged;
+        await Stream.StartAsync();
+
+        _options = await StationSvc.GetOptionsAsync();
+        // An explicit /station/45 wins; otherwise pick up where this person left off. Starting a
+        // 2,967-word walk at 1 every morning is how work gets redone.
+        _position = Position ?? await StationSvc.GetResumeAsync();
+        await Load(_position);
+    }
+
+    /// <summary>
+    /// An admin changed the taxonomy. Work out WHAT changed for this sense and say so — without
+    /// touching a single control.
+    /// </summary>
+    async Task OnTaxonomyChanged(TaxonomyChangedDto change)
+    {
+        if (_sense is null) return;
+
+        var fresh = await StationSvc.PeekAsync(_sense.SenseId);
+        if (fresh is null) return;
+
+        await InvokeAsync(() =>
+        {
+            if (_sense is null) return;
+
+            var byId = fresh.Axes.ToDictionary(a => a.AxisId);
+            var notices = new Dictionary<int, string>();
+
+            foreach (var axis in _sense.Axes)
+            {
+                if (!byId.TryGetValue(axis.AxisId, out var now))
+                {
+                    // Retired or re-parented away. The control STAYS on screen with whatever is in
+                    // it, and the already-stored answer stays readable on the sense and in history —
+                    // deactivation hides an option from new entries, it never erases past ones.
+                    notices[axis.AxisId] = "ئەم بژاردە لەلایەن ئەدمین لابردرا — دەتوانیت ئەوەی هەیە پاشەکەوت بکەیت";
+                    continue;
+                }
+
+                if (now.Name != axis.Name)
+                    notices[axis.AxisId] = $"ناوی ئەم بژاردە گۆڕدرا بۆ «{now.Name}»";
+
+                else if (now.MaxSelections != axis.MaxSelections)
+                    notices[axis.AxisId] = "ژمارەی بژاردەکانی ئەم تەوەرە لەلایەن ئەدمین گۆڕدرا";
+
+                else if (now.Values.Count != axis.Values.Count)
+                    notices[axis.AxisId] = "ئەم بژاردە لەلایەن ئەدمین گۆڕدرا";
+
+                else if (!now.IsRetired && axis.IsRetired || now.IsRetired && !axis.IsRetired)
+                    notices[axis.AxisId] = "دۆخی ئەم بژاردە لەلایەن ئەدمین گۆڕدرا";
+            }
+
+            // A group that appeared is worth knowing about too, but it cannot be shown without
+            // re-rendering — so it is announced rather than inserted.
+            var appeared = fresh.Axes.Count > _sense.Axes.Count;
+
+            _remoteNotices.Clear();
+            foreach (var (axisId, message) in notices) _remoteNotices[axisId] = message;
+
+            if (notices.Count == 0 && !appeared) return;
+
+            _structureChanged = true;
+
+            // Non-blocking, never a modal that steals focus mid-typing.
+            Toast.Info(appeared && notices.Count == 0
+                ? "بژاردەی نوێ زیادکرا — پاش پاشەکەوت دەردەکەوێت"
+                : "ئەدمین بژاردەکان گۆڕی — ئەوەی نووسیوتە پاشەکەوت بکە، ئینجا فۆرمەکە نوێ دەبێتەوە");
+
+            StateHasChanged();
+        });
+    }
+
+    /// <summary>Take the admin's change now, throwing away nothing that was saved.</summary>
+    async Task ApplyStructureChange()
+    {
+        if (_sense is null) return;
+
+        _remoteNotices.Clear();
+        _structureChanged = false;
+
+        var fresh = await StationSvc.PeekAsync(_sense.SenseId);
+        if (fresh is not null) _sense = fresh;
+    }
+
+    async Task Load(int position)
+    {
+        _loading = true;
+        _savedMessage = null;
+        _remoteNotices.Clear();
+        _structureChanged = false;
+        StateHasChanged();
+
+        try
+        {
+            _sense = await StationSvc.GetAtAsync(position, _onlyUnclassified);
+        }
+        catch
+        {
+            _sense = null;
+        }
+
+        if (_sense is not null)
+        {
+            _position = _sense.Position;
+
+            // Saved on every move, not on exit: the case this exists for is a closed laptop, and
+            // an exit hook does not run for one. Fire-and-forget — see SaveResumeAsync.
+            await StationSvc.SaveResumeAsync(_position, _sense.SenseId, _sense.WordId);
+
+            _definition = _sense.Definition;
+            _example = _sense.ExampleUsage;
+
+            // Presence and the claim are one fact — entering the sense sets both.
+            if (_userId is { } uid && _sense.HeldBy is null)
+                await Presence.EnterSenseAsync(uid, _sense.SenseId);
+        }
+
+        _loading = false;
+    }
+
+    async Task SaveAndAdvance()
+    {
+        if (_sense is null || _saving) return;
+
+        _saving = true;
+
+        var updated = await StationSvc.SaveAsync(new SaveStationSenseDto
+        {
+            SenseId = _sense.SenseId,
+            PartOfSpeechId = _sense.PartOfSpeechId,
+            DomainId = _sense.DomainId,
+            Definition = _definition,
+            ExampleUsage = _example,
+        });
+
+        // Submitting is what moves the workflow on; a Senior publishes, a Contributor queues.
+        await StationSvc.SubmitAsync(_sense.SenseId);
+
+        _saving = false;
+        _savedMessage = "پاشەکەوتکرا";
+
+        await Advance();
+    }
+
+    async Task Advance()
+    {
+        if (_sense is null) return;
+
+        if (_userId is { } uid) await Presence.LeaveSenseAsync(uid, _sense.SenseId);
+
+        // When filtering to unclassified, the one just answered leaves the set — so staying at the
+        // same position lands on the next unanswered sense rather than skipping one.
+        var next = _onlyUnclassified ? _position : _position + 1;
+        await Load(next);
+    }
+
+    async Task Skip()
+    {
+        if (_sense is null) return;
+        if (_userId is { } uid) await Presence.LeaveSenseAsync(uid, _sense.SenseId);
+        await Load(_position + 1);
+    }
+
+    async Task Previous() => await Load(Math.Max(1, _position - 1));
+    async Task Next() => await Load(_position + 1);
+
+    async Task ToggleFilter(ChangeEventArgs e)
+    {
+        _onlyUnclassified = e.Value is true;
+        await Load(1);
+    }
+
+    async Task SetPartOfSpeech(int partId)
+    {
+        if (_sense is null) return;
+
+        _sense.PartOfSpeechId = _sense.PartOfSpeechId == partId ? null : partId;
+
+        // Saved immediately: changing the part of speech changes which axes exist, and the server
+        // is the only thing that knows the rules.
+        var updated = await StationSvc.SaveAsync(new SaveStationSenseDto
+        {
+            SenseId = _sense.SenseId,
+            PartOfSpeechId = _sense.PartOfSpeechId,
+            DomainId = _sense.DomainId,
+            Definition = _definition,
+            ExampleUsage = _example,
+        });
+
+        if (updated is not null) _sense = updated;
+    }
+
+    Task OnPick((int AxisId, int ValueId) pick) => SetFeature(pick.AxisId, pick.ValueId);
+
+    async Task SetFeature(int axisId, int valueId)
+    {
+        if (_sense is null) return;
+
+        // The server decides what a click means: single-select replaces, multi-select toggles up to
+        // the cap, and either way it re-resolves the tree and clears exactly the descendants that
+        // stopped applying. The client never reimplements the rules.
+        var updated = await StationSvc.SetFeatureAsync(_sense.SenseId, axisId, valueId);
+        if (updated is not null) _sense = updated;
+    }
+
+    void OpenNotApplicable(int axisId, string axisName)
+    {
+        _notApplicableAxisId = axisId;
+        _notApplicableAxisName = axisName;
+        _notApplicableNote = "";
+        _notApplicableError = null;
+    }
+
+    void CloseNotApplicable() => _notApplicableAxisId = null;
+
+    async Task ConfirmNotApplicable(int axisId)
+    {
+        if (_sense is null) return;
+
+        var (ok, error, updated) = await StationSvc.MarkNotApplicableAsync(_sense.SenseId, axisId, _notApplicableNote);
+
+        if (!ok)
+        {
+            _notApplicableError = error;
+            return;
+        }
+
+        if (updated is not null) _sense = updated;
+        _notApplicableAxisId = null;
+    }
+
+    /// <summary>
+    /// Keyboard-first (پڕۆمپت ٧): digits pick axis values, Enter saves and advances, Esc releases.
+    /// </summary>
+    async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (_sense is null || _notApplicableAxisId is not null) return;
+
+        // Never steal a keystroke from a textarea — the definition and example fields need digits.
+        _preventDefault = false;
+
+        if (e.Key == "Enter" && (e.CtrlKey || e.MetaKey))
+        {
+            _preventDefault = true;
+            await SaveAndAdvance();
+            return;
+        }
+
+        if (e.Key == "Escape")
+        {
+            _preventDefault = true;
+            await Skip();
+            return;
+        }
+
+        if (e.Key.Length == 1 && char.IsDigit(e.Key[0]) && FocusedAxisId is { } axisId)
+        {
+            var digit = e.Key[0] - '0';
+            var axis = _sense.Axes.FirstOrDefault(a => a.AxisId == axisId);
+            var value = axis?.Values.FirstOrDefault(v => v.Digit == digit);
+
+            if (value is not null)
+            {
+                _preventDefault = true;
+                await SetFeature(axisId, value.ValueId);
+            }
+        }
+    }
+
+    static string StateLabel(string state) => state switch
+    {
+        "Raw" => "خام",
+        "Classified" => "پۆلێنکراو",
+        "Published" => "بڵاوکراو",
+        "Disputed" => "کێشەدار",
+        _ => state,
+    };
+
+    public async ValueTask DisposeAsync()
+    {
+        Stream.TaxonomyChanged -= OnTaxonomyChanged;
+
+        if (_sense is not null && _userId is { } uid)
+        {
+            try { await Presence.LeaveSenseAsync(uid, _sense.SenseId); }
+            catch { /* circuit already gone */ }
+        }
+    }
+}

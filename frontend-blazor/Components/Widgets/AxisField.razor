@@ -1,0 +1,330 @@
+@* One axis on the entry form — and the same component in the settings preview, so what a teacher
+   sees and what an admin previews cannot drift apart.
+
+   Three things this component exists to get right:
+
+   1. NESTING. A child group is rendered indented UNDER the value that opened it and labelled with
+      that value's name. When a multi-select axis has children hanging off two of its values and the
+      teacher picks both, two groups open at once — and in a flat list nobody can tell which
+      sub-answer belongs to which parent. The data becomes unreadable, which is worse than the
+      question not being asked.
+
+   2. THE CONTROL FOLLOWS THE CONFIG. MaxSelections == 1 gives a segmented control where choosing
+      one replaces the other; anything else gives checkboxes with a live counter. Nothing here
+      branches on a part of speech or an axis name.
+
+   3. NOT-APPLICABLE IS PART OF THE SAME CONTROL, not a second one beside it. A value and «کار
+      ناکات» are mutually exclusive, and two independent controls invite a sense that is
+      simultaneously answered and declared inapplicable.
+
+   4. THE TEACHER READS A QUESTION, NOT A FIELD NAME. What is printed above the control is
+      Axis.Ask — the written question if the settings screen has one («کارەکە چ جۆرێکە؟»), the raw
+      technical label only as a fallback. A teacher reading «جۆری کار» does not know what is being
+      asked of them, and the answer they pick to get past it is stored as if it were a judgement.
+
+   5. NOTHING IS EVER PRE-SELECTED. Every dropdown opens on «— هەڵبژێرە —». A control that opens
+      showing the first real value looks answered while nobody has touched it, and that is how a
+      wrong value gets saved silently — the single most expensive kind of bad data here, because it
+      is indistinguishable from work. *@
+
+<div class="@IndentClass">
+
+    @* The parent value that opened this group. Without this label the nesting is decoration. *@
+    @if (Axis.ParentValueName is { } parent)
+    {
+        <p class="mb-1 text-11 text-ink-3">
+            چونکە <span class="text-on-tint">@parent</span> هەڵبژێردراوە
+        </p>
+    }
+
+    <div class="mb-2 flex flex-wrap items-center gap-2">
+        @if (ShowName)
+        {
+            @* Axis.Ask, never Axis.Name: the written question if there is one, the bare label only
+               when nobody has written one yet. The fallback lives on the DTO so this component and
+               the settings preview cannot disagree about which string is shown. *@
+            <span class="text-13 text-ink-1">@Axis.Ask</span>
+        }
+
+        @if (Axis.IsRetired)
+        {
+            @* Deactivated in settings, but this sense answered it. Retiring an option hides it from
+               NEW entries; it never erases what is already recorded. *@
+            <span class="pill pill-muted">ناچالاککراوە</span>
+        }
+
+        @if (Axis.MinSelections > 0 || Axis.IsRequired)
+        {
+            <span class="text-11 text-warn" title="لە کەمووکوڕی وشەکاندا دەردەکەوێت — ڕێگری لە پاشەکەوت ناکات">
+                پێویست
+            </span>
+        }
+
+        @* «٢ لە ٣ هەڵبژێردراو» — live, and only where more than one is allowed. *@
+        @if (!IsSingleSelect)
+        {
+            <span class="pill @(AtCap ? "pill-warn" : "pill-muted")">
+                @if (Axis.MaxSelections is { } cap)
+                {
+                    <text><bdi>@Ku.N(SelectedCount)</bdi> لە <bdi>@Ku.N(cap)</bdi> هەڵبژێردراو</text>
+                }
+                else
+                {
+                    <text><bdi>@Ku.N(SelectedCount)</bdi> هەڵبژێردراو</text>
+                }
+            </span>
+        }
+
+        @if (Axis.IsNotApplicable)
+        {
+            <span class="pill pill-muted">کار ناکات</span>
+        }
+    </div>
+
+    @if (IsSingleSelect)
+    {
+        @* One choice → one dropdown. Choosing replaces, and choosing a value that opens a further
+           group makes the next dropdown appear directly beneath this one.
+
+           A native <select> rather than the Telerik dropdown the rest of the admin uses, for one
+           reason: the station is keyboard-first. Digits ١-٩ pick a value without the mouse, which
+           is what makes four thousand senses finishable, and the digit handler on the page needs
+           the keystroke to reach it rather than being swallowed by a rich control's own key
+           handling. The digit is printed in each option so the shortcut stays discoverable. *@
+        <div class="flex flex-wrap items-center gap-2">
+            <select value="@(Axis.SelectedValueId?.ToString() ?? "")"
+                    @onchange="OnSelectChanged"
+                    class="field w-auto min-w-[13rem] max-w-full py-2">
+                @* The empty prompt option, and it is SELECTED whenever the sense holds no answer —
+                   explicitly, not by relying on it happening to be first. A dropdown that opens on a
+                   real value reads as answered by somebody, and nothing downstream can tell that
+                   apart from a teacher's actual judgement. *@
+                <option value="" selected="@(Axis.SelectedValueId is null)">— هەڵبژێرە —</option>
+
+                @foreach (var value in Axis.Values)
+                {
+                    <option value="@value.ValueId" selected="@(Axis.SelectedValueIds.Contains(value.ValueId))">
+                        @OptionLabel(value)
+                    </option>
+                }
+            </select>
+
+            @if (ShowNotApplicable)
+            {
+                <button type="button" @onclick="() => OnNotApplicable.InvokeAsync(Axis)"
+                        class="@(Axis.IsNotApplicable
+                                 ? "rounded-full border border-line bg-page px-3 py-2 text-xs text-ink-1"
+                                 : "rounded-full border border-dashed border-line px-3 py-2 text-xs text-ink-3 transition-colors hover:bg-page")">
+                    کار ناکات
+                </button>
+            }
+        </div>
+    }
+    else
+    {
+        @* Checkboxes. At the cap the remaining boxes disable with a one-line reason rather than
+           silently ignoring clicks — a control that does nothing reads as broken. *@
+        <div class="flex flex-wrap gap-1.5">
+            @foreach (var value in Axis.Values)
+            {
+                var isSelected = Axis.SelectedValueIds.Contains(value.ValueId);
+                var isBlocked = !isSelected && AtCap;
+
+                <button type="button" @onclick="() => Pick(value.ValueId)" disabled="@isBlocked"
+                        title="@(isBlocked ? CapReason : null)"
+                        class="@CheckboxClass(isSelected, isBlocked)">
+                    <span class="@(isSelected
+                                   ? "flex h-4 w-4 shrink-0 items-center justify-center rounded-chip bg-white"
+                                   : "flex h-4 w-4 shrink-0 items-center justify-center rounded-chip border border-line")">
+                        @if (isSelected)
+                        {
+                            <Icon Name="check" Class="h-3 w-3 text-green-deep" />
+                        }
+                    </span>
+                    @value.Name
+                    @if (value.OpensChildGroup)
+                    {
+                        <span class="text-11 opacity-60" title="بژاردەی زیاتری هەیە">+</span>
+                    }
+                </button>
+            }
+
+            @if (ShowNotApplicable)
+            {
+                <button type="button" @onclick="() => OnNotApplicable.InvokeAsync(Axis)"
+                        class="@(Axis.IsNotApplicable
+                                 ? "rounded-full border border-line bg-page px-3 py-2 text-xs text-ink-1"
+                                 : "rounded-full border border-dashed border-line px-3 py-2 text-xs text-ink-3 transition-colors hover:bg-page")">
+                    کار ناکات
+                </button>
+            }
+        </div>
+
+        @if (AtCap)
+        {
+            <p class="mt-1.5 text-11 text-warn">@CapReason</p>
+        }
+    }
+
+    @* ── Worked examples ──────────────────────────────────────────────────────
+       Muted, beneath the control, and only for the options that actually carry one.
+
+       Beneath rather than inside: a native <option> cannot be styled, so a hint appended to the
+       option text would read with the same weight as the answer itself, and the longest hint would
+       set the width of the whole dropdown.
+
+       Before a choice is made, every hint that exists is shown — that is the moment they are needed,
+       because the teacher is deciding between them. Once an answer is in, only that answer's hint
+       stays, so the field settles down instead of carrying a permanent block of help text. *@
+    @if (VisibleHints is { Count: > 0 } hints)
+    {
+        <div class="mt-1.5 space-y-0.5">
+            @foreach (var value in hints)
+            {
+                <p class="text-11 leading-relaxed text-ink-3">
+                    <span class="text-ink-2">@value.Name</span> — @value.Hint
+                </p>
+            }
+        </div>
+    }
+
+    @if (Axis.IsNotApplicable && !string.IsNullOrWhiteSpace(Axis.Note))
+    {
+        <p class="mt-1.5 text-xs text-ink-2">@Axis.Note</p>
+    }
+
+    @if (Notice is { } notice)
+    {
+        @* A remote configuration change. INLINE and non-blocking: the field stays on screen with
+           whatever was typed into it, and the structural change applies after the next save. *@
+        <p class="mt-1.5 flex items-start gap-1.5 text-11 text-warn">
+            <Icon Name="alert" Class="mt-0.5 h-3 w-3 shrink-0" />
+            @notice
+        </p>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public StationAxisDto Axis { get; set; } = default!;
+
+    /// <summary>Fired with the axis and value the user picked. Toggling is the caller's decision.</summary>
+    [Parameter] public EventCallback<(int AxisId, int ValueId)> OnPick { get; set; }
+
+    [Parameter] public EventCallback<StationAxisDto> OnNotApplicable { get; set; }
+
+    /// <summary>Keyboard hints, shown only on the axis the digits currently address.</summary>
+    [Parameter] public bool ShowDigits { get; set; }
+
+    /// <summary>The settings preview passes true; it is interactive but writes nothing.</summary>
+    [Parameter] public bool Interactive { get; set; } = true;
+
+    /// <summary>An inline notice — «ئەم بژاردە لەلایەن ئەدمین گۆڕدرا». Never a modal.</summary>
+    [Parameter] public string? Notice { get; set; }
+
+    /// <summary>
+    /// Whether to print the group's own name above its control.
+    ///
+    /// False when it is the ONLY first-level group, because then the part of speech has already
+    /// named the question: under کار, a heading reading «دەمژمێر» above the one dropdown is a label
+    /// for something the teacher has just selected, and it earns nothing. Sub-groups always keep
+    /// their name — that is what tells you which parent a nested answer belongs to.
+    /// </summary>
+    [Parameter] public bool ShowName { get; set; } = true;
+
+    bool IsSingleSelect => Axis.MaxSelections == 1;
+
+    /// <summary>
+    /// «کار ناکات» sits INSIDE the same control as the values, not beside it — a value and
+    /// not-applicable are mutually exclusive, and two independent controls invite a sense that is
+    /// both answered and declared inapplicable.
+    ///
+    /// The settings preview writes nothing, so it does not offer the escape hatch: there is no sense
+    /// there to declare anything about.
+    /// </summary>
+    bool ShowNotApplicable => Interactive && OnNotApplicable.HasDelegate;
+
+    int SelectedCount => Axis.SelectedValueIds.Count;
+
+    /// <summary>
+    /// The option hints to print under the control: all of them while the axis is unanswered, then
+    /// only the chosen options'.
+    ///
+    /// Empty rather than null-checked at the call site, and capped at six: an axis with twelve
+    /// hinted options would push the next question off the screen, and past a handful the hints stop
+    /// being a glance and become reading.
+    /// </summary>
+    List<StationValueDto> VisibleHints =>
+        Axis.Values
+            .Where(v => !string.IsNullOrWhiteSpace(v.Hint))
+            .Where(v => SelectedCount == 0 || Axis.SelectedValueIds.Contains(v.ValueId))
+            .Take(6)
+            .ToList();
+
+    bool AtCap => Axis.MaxSelections is { } cap && cap > 1 && SelectedCount >= cap;
+
+    string CapReason => Axis.MaxSelections is { } cap
+        ? $"گەیشتووە بە سنووری {Ku.N(cap)} بژاردە — یەکێک لاببە بۆ ئەوەی یەکێکی تر هەڵبژێری"
+        : "";
+
+    /// <summary>
+    /// Indent by depth, with a rule on the start edge so the nesting is visible rather than implied.
+    /// Capped at four steps: past that the indentation is eating the readable width, and the parent
+    /// label is what actually carries the relationship.
+    /// </summary>
+    string IndentClass => Axis.Depth switch
+    {
+        0 => "",
+        1 => "ms-4 border-s border-line ps-3",
+        2 => "ms-8 border-s border-line ps-3",
+        3 => "ms-12 border-s border-line ps-3",
+        _ => "ms-16 border-s border-line ps-3",
+    };
+
+    static string CheckboxClass(bool isSelected, bool isBlocked) => isSelected
+        ? "flex items-center gap-2 rounded-full bg-green-deep px-3.5 py-2 text-sm font-medium text-white"
+        : isBlocked
+            ? "flex items-center gap-2 rounded-full bg-page px-3.5 py-2 text-sm text-ink-3 opacity-50"
+            : "flex items-center gap-2 rounded-full bg-page px-3.5 py-2 text-sm text-ink-2 transition-colors hover:bg-green-tint hover:text-on-tint";
+
+    Task Pick(int valueId) =>
+        Interactive ? OnPick.InvokeAsync((Axis.AxisId, valueId)) : Task.CompletedTask;
+
+    /// <summary>
+    /// A dropdown change. Picking the blank entry clears the group by re-sending the value that is
+    /// already held — the server treats a repeat pick on a single-select axis as a no-op and on a
+    /// multi-select one as a toggle, so clearing goes through the same path everything else does
+    /// rather than needing a second endpoint.
+    /// </summary>
+    async Task OnSelectChanged(ChangeEventArgs e)
+    {
+        if (!Interactive) return;
+
+        var raw = e.Value?.ToString();
+
+        if (string.IsNullOrEmpty(raw))
+        {
+            if (Axis.SelectedValueId is { } held) await Pick(held);
+            return;
+        }
+
+        if (int.TryParse(raw, out var valueId)) await Pick(valueId);
+    }
+
+    /// <summary>
+    /// The option text. Carries the digit shortcut so it stays discoverable inside a dropdown, and a
+    /// «‹» marker on values that open a further group — without it there is no way to tell which
+    /// choice is a leaf and which one asks another question.
+    /// </summary>
+    string OptionLabel(StationValueDto value)
+    {
+        var label = value.Name;
+
+        // Only on the group the digits currently address. Numbering every dropdown at once would
+        // print a shortcut next to a value the keystroke does not reach.
+        if (ShowDigits && value.Digit > 0) label = $"{value.Digit} · {label}";
+        if (value.OpensChildGroup) label += "  ‹";
+        if (value.IsRetired) label += "  (ناچالاک)";
+
+        return label;
+    }
+}

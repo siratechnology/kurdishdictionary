@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.Data.Models;
 
-public class Word
+public class Word : ISoftDeletable
 {
     public int Id { get; set; }
     public string Kurdish { get; set; } = string.Empty;
@@ -27,33 +27,80 @@ public class Word
     public ICollection<WordMeans> Meanings { get; set; } = new List<WordMeans>();
     public ICollection<RelatedWord> OutgoingRelations { get; set; } = new List<RelatedWord>();
     public ICollection<RelatedWord> IncomingRelations { get; set; } = new List<RelatedWord>();
+
+    // ── Schema v3 (پڕۆمپت ٣) — added alongside the old columns, which still drive the app ──
+    /// <summary>
+    /// Kurdish-folded headword: ي/ی/ى → ی, ك/ک → ک, final ه/ھ/ە → ە, ر/ڕ and و/وو collapsed, ZWNJ
+    /// and diacritics stripped. Written at save time and matched at query time so that گەڕان for
+    /// کوردی finds كوردي (پڕۆمپت ٥). Empty until the normaliser exists.
+    /// </summary>
+    [MaxLength(200)]
+    public string Normalized { get; set; } = string.Empty;
+
+    /// <summary>
+    /// بەشی فەرهەنگ — which section of the dictionary this word belongs to.
+    ///
+    /// Nullable in the column, required by the editor. The form will not save a new word without
+    /// one, but three thousand imported words do not have one yet, and a NOT NULL constraint
+    /// would mean either refusing to load them or inventing a section for each — a claim about
+    /// every word in the dictionary, made by a migration rather than by a lexicographer.
+    /// </summary>
+    public int? DictionarySectionId { get; set; }
+    public DictionarySection? DictionarySection { get; set; }
+
+    /// <summary>Senses. Replaces <see cref="Meanings"/> once پڕۆمپت ٤ has migrated the rows across.</summary>
+    public ICollection<Sense> Senses { get; set; } = new List<Sense>();
+
+    public ICollection<WordForm> Forms { get; set; } = new List<WordForm>();
+    public ICollection<WordRelation> OutgoingWordRelations { get; set; } = new List<WordRelation>();
+    public ICollection<WordRelation> IncomingWordRelations { get; set; } = new List<WordRelation>();
+
+    // ── Soft delete (see ISoftDeletable) ──────────────────────────────────
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedByUserId { get; set; }
 }
 
 // Join entity: Word <-> SpeechPaneType (many-to-many via enum, no separate table needed)
-public class WordSpeechPane
+public class WordSpeechPane : ISoftDeletable
 {
     public int WordId { get; set; }
     public Word Word { get; set; } = null!;
     public SpeechPaneType SpeechPaneType { get; set; }
+
+    // ── Soft delete (see ISoftDeletable) ──────────────────────────────────
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedByUserId { get; set; }
 }
 
-public class Category
+public class Category : ISoftDeletable
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public ICollection<WordCategory> WordCategories { get; set; } = new List<WordCategory>();
+
+    // ── Soft delete (see ISoftDeletable) ──────────────────────────────────
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedByUserId { get; set; }
 }
 
 // Join entity: Word <-> Category (many-to-many)
-public class WordCategory
+public class WordCategory : ISoftDeletable
 {
     public int WordId { get; set; }
     public Word Word { get; set; } = null!;
     public int CategoryId { get; set; }
     public Category Category { get; set; } = null!;
+
+    // ── Soft delete (see ISoftDeletable) ──────────────────────────────────
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedByUserId { get; set; }
 }
 
-public class RelatedWord
+public class RelatedWord : ISoftDeletable
 {
     public int Id { get; set; }
     public int WordId { get; set; }
@@ -69,9 +116,14 @@ public class RelatedWord
     /// </summary>
     public Guid? CreatedByUserId { get; set; }
     public AppUser? CreatedByUser { get; set; }
+
+    // ── Soft delete (see ISoftDeletable) ──────────────────────────────────
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedByUserId { get; set; }
 }
 
-public class WordMeans
+public class WordMeans : ISoftDeletable
 {
     [Key]
     public int Id { get; set; }
@@ -83,6 +135,11 @@ public class WordMeans
     /// <summary>Who authored this meaning. Backfilled from the parent word's owner. See <see cref="RelatedWord.CreatedByUserId"/>.</summary>
     public Guid? CreatedByUserId { get; set; }
     public AppUser? CreatedByUser { get; set; }
+
+    // ── Soft delete (see ISoftDeletable) ──────────────────────────────────
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public Guid? DeletedByUserId { get; set; }
 }
 
 public enum GrammaticalGender
@@ -157,27 +214,7 @@ public static class SpeechPaneTypeExtensions
             .ToList();
 }
 
-public enum RelationType
-{
-    Synonym = 1,
-    Antonym = 2,
-    Related = 3,
-    Example = 4
-}
-
-public static class RelationTypeExtensions
-{
-    public static string ToKurdish(this RelationType type) => type switch
-    {
-        RelationType.Synonym => "هاومانا",
-        RelationType.Antonym => "دژمانا",
-        RelationType.Related => "پەیوەندیدار",
-        RelationType.Example => "نموونە",
-        _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-    };
-
-    public static List<(int Id, string Kurdish)> ToList() =>
-        Enum.GetValues<RelationType>()
-            .Select(x => ((int)x, x.ToKurdish()))
-            .ToList();
-}
+// The RelationType enum that used to sit here is gone. It was dead code: RelatedWord.RelationType
+// is a free string, the live data holds six values (synonym, antonym, related, contextual, example,
+// usage) and the enum declared only four of them, so it could not describe its own table. Relation
+// semantics now live in RelationTypeDef, which is data the team can rename.

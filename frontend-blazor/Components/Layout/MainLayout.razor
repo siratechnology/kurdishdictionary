@@ -1,126 +1,310 @@
 @inherits LayoutComponentBase
 @using frontend_blazor.Components.Widgets
+@inject WorkQueueService Queue
+@inject PresenceService Presence
+@inject AuthService Auth
 
-@* The drawer is a pure CSS peer-toggle rather than Blazor state: the layout renders statically, so a
-   JS/Blazor toggle would be dead until the circuit connects. A checkbox works on the very first paint. *@
+@* The shell, on the sidebar reference.
 
-<div class="min-h-screen bg-gray-50">
+   Everything is light. The near-black rail that was here briefly is gone: on a screen whose
+   content is white cards on pale paper, one black column is not emphasis, it is a different
+   application bolted to the side. Separation is done with a single 1px seam, the way the
+   reference does it.
 
-    @* The toggle must be a *sibling* of the overlay and aside below: peer-checked:* compiles to a
-       general-sibling selector (#nav-toggle:checked ~ …), so a nested checkbox would never reach them. *@
-    <input type="checkbox" id="nav-toggle" class="peer hidden" aria-hidden="true" />
+   Green is an ACCENT and appears in four places, all of them small: the logo mark, the dot on
+   the active nav item, the badge on کەمووکوڕی وشەکان, and primary buttons. Nothing else is coloured.
 
-    @* ── Mobile overlay: tapping anywhere outside the drawer closes it ── *@
-    <label for="nav-toggle"
-           class="fixed inset-0 z-30 hidden bg-slate-900/50 backdrop-blur-sm peer-checked:block lg:!hidden"
-           aria-label="داخستنی لیستە"></label>
+   Three widths, which is the reference's own three panels:
+     < lg   off-canvas drawer, full width, labels shown
+     lg–xl  collapsed rail, icons only, tooltips carry the names
+     ≥ xl   rail plus labels
 
-    @* ── Sidebar ─────────────────────────────────────────────────────────
-       Off-canvas on mobile (translated off the right edge, RTL), pinned on lg+. *@
-    <aside class="fixed inset-y-0 right-0 z-40 flex w-64 translate-x-full flex-col
-                  border-l border-slate-800 bg-slate-900 transition-transform duration-300 ease-out
-                  peer-checked:translate-x-0 lg:translate-x-0">
+   The drawer is a pure CSS peer-toggle rather than Blazor state: the layout renders statically,
+   so a JS/Blazor toggle would be dead until the circuit connects. A checkbox works on the first
+   paint. The profile menu at the bottom is the same trick, for the same reason. *@
 
-        <div class="flex h-16 items-center gap-2.5 border-b border-slate-800 px-5">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-lg">📖</span>
-            <div class="min-w-0">
-                <p class="truncate text-sm font-bold leading-tight text-white">فەرھەنگی کوردی</p>
-                <p class="truncate text-[11px] leading-tight text-slate-500">پانێڵی بەڕێوەبردن</p>
+@* Renders nothing — carries the presence heartbeat on every signed-in page. *@
+<AuthorizeView>
+    <PresenceTracker @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
+</AuthorizeView>
+
+@* No TelerikRootComponent here on purpose.
+
+   This layout renders STATICALLY. In a Blazor Web App each @rendermode island is its own render
+   root, so a root component sitting in a static layout is invisible to the interactive pages
+   inside it — Telerik throws "requires a TelerikRootComponent" even though one is right there in
+   the markup. Each interactive island carries its own, via <TelerikScope>. *@
+
+<ToastHost @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
+
+@* The PAGE scrolls; the chrome is pinned to it.
+
+   The sidebar is position:fixed and the top bar is sticky, so both stay put while the document
+   itself grows to its full height. That is the difference between this and a viewport-locked
+   shell — which this was briefly, with the scroll on <main>. A locked shell looks identical in
+   use and is worse in two ways: a full-page screenshot captures one screen and stops, and
+   Ctrl+F / find-in-page cannot reach anything below the fold because the browser only searches
+   what the document says exists.
+
+   The content column carries a margin equal to the sidebar's width to make room for it, since a
+   fixed element is out of flow and nothing else knows it is there. *@
+<div class="bg-page">
+
+    <div class="relative flex min-h-screen">
+
+        @* The toggle must be a *sibling* of the overlay and aside below: peer-checked:* compiles to
+           a general-sibling selector (#nav-toggle:checked ~ …), so a nested checkbox never reaches
+           them. That is also why it lives inside the shell rather than outside it. *@
+        <input type="checkbox" id="nav-toggle" class="peer hidden" aria-hidden="true" />
+
+        @* ── Mobile scrim: tapping anywhere outside the drawer closes it ── *@
+        <label for="nav-toggle"
+               class="fixed inset-0 z-30 hidden bg-overlay peer-checked:block lg:!hidden"
+               aria-label="داخستنی لیستە"></label>
+
+        @* ── Sidebar ────────────────────────────────────────────────────── *@
+        @* The scroll lives on the nav wrapper inside, NOT on the aside. An overflow container
+           clips its absolutely-positioned descendants, and at the collapsed width the profile
+           menu is deliberately wider than the 64px rail — on the aside, `overflow-y-auto` would
+           slice it in half. *@
+        <aside class="fixed inset-y-0 start-0 z-40 flex w-64 shrink-0 translate-x-full flex-col
+                      border-e border-line bg-card
+                      transition-transform duration-300 ease-out peer-checked:translate-x-0
+                      lg:w-16 lg:translate-x-0 xl:w-64">
+
+            @* Logo + wordmark. Our own mark — never the reference's.
+
+               The mark is already green (its dark ink is mapped onto --green-deep in the file), so it
+               is shown on the card rather than reversed out of a green tile: a green mark inside a
+               green square is two greens fighting, and the ramp has no second dark value to
+               separate them with. *@
+            <div class="flex shrink-0 items-center gap-2.5 px-4 py-4 lg:justify-center lg:px-0 xl:justify-start xl:px-5">
+                @* The mark is about 2:1, so it is sized by HEIGHT and allowed to take its own
+                   width — forced into a 36px square it would render at half the visual weight of
+                   every icon beside it. Capped at 40px so it still fits the 64px collapsed rail. *@
+                <img src="img/logo.svg" alt="ژینزار"
+                     class="h-6 w-auto max-w-10 shrink-0" />
+                <span class="nav-label truncate text-15 font-medium text-ink-1 xl:text-20">ژینزار</span>
+
+                <label for="nav-toggle"
+                       class="btn-topbar-icon ms-auto shrink-0 cursor-pointer lg:hidden"
+                       aria-label="داخستنی لیستە">
+                    <Icon Name="close" Class="h-[18px] w-[18px]" />
+                </label>
             </div>
-            <label for="nav-toggle"
-                   class="mr-auto cursor-pointer rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white lg:hidden">
-                ✕
-            </label>
-        </div>
 
-        <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-            <p class="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-600">ناوەڕۆک</p>
+            @* overflow-y-auto is a FALLBACK, not the normal state. At the current item count the
+               column measures about 660px and fits any laptop in one view; the rule is only
+               there so a 600px-tall window degrades to a scroll instead of clipping the
+               profile block off the bottom. If a nav section is ever added, re-measure. *@
+            <div class="min-h-0 flex-1 overflow-y-auto pb-2">
+                <p class="nav-label px-5 pb-2 text-11 tracking-[0.08em] text-ink-3">مێنیو</p>
 
-            <NavItem Href="" Icon="📊" Label="داشبۆرد" Match="NavLinkMatch.All" />
-            <NavItem Href="words" Icon="📖" Label="وشەکان" />
-            <NavItem Href="relations" Icon="🕸" Label="پەیوەندییەکان" />
-            <NavItem Href="taxonomy" Icon="🏷" Label="پۆل و جۆرەکان" />
+                <nav class="space-y-1 px-3">
+                    <NavItem Href=""          Icon="dashboard" Label="داشبۆرد" Match="NavLinkMatch.All" />
+                    <NavItem Href="words"     Icon="book"      Label="وشەکان" />
+                    <NavItem Href="relations" Icon="relations" Label="پەیوەندییەکان" />
+                    <NavItem Href="taxonomy"  Icon="tag"       Label="نەخشەی ژینزار" />
+                    <NavItem Href="station"   Icon="sparkle"   Label="ڕێکخستنەوەی وشەکان" />
+                    <NavItem Href="queue"     Icon="queue"     Label="کەمووکوڕی وشەکان" Badge="@_outstanding" />
+                    <NavItem Href="analytics" Icon="globe"     Label="ترافیکی ماڵپەڕ" />
+                    <NavItem Href="activity"  Icon="chart"     Label="چالاکییەکان" />
 
-            <p class="px-3 pb-2 pt-5 text-[11px] font-semibold uppercase tracking-wider text-slate-600">چاودێری</p>
+                    <AuthorizeView Roles="Admin">
+                        <NavItem Href="users" Icon="users" Label="بەکارهێنەران" />
+                    </AuthorizeView>
+                </nav>
 
-            <NavItem Href="analytics" Icon="🌍" Label="ترافیکی ماڵپەڕ" />
-            <NavItem Href="activity" Icon="🔔" Label="چالاکییەکان" />
+                <p class="nav-label px-5 pb-2 pt-5 text-11 tracking-[0.08em] text-ink-3">گشتی</p>
 
-            <AuthorizeView Roles="Admin">
-                <p class="px-3 pb-2 pt-5 text-[11px] font-semibold uppercase tracking-wider text-slate-600">بەڕێوەبردن</p>
-                <NavItem Href="users" Icon="👥" Label="بەکارهێنەران" />
-            </AuthorizeView>
-        </nav>
-
-        <AuthorizeView>
-            <div class="border-t border-slate-800 p-3">
-                <div class="flex items-center gap-2.5 rounded-lg px-2 py-2">
-                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
-                        @Initials(context.User.Identity?.Name)
-                    </span>
-                    <div class="min-w-0 flex-1">
-                        <p class="truncate text-xs font-semibold text-white">@context.User.Identity?.Name</p>
-                        <p class="truncate text-[11px] text-slate-500">@RoleLabel(context.User)</p>
-                    </div>
-                </div>
-                <form method="post" action="/logout" class="mt-1">
-                    <AntiforgeryToken />
-                    <button type="submit"
-                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-slate-400 transition hover:bg-slate-800 hover:text-red-400">
-                        <span>🚪</span><span>دەرچوون</span>
-                    </button>
-                </form>
+                <nav class="space-y-1 px-3">
+                    <NavItem Href="settings" Icon="settings" Label="ڕێکخستن" />
+                </nav>
             </div>
-        </AuthorizeView>
-    </aside>
 
-    @* ── Main column ─────────────────────────────────────────────────── *@
-    <div class="lg:mr-64">
-
-        <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-gray-200 bg-white/90 px-4 backdrop-blur sm:px-6">
-            <label for="nav-toggle"
-                   class="cursor-pointer rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 lg:hidden"
-                   aria-label="کردنەوەی لیستە">
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </label>
-
-            <div class="flex-1"></div>
-
-            <NotificationBell @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
-
+            @* ── Profile, at the foot of the rail ─────────────────────────
+               Moved out of the top bar, where it competed with the search field for the one
+               place people look first. Down here it is exactly what the reference does with
+               it, and the menu it opens is where the account actions belong. *@
             <AuthorizeView>
-                <span class="hidden text-sm text-gray-600 sm:inline">@context.User.Identity?.Name</span>
-                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
-                    @Initials(context.User.Identity?.Name)
-                </span>
-            </AuthorizeView>
-        </header>
+                <div class="relative border-t border-line p-3">
 
-        <main class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-            <PasswordChangeBanner />
-            @Body
-        </main>
+                    @* Same peer-checkbox trick as the drawer: the menu has to work before a
+                       circuit exists, and this layout is static. *@
+                    <input type="checkbox" id="profile-toggle" class="peer hidden" aria-hidden="true" />
+
+                    @* Click-away. Only rendered while the menu is open, so it cannot swallow
+                       clicks on the nav behind it the rest of the time. *@
+                    <label for="profile-toggle"
+                           class="fixed inset-0 z-30 hidden cursor-default peer-checked:block"
+                           aria-hidden="true"></label>
+
+                    @* At the collapsed width the menu is wider than the rail and spills over the
+                       content — which is why the aside must not be an overflow container. *@
+                    <div class="absolute bottom-full start-3 end-3 z-40 mb-2 hidden overflow-hidden
+                                rounded-card border border-line bg-card shadow-shell peer-checked:block
+                                lg:start-2 lg:end-auto lg:w-56 xl:start-3 xl:end-3 xl:w-auto">
+                        <div class="border-b border-line px-4 py-3">
+                            <p class="truncate text-sm font-medium text-ink-1">@DisplayName(context)</p>
+                            <p class="truncate text-11 text-ink-3">@RoleLabel(context.User)</p>
+                        </div>
+
+                        <a href="/profile" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink-2 transition-colors hover:bg-page hover:text-ink-1">
+                            <Icon Name="users" Class="h-4 w-4 shrink-0" />
+                            هەژمارەکەم
+                        </a>
+                        <a href="/settings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink-2 transition-colors hover:bg-page hover:text-ink-1">
+                            <Icon Name="settings" Class="h-4 w-4 shrink-0" />
+                            ڕێکخستن
+                        </a>
+
+                        @* Logout is a POST carrying an antiforgery token, so it cannot be a link. *@
+                        <form method="post" action="/logout" class="border-t border-line">
+                            <AntiforgeryToken />
+                            <button type="submit"
+                                    class="flex w-full items-center gap-2.5 px-4 py-2.5 text-start text-sm text-danger transition-colors hover:bg-danger-tint">
+                                <Icon Name="logout" Class="h-4 w-4 shrink-0" />
+                                دەرچوون
+                            </button>
+                        </form>
+                    </div>
+
+                    <label for="profile-toggle"
+                           class="flex cursor-pointer items-center gap-2.5 rounded-chip p-1.5 transition-colors hover:bg-page lg:justify-center xl:justify-start">
+                        <Avatar Url="@_me?.AvatarUrl" Name="@DisplayName(context)" Size="36" />
+                        <div class="nav-label min-w-0 flex-1 leading-tight">
+                            <p class="truncate text-sm font-medium text-ink-1">@DisplayName(context)</p>
+                            <p class="truncate text-11 text-ink-3">@RoleLabel(context.User)</p>
+                        </div>
+                    </label>
+                </div>
+            </AuthorizeView>
+        </aside>
+
+        @* ── Content column ──────────────────────────────────────────────── *@
+        @* ms-* rather than a flex sibling: the sidebar is out of flow now, so the column has to
+           reserve the space itself. Logical property, so it is the RIGHT edge in RTL. *@
+        <div class="flex min-w-0 flex-1 flex-col lg:ms-16 xl:ms-64">
+
+            @* z-30: above the page content, below the sidebar's z-40 — otherwise the mobile
+               drawer slides out UNDER the bar it is supposed to cover. *@
+            <header class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b border-line bg-card px-4 sm:px-5">
+
+                <label for="nav-toggle"
+                       class="btn-topbar-icon shrink-0 cursor-pointer lg:hidden"
+                       aria-label="کردنەوەی لیستە">
+                    <Icon Name="menu" Class="h-[18px] w-[18px]" />
+                </label>
+
+                @* Magnifier at the END (left in RTL), keycap at the START (right). The two swapped
+                   sides together — the magnifier had the start and the chip the end. Moving one
+                   alone stacks them on the same edge and leaves the other side of the field empty. *@
+                <div class="relative hidden w-full max-w-md sm:block">
+                    <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-ink-3">
+                        <Icon Name="search" Class="h-4 w-4" />
+                    </span>
+                    <input type="search" placeholder="گەڕان بۆ وشە…"
+                           class="w-full rounded-full border border-line bg-page py-2.5 ps-14 pe-10 text-sm
+                                  text-ink-1 placeholder:text-ink-3 focus:border-green focus:outline-none
+                                  focus:ring-1 focus:ring-green" />
+                    @* dir must go on the TEXT, never on the positioned box: inset-inline-start
+                       resolves against the element's own direction, so dir="ltr" here would
+                       flip start-3 back to the left and stack the chip on the magnifier. *@
+                    <span class="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 rounded-chip
+                                 border border-line bg-card px-1.5 py-0.5 text-11 text-ink-3"><bdi>⌘K</bdi></span>
+                </div>
+
+                <div class="ms-auto flex shrink-0 items-center gap-2">
+                    @* Who is working right now. Interactive and event-driven, so it is live
+                       without this static layout having to re-render. *@
+                    <ActiveUsers />
+
+                    <a href="/activity" class="btn-topbar-icon" aria-label="چالاکییەکان">
+                        <Icon Name="mail" Class="h-[18px] w-[18px]" />
+                    </a>
+
+                    <NotificationBell @rendermode="@(new InteractiveServerRenderMode(prerender: false))" />
+                </div>
+            </header>
+
+            <main class="flex-1 p-4 sm:p-5">
+                <PasswordChangeBanner />
+                @Body
+            </main>
+        </div>
     </div>
 </div>
 
 <div id="blazor-error-ui"
-     class="hidden fixed bottom-4 left-4 z-50 rounded-lg bg-red-600 px-4 py-3 text-sm text-white shadow-lg"
+     class="hidden fixed bottom-4 end-4 z-50 rounded-card bg-danger px-4 py-3 text-sm text-white"
      data-nosnippet>
     هەڵەیەکی چاوەڕوان‌نەکراو ڕوویدا.
-    <a href="." class="mr-2 underline">نوێکردنەوە</a>
-    <span class="dismiss mr-2 cursor-pointer">✕</span>
+    <a href="." class="ms-2 underline">نوێکردنەوە</a>
+    @* The dismiss class is what Blazor's error-UI script looks for; keep it. *@
+    <span class="dismiss ms-2 inline-flex cursor-pointer align-middle">
+        <Icon Name="close" Class="h-4 w-4" />
+    </span>
 </div>
 
 @code {
+    /// <summary>
+    /// The counter pill on کەمووکوڕی وشەکان. Loaded once per circuit rather than on every navigation: the
+    /// number is a nudge, not a live gauge, and re-querying it on each page change would put a
+    /// six-way aggregate in front of every click.
+    /// </summary>
+    private int? _outstanding;
+
+    /// <summary>
+    /// The signed-in user, fetched for the profile picture alone.
+    ///
+    /// Not carried as a claim on purpose: a claim is baked into the token at sign-in, so changing
+    /// your picture would leave the old one in the sidebar until the next login — which is exactly
+    /// the moment you would go looking to see whether the upload worked.
+    /// </summary>
+    private UserDto? _me;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var summary = await Queue.GetSummaryAsync();
+            _outstanding = summary?.Total;
+        }
+        catch
+        {
+            // The nav must render even if the API is down — a missing badge is not a broken page.
+        }
+
+        try
+        {
+            _me = await Auth.GetCurrentAsync();
+        }
+        catch
+        {
+            // The sidebar falls back to the initial letter. A missing picture must never be able
+            // to take the navigation down with it.
+        }
+    }
+
+    /// <summary>
+    /// What to call the signed-in person: their full name if they have set one, otherwise the
+    /// username. The username is a login handle — nobody refers to a colleague as "banazhamad".
+    ///
+    /// Read from _me rather than the token, because the name can be changed on the profile page
+    /// and a claim would keep showing the old one until the next sign-in.
+    /// </summary>
+    private string DisplayName(AuthenticationState state) =>
+        !string.IsNullOrWhiteSpace(_me?.FullName)
+            ? _me.FullName
+            : state.User.Identity?.Name ?? "";
+
     private static string Initials(string? name) =>
         string.IsNullOrWhiteSpace(name) ? "؟" : name.Trim()[..1].ToUpperInvariant();
 
     private static string RoleLabel(System.Security.Claims.ClaimsPrincipal user)
     {
         if (user.IsInRole("Admin")) return "بەڕێوەبەر";
-        if (user.IsInRole("Editor")) return "دەستکاریکەر";
+        if (user.IsInRole("Editor")) return "وشەچن";
         if (user.IsInRole("Viewer")) return "بینەر";
         return "بەکارهێنەر";
     }

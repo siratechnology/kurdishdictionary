@@ -3,109 +3,309 @@
 @attribute [Authorize]
 @inject AuthService Auth
 @inject NavigationManager Nav
+@inject Toast Toast
 
-<PageTitle>هەژمارەکەم — فەرھەنگی کوردی</PageTitle>
+<PageTitle>هەژمارەکەم — ژینزار</PageTitle>
 
-<h1 class="mb-6 text-2xl font-bold text-gray-900">هەژمارەکەم</h1>
+@* Your own account.
+
+   Everything here is editable by the person it belongs to EXCEPT the roles, which are shown as
+   read-only chips. That split is enforced by the shape of the request, not by this page being
+   careful: UpdateProfileDto has no Roles field, so a user cannot grant themselves anything even
+   if they drive the endpoint by hand. Roles stay on the admin-only user endpoint. *@
+
+<TelerikScope>
+
+<PageHeader Title="هەژمارەکەم" Subtitle="وێنە، زانیاری هەژمار و وشەی نهێنی" />
 
 <div class="grid gap-4 lg:grid-cols-2">
 
-    @* ── Who am I ────────────────────────────────────────────────────── *@
-    <AuthorizeView>
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-            <h2 class="mb-4 text-sm font-bold text-gray-900">زانیاری هەژمار</h2>
-
-            <dl class="space-y-3 text-sm">
-                <div class="flex justify-between gap-3">
-                    <dt class="text-gray-400">ناوی بەکارهێنەر</dt>
-                    <dd class="font-semibold text-gray-900">@context.User.Identity?.Name</dd>
-                </div>
-                <div class="flex justify-between gap-3">
-                    <dt class="text-gray-400">ئیمەیل</dt>
-                    <dd class="truncate font-medium text-gray-700">
-                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
-                    </dd>
-                </div>
-                <div class="flex justify-between gap-3">
-                    <dt class="text-gray-400">ڕۆڵەکان</dt>
-                    <dd class="flex flex-wrap justify-end gap-1">
-                        @foreach (var role in context.User.FindAll(System.Security.Claims.ClaimTypes.Role))
-                        {
-                            <span class="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-semibold text-indigo-700">
-                                @RoleLabel(role.Value)
-                            </span>
-                        }
-                    </dd>
-                </div>
-            </dl>
+    @* ── Picture ─────────────────────────────────────────────────────── *@
+    <section class="card lg:col-span-2">
+        <div class="mb-4 flex items-center gap-2.5">
+            <span class="card-badge card-badge-users"><Icon Name="users" Class="h-4 w-4" /></span>
+            <h2 class="card-title">وێنەی پرۆفایل</h2>
         </div>
-    </AuthorizeView>
 
-    @* ── Change password ─────────────────────────────────────────────── *@
-    <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-        <h2 class="mb-1 text-sm font-bold text-gray-900">گۆڕینی وشەی نهێنی</h2>
-        <p class="mb-4 text-xs text-gray-400">لانیکەم ٦ پیت، بە لانیکەم یەک ژمارە</p>
+        <div class="flex flex-wrap items-center gap-5">
+            <Avatar Url="@_me?.AvatarUrl" Name="@(_me?.FullName ?? _me?.UserName)" Size="96" />
 
-        @if (!string.IsNullOrEmpty(_error))
-        {
-            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">⚠️ @_error</div>
-        }
-        @if (_done)
-        {
-            <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
-                ✅ وشەی نهێنی گۆڕدرا
+            <div class="min-w-0 flex-1">
+                <p class="text-sm text-ink-2">
+                    وێنەکە دەبڕدرێت بۆ چوارگۆشە و بچووک دەکرێتەوە بۆ ٥١٢ پیکسڵ.
+                </p>
+                <p class="mt-1 text-11 text-ink-3">
+                    JPG، PNG یان WEBP — زۆرترین قەبارە <bdi>5</bdi> مێگابایت
+                </p>
+
+                <div class="mt-4 flex flex-wrap items-center gap-2">
+                    @* Telerik's FileSelect rather than a raw InputFile: it gives the drag target,
+                       the per-file error slot and the disabled state for free, and it matches the
+                       buttons on every other screen. *@
+                    <TelerikFileSelect Multiple="false"
+                                       AllowedExtensions="@AllowedExtensions"
+                                       MaxFileSize="@MaxBytes"
+                                       OnSelect="@OnFileSelected"
+                                       Enabled="@(!_uploading)" />
+
+                    @if (!string.IsNullOrWhiteSpace(_me?.AvatarUrl))
+                    {
+                        <TelerikButton OnClick="@RemoveAvatar" Enabled="@(!_uploading)"
+                                       ThemeColor="@ThemeConstants.Button.ThemeColor.Error"
+                                       Icon="@SvgIcon.Trash">
+                            لابردنی وێنە
+                        </TelerikButton>
+                    }
+                </div>
+
+                @if (_uploading)
+                {
+                    <p class="mt-2 text-11 text-ink-2">وێنەکە دەنێردرێت…</p>
+                }
             </div>
-        }
+        </div>
+    </section>
+
+    @* ── Details ─────────────────────────────────────────────────────── *@
+    <section class="card">
+        <div class="mb-4 flex items-center gap-2.5">
+            <span class="card-badge"><Icon Name="pencil" Class="h-4 w-4" /></span>
+            <h2 class="card-title">زانیاری هەژمار</h2>
+        </div>
 
         <div class="space-y-3">
             <label class="block">
-                <span class="mb-1 block text-xs font-semibold text-gray-700">وشەی نهێنی ئێستا</span>
-                <input @bind="_current" type="password" autocomplete="current-password"
-                       class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                <span class="field-label">ناوی بەکارهێنەر</span>
+                @* Read-only: it is the audit trail's key. Every word, every edit and every merge
+                   is attributed by it, so changing it would rewrite the history of who did what. *@
+                <input value="@_me?.UserName" disabled class="field bg-page text-ink-2" />
+                <span class="mt-1 block text-11 text-ink-3">ناوی بەکارهێنەر ناگۆڕدرێت</span>
             </label>
 
             <label class="block">
-                <span class="mb-1 block text-xs font-semibold text-gray-700">وشەی نهێنی نوێ</span>
-                <input @bind="_new" type="password" autocomplete="new-password"
-                       class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                <span class="field-label">ناوی تەواو</span>
+                <input @bind="_fullName" class="field" placeholder="ناوی تەواوت" />
             </label>
 
             <label class="block">
-                <span class="mb-1 block text-xs font-semibold text-gray-700">دووبارەکردنەوەی وشەی نهێنی نوێ</span>
-                <input @bind="_confirm" type="password" autocomplete="new-password"
-                       class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+                <span class="field-label">ئیمەیل</span>
+                <input @bind="_email" type="email" class="field" />
             </label>
 
-            <button @onclick="SaveAsync" disabled="@_saving"
-                    class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50">
-                @(_saving ? "دەگۆڕدرێت..." : "گۆڕینی وشەی نهێنی")
-            </button>
+            <div>
+                <span class="field-label">ڕۆڵەکان</span>
+                <div class="flex flex-wrap gap-1">
+                    @foreach (var role in _me?.Roles ?? new())
+                    {
+                        <span class="pill pill-ok">@RoleLabel(role)</span>
+                    }
+                </div>
+                @* Said out loud rather than left as a silently disabled control — "why can I not
+                   edit this" is the question a greyed-out field always produces. *@
+                <span class="mt-1.5 block text-11 text-ink-3">
+                    ڕۆڵەکان تەنها بەڕێوەبەر دەیانگۆڕێت
+                </span>
+            </div>
+
+            <TelerikButton OnClick="@SaveProfile" Enabled="@(!_savingProfile)"
+                           ThemeColor="@ThemeConstants.Button.ThemeColor.Primary"
+                           Class="w-full">
+                @(_savingProfile ? "پاشەکەوت دەکرێت…" : "پاشەکەوتکردن")
+            </TelerikButton>
         </div>
-    </div>
+    </section>
+
+    @* ── Change password ─────────────────────────────────────────────── *@
+    <section class="card">
+        <div class="mb-1 flex items-center gap-2.5">
+            <span class="card-badge"><Icon Name="settings" Class="h-4 w-4" /></span>
+            <h2 class="card-title">گۆڕینی وشەی نهێنی</h2>
+        </div>
+        <p class="mb-4 text-xs text-ink-2">لانیکەم ٦ پیت، بە لانیکەم یەک ژمارە</p>
+
+        <div class="space-y-3">
+            <label class="block">
+                <span class="field-label">وشەی نهێنی ئێستا</span>
+                <input @bind="_current" type="password" autocomplete="current-password" class="field" />
+            </label>
+
+            <label class="block">
+                <span class="field-label">وشەی نهێنی نوێ</span>
+                <input @bind="_new" type="password" autocomplete="new-password" class="field" />
+            </label>
+
+            <label class="block">
+                <span class="field-label">دووبارەکردنەوەی وشەی نهێنی نوێ</span>
+                <input @bind="_confirm" type="password" autocomplete="new-password" class="field" />
+            </label>
+
+            <TelerikButton OnClick="@SaveAsync" Enabled="@(!_saving)"
+                           ThemeColor="@ThemeConstants.Button.ThemeColor.Primary"
+                           Class="w-full">
+                @(_saving ? "دەگۆڕدرێت…" : "گۆڕینی وشەی نهێنی")
+            </TelerikButton>
+        </div>
+    </section>
 </div>
 
+</TelerikScope>
+
 @code {
+    private UserDto? _me;
+
+    private string? _fullName;
+    private string? _email;
+    private bool _savingProfile;
+
+    private bool _uploading;
+
     private string _current = "";
     private string _new = "";
     private string _confirm = "";
-    private string? _error;
-    private bool _done;
     private bool _saving;
+
+    /// <summary>Mirrors AvatarService.MaxBytes. The server is the real gate; this saves the trip.</summary>
+    private const int MaxBytes = 5 * 1024 * 1024;
+
+    private static readonly List<string> AllowedExtensions = new() { ".jpg", ".jpeg", ".png", ".webp" };
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            _me = await Auth.GetCurrentAsync();
+            _fullName = _me?.FullName;
+            _email = _me?.Email;
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (HttpRequestException)
+        {
+            Toast.Error("ناتوانرێت زانیاری هەژمار بهێنرێت");
+        }
+    }
+
+    private async Task SaveProfile()
+    {
+        _savingProfile = true;
+
+        try
+        {
+            var result = await Auth.UpdateProfileAsync(new UpdateProfileDto
+            {
+                FullName = _fullName,
+                Email = _email,
+            });
+
+            if (!result.Succeeded)
+            {
+                Toast.Error(result.Error ?? "پاشەکەوتکردن سەرکەوتوو نەبوو");
+                return;
+            }
+
+            _me = result.User;
+            Toast.Success("زانیارییەکان پاشەکەوتکران");
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (HttpRequestException)
+        {
+            Toast.Error("ناتوانرێت پەیوەندی بە سێرڤەرەوە بکرێت");
+        }
+        finally
+        {
+            _savingProfile = false;
+        }
+    }
+
+    private async Task OnFileSelected(FileSelectEventArgs args)
+    {
+        var file = args.Files.FirstOrDefault();
+        if (file is null) return;
+
+        if (file.Size > MaxBytes)
+        {
+            Toast.Error("وێنەکە زۆر گەورەیە — زۆرترین قەبارە ٥ مێگابایتە.");
+            return;
+        }
+
+        _uploading = true;
+
+        try
+        {
+            // OpenReadStream needs an explicit ceiling — the default is 512KB and a phone photo
+            // trips it long before the server ever sees the file.
+            await using var stream = file.Stream;
+
+            var result = await Auth.UploadAvatarAsync(stream, file.Name, "application/octet-stream");
+
+            if (!result.Succeeded)
+            {
+                Toast.Error(result.Error ?? "ناردنی وێنە سەرکەوتوو نەبوو");
+                return;
+            }
+
+            _me = result.User;
+            Toast.Success("وێنەکە پاشەکەوتکرا");
+        }
+        catch (ApiUnauthorizedException)
+        {
+            Nav.NavigateTo("/login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            Toast.Error($"ناردنی وێنە سەرکەوتوو نەبوو: {ex.Message}");
+        }
+        finally
+        {
+            _uploading = false;
+        }
+    }
+
+    private async Task RemoveAvatar()
+    {
+        _uploading = true;
+
+        try
+        {
+            var result = await Auth.RemoveAvatarAsync();
+
+            if (!result.Succeeded)
+            {
+                Toast.Error(result.Error ?? "لابردنی وێنە سەرکەوتوو نەبوو");
+                return;
+            }
+
+            _me = result.User;
+            Toast.Success("وێنەکە لابرا");
+        }
+        catch (Exception ex)
+        {
+            Toast.Error($"لابردنی وێنە سەرکەوتوو نەبوو: {ex.Message}");
+        }
+        finally
+        {
+            _uploading = false;
+        }
+    }
 
     private async Task SaveAsync()
     {
-        _error = null;
-        _done = false;
-
         if (_new != _confirm)
         {
-            _error = "وشە نهێنییە نوێکان وەک یەک نین";
+            Toast.Error("وشە نهێنییە نوێکان وەک یەک نین");
             return;
         }
 
         if (_new.Length < 6)
         {
-            _error = "وشەی نهێنی دەبێت لانیکەم ٦ پیت بێت";
+            Toast.Error("وشەی نهێنی دەبێت لانیکەم ٦ پیت بێت");
             return;
         }
 
@@ -121,11 +321,10 @@
 
             if (!result.Succeeded)
             {
-                _error = result.Error ?? "گۆڕین سەرکەوتوو نەبوو";
+                Toast.Error(result.Error ?? "گۆڕین سەرکەوتوو نەبوو");
                 return;
             }
 
-            _done = true;
             _current = _new = _confirm = "";
 
             // The cookie still holds the pre-change token and the "must change password" claim.
@@ -138,7 +337,7 @@
         }
         catch (HttpRequestException)
         {
-            _error = "ناتوانرێت پەیوەندی بە سێرڤەرەوە بکرێت";
+            Toast.Error("ناتوانرێت پەیوەندی بە سێرڤەرەوە بکرێت");
         }
         finally
         {
@@ -149,7 +348,7 @@
     private static string RoleLabel(string role) => role switch
     {
         "Admin" => "بەڕێوەبەر",
-        "Editor" => "دەستکاریکەر",
+        "Editor" => "وشەچن",
         "Viewer" => "بینەر",
         _ => role,
     };

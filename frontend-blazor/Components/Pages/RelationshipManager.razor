@@ -1,583 +1,614 @@
 @page "/relations"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize(Roles = "Admin,Editor")]
-@inject WordService WordSvc
+@inject RelationService Relations
+@inject Toast Toast
 
-<PageTitle>بەڕێوەبردنی پەیوەندییەکان</PageTitle>
+<PageTitle>پەیوەندییەکان — ژینزار</PageTitle>
 
-<!-- Page header -->
-<div class="flex items-center justify-between mb-6" dir="rtl">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900">پەیوەندییەکان</h1>
-        <p class="text-sm text-gray-400 mt-0.5">
-            @_listWords.Count(w => w.TotalRelations == 0) وشە بەبێ پەیوەندی ·
-            @_listWords.Count(w => w.TotalRelations > 0) وشە بە پەیوەندی
-        </p>
+@* Relations: walk the dictionary, wire each word to others.
+
+   TWO PANES, and that is the whole structure. Left is the word you are on — who it is and what it
+   is already wired to. Right is the one job: pick a type, tick words, press add.
+
+   The version before this split that job across three numbered cards stacked down the page, which
+   made a two-click task look like a form and pushed the button below the fold. It also asked which
+   sense to use on every semantic relation — a question that is genuinely ambiguous for 3 words in
+   59 and pure friction for the other 56. Now it defaults to the only sense there is and asks only
+   when a word actually has more than one.
+
+   Targets are MULTI-select. Wiring six synonyms is one action, not six. *@
+
+<TelerikScope>
+
+<PageHeader Title="پەیوەندییەکان" Subtitle="@Subtitle">
+    <Actions>
+        @if (_coverage is { } c)
+        {
+            <span class="pill @(c.WordsWithRelations > 0 ? "pill-ok" : "pill-warn")">
+                <bdi>@Ku.N(c.WordsWithRelations)</bdi> / <bdi>@Ku.N(c.TotalWords)</bdi>
+            </span>
+        }
+    </Actions>
+</PageHeader>
+
+@* ── Walk bar ─────────────────────────────────────────────────────────── *@
+<div class="card mb-4 flex flex-wrap items-center gap-2 px-4 py-2.5">
+    <button @onclick="() => Go(_position - 1)" disabled="@(_position <= 1 || _busy)" class="btn-secondary">
+        پێشوو
+    </button>
+    <button @onclick="() => Go(_position + 1)" disabled="@(_position >= _total || _busy)" class="btn-secondary">
+        دواتر
+    </button>
+
+    <div class="flex items-center gap-1.5 text-sm text-ink-2">
+        <input type="number" value="@_position" @onchange="OnJump" min="1" max="@_total"
+               class="field w-24 py-1.5 text-center text-sm" aria-label="ژمارەی وشە" />
+        <span>لە <bdi class="text-ink-1">@Ku.N(_total)</bdi></span>
     </div>
-    <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-700">
-            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-            بەبێ پەیوەندی
-        </span>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-700">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-            بە پەیوەندی
-        </span>
-    </div>
+
+    <button @onclick="SkipToMissing" disabled="@_busy" class="btn-secondary">بێ پەیوەندی دواتر</button>
+
+    @if (_coverage is { } cv)
+    {
+        <div class="ms-auto h-1.5 w-32 overflow-hidden rounded-full bg-page" title="@Subtitle">
+            <div class="h-full rounded-full bg-green-deep" style="width: @Percent(cv)%"></div>
+        </div>
+    }
 </div>
 
-<!-- Two-column layout -->
-<div class="flex gap-5" style="height: calc(100vh - 180px); min-height: 500px;">
+@if (_word is null)
+{
+    <div class="card flex flex-col items-center gap-3 py-16 text-center">
+        <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+        <p class="text-sm text-ink-2">@(_busy ? "…" : "هیچ وشەیەک نەهاتەوە")</p>
+    </div>
+}
+else
+{
+<div class="grid gap-4 lg:grid-cols-2">
 
-    <!-- ══════════════════════════════════════════════════════════════
-         LEFT PANEL — word list
-    ══════════════════════════════════════════════════════════════ -->
-    <div class="w-72 shrink-0 flex flex-col gap-3 overflow-hidden">
+    @* ══ LEFT — the word and what it already has ════════════════════════ *@
+    <div class="space-y-4">
+        <div class="card">
+            <span class="text-34 font-medium text-ink-1">@_word.Kurdish</span>
 
-        <!-- Search box -->
-        <div dir="rtl">
-            <input value="@_listSearch" @oninput="OnListSearch"
-                   placeholder="🔍 گەڕان لە وشەکان..."
-                   dir="rtl"
-                   class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all" />
+            @if (!string.IsNullOrWhiteSpace(_word.Description))
+            {
+                <p class="mt-1.5 text-sm leading-relaxed text-ink-2">@_word.Description</p>
+            }
+
+            @foreach (var s in _word.Senses)
+            {
+                <p class="mt-1 truncate text-xs text-ink-3">@s.Label</p>
+            }
         </div>
 
-        <!-- Word list (scrollable) -->
-        <div class="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-200 shadow-sm">
-            @if (_listLoading)
+        <div class="card">
+            <div class="mb-3 flex items-center gap-2.5">
+                <span class="card-badge"><Icon Name="relations" Class="h-4 w-4" /></span>
+                <h2 class="card-title">پەیوەندییەکان</h2>
+                <span class="pill @(_word.Relations.Count == 0 ? "pill-warn" : "pill-ok") ms-auto">
+                    <bdi>@Ku.N(_word.Relations.Count)</bdi>
+                </span>
+            </div>
+
+            @if (_word.Relations.Count == 0)
             {
-                @for (int i = 0; i < 10; i++)
-                {
-                    <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-50" dir="rtl">
-                        <div class="skeleton flex-1 h-4"></div>
-                        <div class="skeleton w-6 h-5 rounded-full"></div>
-                    </div>
-                }
-            }
-            else if (!_listWords.Any())
-            {
-                <div class="flex flex-col items-center justify-center py-12 text-gray-400 gap-2">
-                    <span class="text-3xl">📭</span>
-                    <p class="text-sm">هیچ وشەیەک نەدۆزرایەوە</p>
-                </div>
+                <p class="py-6 text-center text-sm text-ink-2">هێشتا هیچ پەیوەندییەک نییە</p>
             }
             else
             {
-                @foreach (var w in _listWords)
-                {
-                    bool isSelected = _selectedWord?.Id == w.Id;
-                    <button @onclick="() => SelectWord(w)"
-                            class="w-full flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 text-right transition-colors @(isSelected ? "bg-indigo-50 border-r-2 border-indigo-500" : "hover:bg-gray-50")"
-                            dir="rtl">
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold text-gray-900 truncate">@w.Kurdish</p>
-                            @if (w.Categories.Any())
-                            {
-                                <p class="text-[10px] text-gray-400 truncate mt-0.5">@w.Categories.First().Name</p>
-                            }
+                <div class="space-y-3">
+                    @foreach (var group in _word.Relations.GroupBy(r => r.TypeNameKu))
+                    {
+                        <div>
+                            <p class="mb-1.5 text-11 text-ink-3">@group.Key</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                @foreach (var rel in group)
+                                {
+                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-green-tint py-1 pe-3 ps-1.5 text-sm text-on-tint"
+                                          title="@RelTitle(rel)">
+                                        <button @onclick="() => Remove(rel)" disabled="@_busy"
+                                                class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-card disabled:opacity-40"
+                                                aria-label="سڕینەوە">
+                                            <Icon Name="close" Class="h-2.5 w-2.5" />
+                                        </button>
+                                        @rel.OtherWord
+                                    </span>
+                                }
+                            </div>
                         </div>
-                        @if (w.TotalRelations == 0)
-                        {
-                            <span class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-600 border border-amber-200">٠</span>
-                        }
-                        else
-                        {
-                            <span class="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">@w.TotalRelations</span>
-                        }
-                    </button>
-                }
-
-                @if (_listHasMore)
-                {
-                    <button @onclick="LoadMoreWords"
-                            disabled="@_listLoadingMore"
-                            class="w-full py-3 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors border-t border-gray-100 disabled:opacity-40">
-                        @(_listLoadingMore ? "بارکردن..." : "+ وشەی زیاتر")
-                    </button>
-                }
+                    }
+                </div>
             }
         </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         RIGHT PANEL — relation manager
-    ══════════════════════════════════════════════════════════════ -->
-    <div class="flex-1 flex flex-col gap-4 overflow-hidden min-w-0">
+    @* ══ RIGHT — add ════════════════════════════════════════════════════ *@
+    <div class="card flex flex-col">
 
-        @if (_selectedWord is null)
+        @* The type. A dropdown rather than eleven chips: eleven chips is a wall, and the two
+           groups are what carry the meaning — morphology belongs to the WORD, semantics to one
+           SENSE. Optgroups say that in the control itself. *@
+        <label class="field-label">جۆری پەیوەندی</label>
+        <select value="@_typeId" @onchange="OnTypeChanged" class="field">
+            <option value="0">— جۆرێک هەڵبژێرە —</option>
+            <optgroup label="پەیوەندی وشەیی (ڕەگ و پێکهاتە)">
+                @foreach (var t in _types.Where(t => t.Scope == "word"))
+                {
+                    <option value="@t.Id">@t.NameKu</option>
+                }
+            </optgroup>
+            <optgroup label="پەیوەندی مانایی (واتا)">
+                @foreach (var t in _types.Where(t => t.Scope == "sense"))
+                {
+                    <option value="@t.Id">@t.NameKu</option>
+                }
+            </optgroup>
+        </select>
+
+        @if (SelectedType is { } sel)
         {
-            <div class="flex-1 flex flex-col items-center justify-center text-center text-gray-400 bg-white rounded-2xl border border-gray-200 border-dashed gap-4 p-8">
-                <div class="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl">🕸</div>
-                <div>
-                    <p class="font-semibold text-gray-600 text-base">وشەیەک هەڵبژێرە</p>
-                    <p class="text-sm text-gray-400 mt-1.5 leading-relaxed">
-                        لە لیستی لای چەپەوە وشەیەک هەڵبژێرە<br/>بۆ بینینی پەیوەندییەکان و زیادکردنی پەیوەندی نوێ
-                    </p>
-                </div>
-            </div>
+            <p class="mt-1.5 text-11 leading-relaxed text-ink-3">@InverseHint(sel)</p>
         }
-        else
+
+        @* Which sense of THIS word — only when the type is semantic and the word has a choice. *@
+        @if (SelectedType?.IsSenseScoped == true && _word.Senses.Count > 1)
         {
-            <!-- Selected word header -->
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm px-5 py-4" dir="rtl">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3 flex-wrap">
-                        <span class="text-2xl font-black text-gray-900">@_selectedWord.Kurdish</span>
-                        @foreach (var sp in _selectedWord.SpeechPanes)
-                        {
-                            <span class="text-xs font-semibold px-2.5 py-1 bg-violet-100 text-violet-700 rounded-full">@sp.Kurdish</span>
-                        }
-                        @foreach (var cat in _selectedWord.Categories)
-                        {
-                            <span class="text-xs font-medium px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-100">@cat.Name</span>
-                        }
-                    </div>
-                    <div class="shrink-0 flex items-center gap-3">
-                        <span class="text-xs font-semibold px-3 py-1.5 bg-gray-100 text-gray-600 rounded-xl">
-                            @(_selectedWord.OutgoingRelations.Count + _selectedWord.IncomingRelations.Count) پەیوەندی
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <label class="field-label mt-3">مانای «@_word.Kurdish»</label>
+            <select value="@_fromSenseId" @onchange="OnFromSenseChanged" class="field">
+                @foreach (var s in _word.Senses)
+                {
+                    <option value="@s.SenseId">@s.Label</option>
+                }
+            </select>
+        }
 
-            <div class="flex-1 flex flex-col gap-4 overflow-y-auto pb-1 pr-0.5">
+        @* ── Search + list ───────────────────────────────────────────── *@
+        <div class="relative mt-4">
+            <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-ink-3">
+                <Icon Name="search" Class="h-4 w-4" />
+            </span>
+            <input value="@_search" @oninput="OnSearch"
+                   placeholder="وشە بە پیتی سەرەتا بگەڕێ…" class="field pe-10" />
+        </div>
 
-                <!-- ── Current relations ── -->
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" dir="rtl">
-                    <div class="flex items-center justify-between px-5 py-3.5 bg-gray-50 border-b border-gray-100">
-                        <span class="text-sm font-bold text-gray-800">پەیوەندییە ئێستاکان</span>
-                        @if (!_selectedWord.OutgoingRelations.Any() && !_selectedWord.IncomingRelations.Any())
-                        {
-                            <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                                هیچ پەیوەندییەک نییە
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="text-xs font-semibold text-gray-400">
-                                @_selectedWord.OutgoingRelations.Count خروج · @_selectedWord.IncomingRelations.Count دەرچوو
-                            </span>
-                        }
-                    </div>
-
-                    @{
-                        var grouped  = _selectedWord.OutgoingRelations.GroupBy(r => r.RelationType).OrderBy(g => g.Key).ToList();
-                        var incoming = _selectedWord.IncomingRelations.ToList();
-                    }
-
-                    @if (!grouped.Any() && !incoming.Any())
-                    {
-                        <div class="px-5 py-8 text-center">
-                            <p class="text-sm text-gray-400">هێشتا هیچ پەیوەندییەک زیادنەکراوە</p>
-                            <p class="text-xs text-gray-300 mt-1">لە خوارەوە پەیوەندی زیاد بکە</p>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="p-5 space-y-4">
-
-                            @foreach (var group in grouped)
-                            {
-                                <div>
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">@RelLabel(group.Key)</span>
-                                        <span class="text-[10px] font-bold text-gray-300">(@group.Count())</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach (var rel in group)
-                                        {
-                                            <span class="inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1.5 rounded-full text-sm font-semibold @RelChipClass(group.Key)">
-                                                <button @onclick="() => DeleteRelation(rel)"
-                                                        disabled="@_saving"
-                                                        class="w-4 h-4 flex items-center justify-center rounded-full hover:bg-black/10 text-xs leading-none disabled:opacity-40 transition-colors shrink-0">
-                                                    ×
-                                                </button>
-                                                @rel.RelatedKurdish
-                                            </span>
-                                        }
-                                    </div>
-                                </div>
-                            }
-
-                            @if (incoming.Any())
-                            {
-                                <div class="pt-3 border-t border-gray-100">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">ئاماژەی بۆ کراوە</span>
-                                        <span class="text-[10px] font-bold text-gray-300">(@incoming.Count)</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach (var rel in incoming)
-                                        {
-                                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-gray-100 text-gray-500 border border-gray-200"
-                                                  title="@rel.RelationType">
-                                                ← @rel.RelatedKurdish
-                                            </span>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
-
-                <!-- ── Add new relations ── -->
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" dir="rtl">
-                    <div class="px-5 py-3.5 bg-gray-50 border-b border-gray-100">
-                        <span class="text-sm font-bold text-gray-800">+ زیادکردنی پەیوەندی نوێ</span>
-                    </div>
-
-                    <div class="p-5 space-y-4">
-
-                        <!-- Multi-select combobox -->
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">وشەکانی مەبەست</label>
-
-                            <div class="min-h-[44px] border-2 @(_comboFocused ? "border-indigo-400 ring-2 ring-indigo-100" : "border-gray-200") rounded-xl px-3 py-2 flex flex-wrap gap-1.5 items-center cursor-text transition-all bg-white"
-                                 @onclick="FocusComboInput">
-
-                                @foreach (var pick in _picks)
-                                {
-                                    <span class="inline-flex items-center gap-1 pl-1.5 pr-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold">
-                                        <button @onclick:stopPropagation="true"
-                                                @onclick="() => RemovePick(pick)"
-                                                class="w-4 h-4 flex items-center justify-center rounded-full hover:bg-indigo-200 text-xs leading-none">
-                                            ×
-                                        </button>
-                                        @pick.Kurdish
-                                    </span>
-                                }
-
-                                <input @ref="_comboInputRef"
-                                       value="@_comboSearch"
-                                       @oninput="OnComboInput"
-                                       @onfocus="() => _comboFocused = true"
-                                       @onblur="OnComboBlur"
-                                       placeholder="@(_picks.Any() ? "" : "وشە بگەڕێ و هەڵبژێرە...")"
-                                       dir="rtl"
-                                       class="flex-1 min-w-[140px] outline-none text-sm bg-transparent placeholder-gray-400 py-0.5" />
-                            </div>
-
-                            @if (_comboSuggestions.Any())
-                            {
-                                <div class="relative">
-                                    <ul class="absolute top-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl max-h-48 overflow-y-auto z-40">
-                                        @foreach (var s in _comboSuggestions)
-                                        {
-                                            bool isPicked = _picks.Any(p => p.Id == s.Id);
-                                            <li @onclick="() => TogglePick(s)"
-                                                class="flex items-center justify-between px-4 py-2.5 text-sm cursor-pointer border-b border-gray-50 last:border-0 @(isPicked ? "bg-indigo-50" : "hover:bg-gray-50") transition-colors">
-                                                <span class="font-bold text-gray-800" dir="rtl">@s.Kurdish</span>
-                                                <div class="flex items-center gap-2 shrink-0">
-                                                    @if (s.SpeechPanes.Any())
-                                                    {
-                                                        <span class="text-[10px] text-gray-400">@s.SpeechPanes.First().Kurdish</span>
-                                                    }
-                                                    @if (isPicked)
-                                                    {
-                                                        <span class="w-4 h-4 flex items-center justify-center bg-indigo-500 text-white rounded-full text-[9px] font-bold">✓</span>
-                                                    }
-                                                </div>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- Relation type selector -->
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">جۆری پەیوەندی</label>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach (var rt in _relTypes)
-                                {
-                                    <button @onclick="() => _addRelType = rt.Key"
-                                            class="px-3 py-1.5 rounded-xl text-xs font-semibold border-2 transition-all @(_addRelType == rt.Key ? rt.ActiveClass : rt.IdleClass)">
-                                        @rt.Label
-                                    </button>
-                                }
-                            </div>
-                        </div>
-
-                        <!-- Feedback messages -->
-                        @if (!string.IsNullOrEmpty(_saveError))
-                        {
-                            <div class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-xs font-medium text-red-600">
-                                <span>⚠</span> @_saveError
-                            </div>
-                        }
-                        @if (_saveSuccess)
-                        {
-                            <div class="flex items-center gap-2 px-3 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-medium text-emerald-700">
-                                <span>✓</span> پەیوەندییەکان بەسەرکەوتوویی زیاد کران
-                            </div>
-                        }
-
-                        <!-- Add button -->
-                        <button @onclick="AddRelations"
-                                disabled="@(!CanAdd || _saving)"
-                                class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors text-sm">
-                            @if (_saving)
-                            {
-                                <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                <span>پاشەکەوتکردن...</span>
-                            }
-                            else
-                            {
-                                <span>+ زیادکردنی @_picks.Count پەیوەندی</span>
-                            }
+        @if (_picked.Any())
+        {
+            <div class="mt-3 flex flex-wrap gap-1.5">
+                @foreach (var p in _picked.Values)
+                {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-green-tint py-1 pe-3 ps-1.5 text-sm text-on-tint">
+                        <button @onclick="() => Toggle(p)" class="flex h-4 w-4 items-center justify-center rounded-full hover:bg-card"
+                                aria-label="لابردن">
+                            <Icon Name="close" Class="h-2.5 w-2.5" />
                         </button>
-                    </div>
-                </div>
-
+                        @p.Kurdish
+                    </span>
+                }
             </div>
         }
+
+        <div class="mt-3 max-h-80 min-h-[8rem] overflow-y-auto rounded-chip border border-line-soft">
+            @if (!_results.Any())
+            {
+                <p class="py-8 text-center text-sm text-ink-2">
+                    @(string.IsNullOrWhiteSpace(_search) ? "…" : "هیچ وشەیەک نەدۆزرایەوە")
+                </p>
+            }
+            else
+            {
+                @foreach (var r in _results)
+                {
+                    var blocked = NeedsSense && r.SenseCount == 0;
+
+                    <button type="button" @onclick="() => Toggle(r)" disabled="@blocked" class="@RowClass(r, blocked)">
+                        <span class="flex h-4 w-4 shrink-0 items-center justify-center rounded border @(_picked.ContainsKey(r.Id) ? "border-green bg-green-deep text-white" : "border-line")">
+                            @if (_picked.ContainsKey(r.Id))
+                            {
+                                <Icon Name="check" Class="h-2.5 w-2.5" />
+                            }
+                        </span>
+
+                        <span class="min-w-0 flex-1 text-start">
+                            <span class="block truncate text-sm text-ink-1">@r.Kurdish</span>
+                            @if (!string.IsNullOrWhiteSpace(r.Description))
+                            {
+                                <span class="block truncate text-11 text-ink-3">@r.Description</span>
+                            }
+                        </span>
+
+                        @if (blocked)
+                        {
+                            <span class="shrink-0 text-11 text-warn">بێ مانا</span>
+                        }
+                        else if (r.RelationCount > 0)
+                        {
+                            <span class="shrink-0 text-11 text-ink-3"><bdi>@Ku.N(r.RelationCount)</bdi></span>
+                        }
+                    </button>
+
+                    @* The only genuinely ambiguous case: a semantic relation onto a word that has
+                       more than one sense. Shown inline on the row it belongs to, and only once the
+                       row is ticked — asking before that is asking about a word nobody chose. *@
+                    @if (NeedsSense && _picked.ContainsKey(r.Id) && r.SenseCount > 1)
+                    {
+                        <div class="border-b border-line-soft bg-page px-3 pb-2.5">
+                            <label class="field-label !mb-1 !text-11">کام مانای «@r.Kurdish»؟</label>
+                            <select value="@TargetSense(r.Id)" @onchange="e => OnTargetSenseChanged(r.Id, e)"
+                                    class="field py-1.5 text-xs">
+                                @foreach (var s in r.Senses)
+                                {
+                                    <option value="@s.SenseId">@s.Label</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                }
+            }
+        </div>
+
+        @* ── Pager ───────────────────────────────────────────────────────
+           The whole dictionary is browsable from here, not just whatever twenty rows a prefix
+           happens to return. Ticks survive a page change — _picked is keyed by word id and holds
+           the row itself, so a word chosen on page ٢ is still chosen, and still named, on page ٧. *@
+        @if (_resultTotal > 0)
+        {
+            <div class="mt-2 flex items-center gap-2 text-11 text-ink-3">
+                <button @onclick="() => GoToPage(_resultPage - 1)" disabled="@(_resultPage <= 1 || _busy)"
+                        class="rounded-chip border border-line px-2 py-1 text-ink-2 transition-colors hover:bg-page disabled:opacity-40">
+                    پێشوو
+                </button>
+                <button @onclick="() => GoToPage(_resultPage + 1)" disabled="@(_resultPage >= ResultPages || _busy)"
+                        class="rounded-chip border border-line px-2 py-1 text-ink-2 transition-colors hover:bg-page disabled:opacity-40">
+                    دواتر
+                </button>
+
+                <span>
+                    پەڕەی <bdi class="text-ink-1">@Ku.N(_resultPage)</bdi> لە <bdi>@Ku.N(ResultPages)</bdi>
+                </span>
+
+                <span class="ms-auto"><bdi>@Ku.N(_resultTotal)</bdi> وشە</span>
+            </div>
+        }
+
+        @* ── Save ────────────────────────────────────────────────────── *@
+        <div class="mt-4 border-t border-line-soft pt-3">
+            @if (Blocker is { } why)
+            {
+                <p class="mb-2 text-xs text-ink-3">@why</p>
+            }
+
+            <button @onclick="Add" disabled="@(Blocker is not null || _busy)"
+                    class="btn-primary w-full justify-center disabled:opacity-40">
+                @(_busy ? "پاشەکەوت…" : SaveLabel)
+            </button>
+        </div>
     </div>
 </div>
+}
+
+</TelerikScope>
 
 @code {
-    // ── Word list (left panel) ──────────────────────────────────────────────
-    List<WordDto> _listWords = new();
-    string _listSearch = "";
-    bool _listLoading = true;
-    bool _listLoadingMore;
-    bool _listHasMore;
-    int _listPage = 1;
-    const int ListPageSize = 30;
-    CancellationTokenSource? _listCts;
+    RelationCoverageDto? _coverage;
+    List<RelationTypeDto> _types = new();
 
-    // ── Selected word ───────────────────────────────────────────────────────
-    WordDto? _selectedWord;
-    bool _saving;
-    bool _saveSuccess;
-    string _saveError = "";
+    WordRelationsDto? _word;
+    int _position = 1, _total;
+    bool _busy;
 
-    // ── Multi-select combobox ───────────────────────────────────────────────
-    string _comboSearch = "";
-    List<WordDto> _comboSuggestions = new();
-    List<WordDto> _picks = new();
-    bool _comboFocused;
-    ElementReference _comboInputRef;
-    CancellationTokenSource? _comboCts;
+    // ── The add form ────────────────────────────────────────────────────────
+    int _typeId;
+    int _fromSenseId;
 
-    string _addRelType = "synonym";
+    /// <summary>Ticked targets, by word id. A dictionary so the chips can name them without a lookup.</summary>
+    readonly Dictionary<int, RelationTargetDto> _picked = new();
 
-    bool CanAdd => _picks.Any() && !string.IsNullOrEmpty(_addRelType) && _selectedWord is not null;
+    /// <summary>Target word id → chosen sense, only for the few targets that have more than one.</summary>
+    readonly Dictionary<int, int> _targetSense = new();
 
-    // ── Relation type config ────────────────────────────────────────────────
-    record RelTypeConfig(string Key, string Label, string ActiveClass, string IdleClass);
+    string _search = "";
+    List<RelationTargetDto> _results = new();
+    int _resultPage = 1, _resultTotal;
+    const int ResultPageSize = 20;
 
-    readonly List<RelTypeConfig> _relTypes = new()
+    int ResultPages => _resultTotal <= 0 ? 1 : (int)Math.Ceiling(_resultTotal / (double)ResultPageSize);
+
+    CancellationTokenSource? _searchCts;
+
+    RelationTypeDto? SelectedType => _types.FirstOrDefault(t => t.Id == _typeId);
+
+    /// <summary>The chosen type needs a sense on both sides.</summary>
+    bool NeedsSense => SelectedType?.IsSenseScoped == true;
+
+    string Subtitle => _coverage is { } c
+        ? $"{Ku.N(c.WordsWithoutRelations)} وشە بەبێ پەیوەندی لە کۆی {Ku.N(c.TotalWords)}"
+        : "…";
+
+    /// <summary>
+    /// Why the button is off, in the user's words — or null when it is on.
+    ///
+    /// Every branch here names something VISIBLE on screen. The version before this could block on
+    /// a sense that was never asked for, so the button sat dead with no control anywhere to fix it;
+    /// senses now default to the only one there is, which leaves type and targets as the only two
+    /// things that can be missing, and both are a control you are looking at.
+    /// </summary>
+    string? Blocker
     {
-        new("synonym",    "هاوماناکە",       "border-emerald-500 bg-emerald-50 text-emerald-700",  "border-gray-200 text-gray-500 hover:border-emerald-300 hover:text-emerald-600"),
-        new("antonym",    "دژەوشە",          "border-red-500     bg-red-50     text-red-700",      "border-gray-200 text-gray-500 hover:border-red-300     hover:text-red-600"),
-        new("related",    "پەیوەندیدار",     "border-blue-500    bg-blue-50    text-blue-700",     "border-gray-200 text-gray-500 hover:border-blue-300    hover:text-blue-600"),
-        new("example",    "نموونە",          "border-amber-500   bg-amber-50   text-amber-700",    "border-gray-200 text-gray-500 hover:border-amber-300   hover:text-amber-600"),
-        new("usage",      "بکارهێنان",       "border-purple-500  bg-purple-50  text-purple-700",   "border-gray-200 text-gray-500 hover:border-purple-300  hover:text-purple-600"),
-        new("contextual", "چارچێوەیی",       "border-cyan-500    bg-cyan-50    text-cyan-700",     "border-gray-200 text-gray-500 hover:border-cyan-300    hover:text-cyan-600"),
-        new("partof",     "بەشێکە لە وشەکە", "border-orange-500  bg-orange-50  text-orange-700",   "border-gray-200 text-gray-500 hover:border-orange-300  hover:text-orange-600"),
+        get
+        {
+            if (_word is null) return "هیچ وشەیەک نەهاتەوە";
+            if (SelectedType is null) return "جۆری پەیوەندی هەڵبژێرە";
+            if (_picked.Count == 0) return "لانیکەم یەک وشە هەڵبژێرە";
+
+            if (NeedsSense && _word.Senses.Count == 0)
+                return $"«{_word.Kurdish}» هیچ مانایەکی نییە — لە وێستگە مانای بۆ زیاد بکە";
+
+            return null;
+        }
+    }
+
+    string SaveLabel => _picked.Count switch
+    {
+        0 => "زیادکردنی پەیوەندی",
+        1 => $"«{_picked.Values.First().Kurdish}» زیاد بکە",
+        var n => $"زیادکردنی {Ku.N(n)} پەیوەندی",
     };
 
-    // ═══════════════════════════════════════════════════════════════════════
     protected override async Task OnInitializedAsync()
     {
-        await LoadListPage(reset: true);
+        try { _types = await Relations.GetTypesAsync(); }
+        catch (Exception ex) { Toast.Error($"جۆرەکان نەهاتنەوە: {ex.Message}"); }
+
+        await LoadCoverage();
+        await Go(1);
     }
 
-    async Task LoadListPage(bool reset)
+    async Task LoadCoverage()
     {
-        if (reset) { _listPage = 1; _listWords = new(); _listLoading = true; }
-        else _listLoadingMore = true;
-
-        var result  = await WordSvc.GetWordsAsync(_listPage, ListPageSize, _listSearch);
-        var incoming = result?.Items ?? new();
-
-        if (reset) _listWords = incoming;
-        else _listWords.AddRange(incoming);
-
-        _listHasMore    = incoming.Count == ListPageSize;
-        _listLoading    = false;
-        _listLoadingMore = false;
-    }
-
-    async Task LoadMoreWords() { _listPage++; await LoadListPage(reset: false); }
-
-    async Task OnListSearch(ChangeEventArgs e)
-    {
-        _listSearch = e.Value?.ToString() ?? "";
-        _listCts?.Cancel();
-        _listCts = new CancellationTokenSource();
         try
         {
-            await Task.Delay(300, _listCts.Token);
-            await LoadListPage(reset: true);
+            _coverage = await Relations.GetCoverageAsync();
+            if (_coverage is { } c) _total = c.TotalWords;
         }
-        catch (TaskCanceledException) { }
+        catch { /* The header goes quiet; the walk still works. */ }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    async Task SelectWord(WordDto w)
+    // Walk
+    // ═══════════════════════════════════════════════════════════════════════
+
+    async Task Go(int position) => await Load(() => Relations.GetAtAsync(position));
+
+    async Task OnJump(ChangeEventArgs e)
     {
-        _saveSuccess = false;
-        _saveError   = "";
-        ResetCombo();
-        var full     = await WordSvc.GetWordByIdAsync(w.Id);
-        _selectedWord = full ?? w;
+        if (int.TryParse(e.Value?.ToString(), out var n)) await Go(n);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    async Task OnComboInput(ChangeEventArgs e)
+    async Task SkipToMissing()
     {
-        _comboSearch = e.Value?.ToString() ?? "";
-        _comboCts?.Cancel();
-        _comboCts = new CancellationTokenSource();
-        try
+        // Counted from the CURRENT position, so pressing it twice moves twice.
+        var next = await Relations.NextMissingAsync(_position);
+
+        if (next is not { } position)
         {
-            await Task.Delay(250, _comboCts.Token);
-            if (string.IsNullOrWhiteSpace(_comboSearch)) { _comboSuggestions = new(); return; }
-            var result = await WordSvc.GetWordsAsync(search: _comboSearch, pageSize: 10);
-            _comboSuggestions = (result?.Items ?? new())
-                .Where(w => w.Id != _selectedWord?.Id && !_picks.Any(p => p.Id == w.Id))
-                .ToList();
+            Toast.Success("هەموو وشەکان پەیوەندییان هەیە.");
+            return;
         }
-        catch (TaskCanceledException) { }
+
+        await Go(position);
     }
 
-    void TogglePick(WordDto w)
+    async Task Load(Func<Task<WordRelationsDto?>> fetch)
     {
-        var existing = _picks.FirstOrDefault(p => p.Id == w.Id);
-        if (existing is not null) _picks.Remove(existing);
-        else _picks.Add(w);
-        _comboSuggestions = _comboSuggestions.ToList();
-        _saveSuccess = false;
-        _saveError   = "";
-    }
+        _busy = true;
+        try
+        {
+            _word = await fetch();
+            if (_word is null) return;
 
-    void RemovePick(WordDto w) => _picks.Remove(w);
+            _position = _word.Position;
+            _total = _word.Total;
 
-    async Task FocusComboInput() => await _comboInputRef.FocusAsync();
+            // Cleared on purpose. Carrying a ticked word across would leave it selected against a
+            // headword nobody chose it for, and the next press would wire two unrelated words.
+            _picked.Clear();
+            _targetSense.Clear();
 
-    async Task OnComboBlur()
-    {
-        await Task.Delay(200);
-        _comboFocused = false;
-        if (string.IsNullOrWhiteSpace(_comboSearch)) _comboSuggestions = new();
-    }
+            _fromSenseId = _word.Senses.Count > 0 ? _word.Senses[0].SenseId : 0;
 
-    void ResetCombo()
-    {
-        _picks           = new();
-        _comboSearch     = "";
-        _comboSuggestions = new();
-        _comboFocused    = false;
+            await RunSearch(page: 1);
+        }
+        catch (Exception ex)
+        {
+            Toast.Error($"وشەکە نەهاتەوە: {ex.Message}");
+        }
+        finally { _busy = false; }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    async Task AddRelations()
+    // The form
+    // ═══════════════════════════════════════════════════════════════════════
+
+    void OnTypeChanged(ChangeEventArgs e)
     {
-        if (!CanAdd || _selectedWord is null) return;
-        _saving = true; _saveError = ""; _saveSuccess = false;
-        try
+        _typeId = int.TryParse(e.Value?.ToString(), out var id) ? id : 0;
+
+        // Switching to a semantic type on a word with no senses, or away from one, invalidates
+        // nothing that is still on screen — but a target ticked while it was allowed can become
+        // unusable, so drop the ones that no longer qualify rather than fail at save time.
+        if (NeedsSense)
         {
-            var existing = _selectedWord.OutgoingRelations
-                .Select(r => new CreateRelatedWordDto { TargetWordId = r.RelatedWordId, RelationType = r.RelationType, Weight = r.Weight })
-                .ToList();
-
-            var toAdd = _picks
-                .Where(p => !existing.Any(e => e.TargetWordId == p.Id && e.RelationType == _addRelType))
-                .Select(p => new CreateRelatedWordDto { TargetWordId = p.Id, RelationType = _addRelType, Weight = 1 })
-                .ToList();
-
-            if (!toAdd.Any()) { _saveError = "هەموو وشەکانی هەڵبژێردراو پێشتر زیاد کراون."; return; }
-
-            existing.AddRange(toAdd);
-
-            var dto = new UpdateWordDto
+            foreach (var id2 in _picked.Where(p => p.Value.SenseCount == 0).Select(p => p.Key).ToList())
             {
-                Kurdish      = _selectedWord.Kurdish,
-                SpeechPanes = _selectedWord.SpeechPanes.Select(sp => sp.Id).ToList(),
-                CategoryIds = _selectedWord.Categories.Select(c => c.Id).ToList(),
-                Description  = _selectedWord.Description,
-                Meanings     = _selectedWord.Meanings.Select(m => new WordMeansDto { Meaning = m.Meaning, Locate = m.Locate }).ToList(),
-                RelatedWords = existing
-            };
-
-            var updated = await WordSvc.UpdateWordAsync(_selectedWord.Id, dto);
-            if (updated is not null)
-            {
-                _selectedWord = updated;
-                _saveSuccess  = true;
-                ResetCombo();
-                RefreshWordInList(updated);
+                _picked.Remove(id2);
+                _targetSense.Remove(id2);
             }
-            else _saveError = "کێشەیەک ڕووی دا. دووبارە هەوڵ بدەرەوە.";
         }
-        catch { _saveError = "پەیوەستی نێوخۆ بپشکنە."; }
-        finally { _saving = false; }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    async Task DeleteRelation(RelatedWordDto rel)
+    void OnFromSenseChanged(ChangeEventArgs e)
     {
-        if (_selectedWord is null) return;
-        _saving = true; _saveError = ""; _saveSuccess = false;
+        if (int.TryParse(e.Value?.ToString(), out var id)) _fromSenseId = id;
+    }
+
+    void OnTargetSenseChanged(int wordId, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var id)) _targetSense[wordId] = id;
+    }
+
+    /// <summary>The sense a target will be wired through — the explicit choice, or its first.</summary>
+    int TargetSense(int wordId) =>
+        _targetSense.TryGetValue(wordId, out var chosen)
+            ? chosen
+            : _picked.GetValueOrDefault(wordId)?.DefaultSenseId
+              ?? _results.FirstOrDefault(r => r.Id == wordId)?.DefaultSenseId
+              ?? 0;
+
+    void Toggle(RelationTargetDto target)
+    {
+        if (_picked.Remove(target.Id)) { _targetSense.Remove(target.Id); return; }
+
+        _picked[target.Id] = target;
+    }
+
+    async Task OnSearch(ChangeEventArgs e)
+    {
+        _search = e.Value?.ToString() ?? "";
+
+        _searchCts?.Cancel();
+        _searchCts = new CancellationTokenSource();
+        var token = _searchCts.Token;
+
         try
         {
-            var remaining = _selectedWord.OutgoingRelations
-                .Where(r => r.Id != rel.Id)
-                .Select(r => new CreateRelatedWordDto { TargetWordId = r.RelatedWordId, RelationType = r.RelationType, Weight = r.Weight })
-                .ToList();
+            await Task.Delay(300, token);
 
-            var dto = new UpdateWordDto
-            {
-                Kurdish      = _selectedWord.Kurdish,
-                SpeechPanes = _selectedWord.SpeechPanes.Select(sp => sp.Id).ToList(),
-                CategoryIds = _selectedWord.Categories.Select(c => c.Id).ToList(),
-                Description  = _selectedWord.Description,
-                Meanings     = _selectedWord.Meanings.Select(m => new WordMeansDto { Meaning = m.Meaning, Locate = m.Locate }).ToList(),
-                RelatedWords = remaining
-            };
-
-            var updated = await WordSvc.UpdateWordAsync(_selectedWord.Id, dto);
-            if (updated is not null) { _selectedWord = updated; RefreshWordInList(updated); }
-            else _saveError = "سڕینەوە سەرکەوتوو نەبوو.";
+            // Back to page one: the old page number belongs to the old result set, and staying on
+            // page seven of a search that now has two pages shows an empty list that looks broken.
+            if (!token.IsCancellationRequested) await RunSearch(page: 1);
         }
-        catch { _saveError = "سڕینەوە سەرکەوتوو نەبوو."; }
-        finally { _saving = false; }
+        catch (TaskCanceledException) { }
+    }
+
+    async Task GoToPage(int page) => await RunSearch(Math.Clamp(page, 1, ResultPages));
+
+    async Task RunSearch(int page)
+    {
+        if (_word is null) return;
+
+        try
+        {
+            var result = await Relations.SearchAsync(_search, _word.WordId, page, ResultPageSize);
+
+            _results = result?.Items ?? new();
+            _resultTotal = result?.TotalCount ?? 0;
+            _resultPage = result?.Page ?? 1;
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (Exception ex)
+        {
+            _results = new();
+            _resultTotal = 0;
+            Toast.Error($"گەڕان سەرنەکەوت: {ex.Message}");
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    void RefreshWordInList(WordDto updated)
+    // Writes
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /// <summary>
+    /// One request per target. Sequential rather than parallel: they all write relations on the
+    /// same word, and the server returns the word's refreshed state with each — firing them at
+    /// once would race and leave the screen holding whichever reply landed last.
+    /// </summary>
+    async Task Add()
     {
-        var idx = _listWords.FindIndex(w => w.Id == updated.Id);
-        if (idx >= 0)
+        if (Blocker is not null || _word is null || SelectedType is null) return;
+
+        _busy = true;
+        var added = 0;
+        var failures = new List<string>();
+
+        try
         {
-            updated.TotalRelations = updated.OutgoingRelations.Count + updated.IncomingRelations.Count;
-            _listWords[idx] = updated;
+            foreach (var target in _picked.Values.ToList())
+            {
+                try
+                {
+                    var updated = await Relations.AddAsync(new AddRelationDto
+                    {
+                        FromWordId = _word.WordId,
+                        ToWordId = target.Id,
+                        TypeId = SelectedType.Id,
+                        FromSenseId = NeedsSense ? _fromSenseId : null,
+                        ToSenseId = NeedsSense ? TargetSense(target.Id) : null,
+                    });
+
+                    if (updated is not null) _word = updated;
+                    added++;
+                }
+                catch (Exception ex)
+                {
+                    // One bad pair must not lose the other five. Collected and reported together.
+                    failures.Add($"{target.Kurdish}: {ex.Message}");
+                }
+            }
+
+            _picked.Clear();
+            _targetSense.Clear();
+            await LoadCoverage();
+
+            if (added > 0) Toast.Success($"{Ku.N(added)} پەیوەندی زیادکرا");
+            foreach (var f in failures.Take(3)) Toast.Error(f);
         }
+        finally { _busy = false; }
     }
 
-    string RelLabel(string type) => type switch
+    async Task Remove(RelationEdgeDto rel)
     {
-        "synonym"    => "هاوماناکە",
-        "antonym"    => "دژەوشە",
-        "related"    => "پەیوەندیدار",
-        "example"    => "نموونە",
-        "usage"      => "بکارهێنان",
-        "contextual" => "چارچێوەیی",
-        "partof"     => "بەشێکە لە وشەکە",
-        _            => type
-    };
+        if (_word is null) return;
 
-    string RelChipClass(string type) => type switch
+        _busy = true;
+        try
+        {
+            var updated = await Relations.RemoveAsync(rel, _word.WordId);
+            if (updated is not null) _word = updated;
+
+            await LoadCoverage();
+            Toast.Success($"پەیوەندی «{rel.OtherWord}» لابرا");
+        }
+        catch (Exception ex) { Toast.Error(ex.Message); }
+        finally { _busy = false; }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+
+    static int Percent(RelationCoverageDto c) =>
+        c.TotalWords <= 0 ? 0 : (int)Math.Round(c.WordsWithRelations * 100.0 / c.TotalWords);
+
+    string RowClass(RelationTargetDto r, bool blocked) =>
+        "flex w-full items-center gap-2.5 border-b border-line-soft px-3 py-2 text-start transition-colors last:border-b-0 "
+        + (blocked ? "opacity-40" : _picked.ContainsKey(r.Id) ? "bg-green-tint" : "hover:bg-page");
+
+    static string InverseHint(RelationTypeDto t) => t.IsSymmetric
+        ? $"«{t.NameKu}» دوولایەنە — هەردوو وشەکە هەمان شت دەخوێننەوە."
+        : string.IsNullOrWhiteSpace(t.InverseNameKu)
+            ? t.NameKu
+            : $"وشەی مەبەست «{t.InverseNameKu}» دەبێت بۆ ئەم وشەیە.";
+
+    static string RelTitle(RelationEdgeDto rel)
     {
-        "synonym"    => "bg-emerald-100 text-emerald-700",
-        "antonym"    => "bg-red-100 text-red-700",
-        "related"    => "bg-blue-100 text-blue-700",
-        "example"    => "bg-amber-100 text-amber-700",
-        "usage"      => "bg-purple-100 text-purple-700",
-        "contextual" => "bg-cyan-100 text-cyan-700",
-        "partof"     => "bg-orange-100 text-orange-700",
-        _            => "bg-gray-100 text-gray-600"
-    };
+        var parts = new List<string> { rel.TypeNameKu };
+
+        if (rel.OwnSenseLabel is { Length: > 0 }) parts.Add(rel.OwnSenseLabel);
+        if (rel.OtherSenseLabel is { Length: > 0 }) parts.Add($"← {rel.OtherSenseLabel}");
+        if (rel.IsAutoInverse) parts.Add("(بەخۆکار)");
+
+        return string.Join(" · ", parts);
+    }
 }

@@ -6,38 +6,31 @@
 @inject ActivityService ActivitySvc
 @inject NavigationManager Nav
 
-<PageTitle>چالاکییەکان — فەرھەنگی کوردی</PageTitle>
+<PageTitle>چالاکییەکان — ژینزار</PageTitle>
 
-<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900">چالاکییەکان</h1>
-        <p class="mt-0.5 text-sm text-gray-400">
-            هەموو زیادکردن، دەستکاری و سڕینەوەیەک — لەگەڵ ئەوەی کێ کردوویەتی، لە چ IPیەک و کەی
-        </p>
-    </div>
-    <button @onclick="() => LoadAsync(1)"
-            class="shrink-0 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">
-        ↻ نوێکردنەوە
-    </button>
-</div>
+<PageHeader Title="چالاکییەکان"
+            Subtitle="هەموو زیادکردن، دەستکاری و سڕینەوەیەک — لەگەڵ ئەوەی کێ کردوویەتی، لە چ IPیەک و کەی">
+    <Actions>
+        <button @onclick="() => LoadAsync(1)" class="btn-secondary">نوێکردنەوە</button>
+    </Actions>
+</PageHeader>
 
 @* ── Filters ─────────────────────────────────────────────────────────── *@
-<div class="mb-5 flex flex-wrap gap-2">
+<div class="mb-4 flex flex-wrap items-center gap-1.5">
     @foreach (var filter in ActionFilters)
     {
-        <button @onclick="() => SetActionAsync(filter.Value)"
-                class="rounded-lg px-3 py-1.5 text-xs font-semibold transition
-                       @(_action == filter.Value
-                         ? "bg-indigo-600 text-white"
-                         : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50")">
+        <button @onclick="() => SetActionAsync(filter.Value)" class="@FilterClass(filter.Value)">
             @filter.Label
         </button>
     }
 
-    <div class="mr-auto">
+    <div class="relative ms-auto">
+        <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-ink-3">
+            <Icon Name="search" Class="h-3.5 w-3.5" />
+        </span>
         <input @bind="_search" @bind:event="oninput" @onkeyup="OnSearchKeyAsync"
-               placeholder="گەڕان بە وشە، بەکارهێنەر یان IP..."
-               class="w-64 rounded-lg border border-gray-200 px-3 py-1.5 text-xs outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" />
+               placeholder="گەڕان بە وشە، بەکارهێنەر یان IP…"
+               class="field w-64 py-1.5 pe-9 text-xs" />
     </div>
 </div>
 
@@ -46,99 +39,106 @@
     <div class="space-y-2">
         @for (var i = 0; i < 8; i++)
         {
-            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full rounded-card"></div>
         }
     </div>
 }
 else if (_logs is null || _logs.Items.Count == 0)
 {
-    <div class="rounded-2xl border border-gray-100 bg-white py-16 text-center">
-        <p class="text-4xl">📭</p>
-        <p class="mt-3 text-sm text-gray-400">هیچ چالاکییەک نەدۆزرایەوە</p>
+    <div class="card flex flex-col items-center gap-3 py-16 text-center">
+        <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+        <p class="text-sm text-ink-1">هیچ چالاکییەک نەدۆزرایەوە</p>
     </div>
 }
 else
 {
-    <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-        @* Cards on mobile, table on desktop — a 7-column table is unreadable on a phone. *@
-        <div class="divide-y divide-gray-100">
-            @foreach (var log in _logs.Items)
-            {
-                <div class="flex gap-3 p-4 transition hover:bg-gray-50">
-                    <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm @ActionStyle(log.Action)">
-                        @ActionIcon(log.Action)
-                    </span>
+    <div class="card p-0">
+        @foreach (var log in _logs.Items)
+        {
+            <div class="flex gap-3 border-b border-line p-4 transition-colors last:border-0 hover:bg-page">
+                <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full @ActionStyle(log.Action)">
+                    <Icon Name="@ActionIcon(log.Action)" Class="h-4 w-4" />
+                </span>
 
-                    <div class="min-w-0 flex-1">
-                        <div class="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-                            <span class="text-sm font-semibold text-gray-900">@(log.UserName ?? "نەناسراو")</span>
-                            <span class="text-sm text-gray-600">@ActionText(log.Action)</span>
-                            <span class="text-sm font-medium text-indigo-700">@(log.Summary ?? EntityLabel(log.EntityType))</span>
-                            <span class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
-                                @EntityLabel(log.EntityType)@(log.EntityId > 0 ? $" #{log.EntityId}" : "")
-                            </span>
+                <div class="min-w-0 flex-1">
+                    <div class="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                        <span class="text-sm font-medium text-ink-1">@(log.UserName ?? "نەناسراو")</span>
+                        <span class="text-sm text-ink-2">@ActionText(log.Action)</span>
+                        <span class="text-sm font-medium text-ink-1">@(log.Summary ?? EntityLabel(log.EntityType))</span>
+                        <span class="rounded-full bg-page px-2 py-0.5 text-11 text-ink-2">
+                            @EntityLabel(log.EntityType)@(log.EntityId > 0 ? $" #{Ku.Raw(log.EntityId)}" : "")
+                        </span>
+                    </div>
+
+                    @* Field-level diff — the "what exactly changed" that a plain log line can't show.
+                       Old is struck through in danger, new is plain: only the removal needs marking. *@
+                    @{
+                        var changes = ActivityService.ParseChanges(log.Changes);
+                    }
+                    @if (changes.Count > 0)
+                    {
+                        <div class="mt-2 space-y-1 rounded-chip bg-page p-2.5">
+                            @foreach (var change in changes)
+                            {
+                                <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                                    <span class="text-ink-3">@FieldLabel(change.Field):</span>
+                                    <span class="rounded-chip bg-danger-tint px-1.5 py-0.5 text-danger line-through">
+                                        @Display(change.Old)
+                                    </span>
+                                    <span class="text-ink-3">←</span>
+                                    <span class="rounded-chip bg-green-tint px-1.5 py-0.5 text-on-tint">
+                                        @Display(change.New)
+                                    </span>
+                                </div>
+                            }
                         </div>
+                    }
 
-                        @* Field-level diff — the "what exactly changed" that a plain log line can't show. *@
-                        @{
-                            var changes = ActivityService.ParseChanges(log.Changes);
-                        }
-                        @if (changes.Count > 0)
+                    <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-11 text-ink-3">
+                        <span title="@log.CreatedAt.ToString("u")">@Ago(log.CreatedAt)</span>
+
+                        @if (!string.IsNullOrEmpty(log.IpAddress))
                         {
-                            <div class="mt-2 space-y-1 rounded-lg bg-gray-50 p-2.5">
-                                @foreach (var change in changes)
-                                {
-                                    <div class="flex flex-wrap items-center gap-1.5 text-xs">
-                                        <span class="font-semibold text-gray-500">@FieldLabel(change.Field):</span>
-                                        <span class="rounded bg-red-50 px-1.5 py-0.5 text-red-700 line-through decoration-red-300">
-                                            @Display(change.Old)
-                                        </span>
-                                        <span class="text-gray-300">←</span>
-                                        <span class="rounded bg-emerald-50 px-1.5 py-0.5 text-emerald-700">
-                                            @Display(change.New)
-                                        </span>
-                                    </div>
-                                }
-                            </div>
+                            <a href="@($"https://ipinfo.io/{log.IpAddress}")" target="_blank" rel="noopener"
+                               class="inline-flex items-center gap-1 font-mono text-green hover:underline">
+                                <Icon Name="globe" Class="h-3 w-3" />
+                                <bdi>@log.IpAddress</bdi>
+                            </a>
                         }
 
-                        <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-400">
-                            <span title="@log.CreatedAt.ToString("u")">🕐 @Ago(log.CreatedAt)</span>
+                        @if (!string.IsNullOrEmpty(log.City) || !string.IsNullOrEmpty(log.Country))
+                        {
+                            <span class="inline-flex items-center gap-1">
+                                <Icon Name="pin" Class="h-3 w-3" />
+                                @string.Join("، ", new[] { log.City, log.Country }.Where(x => !string.IsNullOrEmpty(x)))
+                            </span>
+                        }
 
-                            @if (!string.IsNullOrEmpty(log.IpAddress))
-                            {
-                                <a href="@($"https://ipinfo.io/{log.IpAddress}")" target="_blank" rel="noopener"
-                                   class="font-mono text-indigo-500 hover:underline">🌐 @log.IpAddress</a>
-                            }
-
-                            @if (!string.IsNullOrEmpty(log.City) || !string.IsNullOrEmpty(log.Country))
-                            {
-                                <span>📍 @string.Join(", ", new[] { log.City, log.Country }.Where(x => !string.IsNullOrEmpty(x)))</span>
-                            }
-
-                            @if (!string.IsNullOrEmpty(log.UserAgent))
-                            {
-                                <span class="max-w-xs truncate" title="@log.UserAgent">💻 @log.UserAgent</span>
-                            }
-                        </div>
+                        @if (!string.IsNullOrEmpty(log.UserAgent))
+                        {
+                            <span class="inline-flex max-w-xs items-center gap-1 truncate" title="@log.UserAgent">
+                                <Icon Name="monitor" Class="h-3 w-3 shrink-0" />
+                                <bdi class="truncate">@log.UserAgent</bdi>
+                            </span>
+                        }
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 
     @* ── Paging ───────────────────────────────────────────────────────── *@
     <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p class="text-xs text-gray-400">
-            @_logs.TotalCount تۆمار — لاپەڕەی @_page لە @TotalPages
+        <p class="text-xs text-ink-2">
+            <bdi>@Ku.N(_logs.TotalCount)</bdi> تۆمار — لاپەڕەی <bdi>@Ku.N(_page)</bdi> لە <bdi>@Ku.N(TotalPages)</bdi>
         </p>
         <div class="flex gap-2">
             <button @onclick="() => LoadAsync(_page - 1)" disabled="@(_page <= 1)"
-                    class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
+                    class="btn-secondary py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-40">
                 پێشوو
             </button>
             <button @onclick="() => LoadAsync(_page + 1)" disabled="@(_page >= TotalPages)"
-                    class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40">
+                    class="btn-secondary py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-40">
                 دواتر
             </button>
         </div>
@@ -222,23 +222,26 @@ else
 
     private static string ActionIcon(string action) => action switch
     {
-        "Create" => "＋",
-        "Update" => "✎",
-        "Delete" => "🗑",
-        "Login" => "→",
-        "LoginFailed" => "⚠",
-        _ => "•",
+        "Create" => "plus",
+        "Update" => "pencil",
+        "Delete" => "trash",
+        "Login" => "login",
+        "LoginFailed" => "alert",
+        _ => "check",
     };
 
+    /// <summary>Colour marks the kind of action, never the person who performed it.</summary>
     private static string ActionStyle(string action) => action switch
     {
-        "Create" => "bg-emerald-100 text-emerald-700",
-        "Update" => "bg-amber-100 text-amber-700",
-        "Delete" => "bg-red-100 text-red-700",
-        "LoginFailed" => "bg-red-100 text-red-700",
-        "Login" => "bg-blue-100 text-blue-700",
-        _ => "bg-gray-100 text-gray-600",
+        "Create" => "bg-green-tint text-on-tint",
+        "Update" => "bg-warn-tint text-warn",
+        "Delete" or "LoginFailed" => "bg-danger-tint text-danger",
+        _ => "bg-page text-ink-2",
     };
+
+    private string FilterClass(string? value) => _action == value
+        ? "rounded-full bg-green-deep px-3 py-1.5 text-xs font-medium text-white"
+        : "rounded-full border border-line bg-card px-3 py-1.5 text-xs text-ink-2 transition-colors hover:bg-page";
 
     private static string ActionText(string action) => action switch
     {

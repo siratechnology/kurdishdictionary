@@ -1,0 +1,33 @@
+name: kurdish_dictionary
+description: "فەرهەنگی کوردی — Kurdish Dictionary mobile client for the Sira Technology dictionary API."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  http: ^1.6.0
+  shared_preferences: ^2.5.5
+  flutter_riverpod: ^3.3.2
+  share_plus: ^13.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  fonts:
+    # NRT is the same Kurdish face the web and admin front-ends use, so the
+    # three clients render Sorani identically.
+    - family: NRT
+      fonts:
+        - asset: assets/fonts/NRT-Reg.ttf
+          weight: 400

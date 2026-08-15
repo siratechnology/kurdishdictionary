@@ -5,443 +5,387 @@
 @inject WordService WordSvc
 @inject AuthService Auth
 @inject ActivityStream Stream
+@inject WorkQueueService Queue
 
-<PageTitle>داشبۆرد — فەرھەنگی کوردی</PageTitle>
+<PageTitle>ژینزار</PageTitle>
+
+<HatchDefs />
+
+@* The dashboard, on the layout language of design-sample-2.
+
+   Three blocks across the top, read right to left: what the dictionary looks like as a whole
+   (the dial plus four tiles), what is wrong with it right now (the alert rail), and what to do
+   about it (the queue, stated as progress). Then one tabbed surface at the bottom instead of
+   the four half-empty cards that used to sit there.
+
+   Everything below the fold is one section at a time on purpose. The previous version showed
+   recent words, contributors and the week chart simultaneously, each in a box too small to be
+   read; a tab rail gives any one of them the full width. *@
+
+<TelerikScope>
+
+<PageHeader Title="ژینزار" Subtitle="@Subtitle">
+    <Actions>
+        <a href="/station" class="btn-primary">
+            <Icon Name="sparkle" Class="h-4 w-4" />
+            دەستپێکردنی ستەیشن
+        </a>
+        <button @onclick="RefreshAsync" disabled="@_refreshing" class="btn-secondary">
+            @(_refreshing ? "نوێدەبێتەوە…" : "نوێکردنەوە")
+        </button>
+    </Actions>
+</PageHeader>
 
 @if (_loading)
 {
-    <!-- Light shimmer skeleton -->
-    <div class="space-y-5" dir="rtl">
-        <div class="skeleton h-40 rounded-3xl"></div>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            @for (int i = 0; i < 4; i++)
-            {
-                <div class="skeleton h-28 rounded-2xl"></div>
-            }
+    <div class="space-y-4">
+        <div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+            <div class="skeleton h-96 rounded-card"></div>
+            <div class="skeleton h-96 rounded-card"></div>
+            <div class="skeleton h-96 rounded-card lg:col-span-2 xl:col-span-1"></div>
         </div>
-        <div class="skeleton h-80 rounded-2xl"></div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            @for (int i = 0; i < 3; i++)
-            {
-                <div class="skeleton h-72 rounded-2xl"></div>
-            }
-        </div>
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
-            <div class="skeleton h-64 rounded-2xl"></div>
-            <div class="skeleton h-64 rounded-2xl xl:col-span-2"></div>
-        </div>
+        <div class="skeleton h-16 rounded-card"></div>
+        <div class="skeleton h-72 rounded-card"></div>
     </div>
 }
 else if (_stats is null)
 {
-    <div class="flex flex-col items-center justify-center py-24 bg-white border border-gray-200 rounded-3xl text-center gap-3 page-enter" dir="rtl">
-        <span class="text-4xl">📡</span>
-        <p class="text-gray-600 font-semibold">پەیوەندی بە ڕاژەکارەوە نەکرا</p>
-        <button @onclick="Load" class="mt-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors">
-            هەوڵدانەوە
-        </button>
+    <div class="card page-enter flex flex-col items-center gap-3 py-20 text-center">
+        <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+        <p class="text-sm text-ink-1">پەیوەندی بە ڕاژەکارەوە نەکرا</p>
+        <button @onclick="Load" class="btn-primary mt-1">هەوڵدانەوە</button>
     </div>
 }
 else
 {
-    <div class="space-y-5 page-enter" dir="rtl">
+    <div class="page-enter space-y-4">
 
-        <!-- ══════════════════════════════════════════════════════════
-             HERO — command bar (vibrant, light-friendly)
-        ══════════════════════════════════════════════════════════ -->
-        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-l from-indigo-500 via-violet-500 to-fuchsia-500 shadow-xl shadow-indigo-200">
-            <!-- glow decorations -->
-            <div class="absolute -top-24 -left-24 w-72 h-72 bg-white/20 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-32 right-1/3 w-80 h-80 bg-fuchsia-300/20 rounded-full blur-3xl"></div>
+        @* ── Row 1 ───────────────────────────────────────────────────────
+           THREE BALANCED COLUMNS, each a stack of cards.
 
-            <div class="relative p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center gap-6">
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2.5 mb-2">
-                        <span class="relative flex w-2.5 h-2.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full w-2.5 h-2.5 bg-emerald-300"></span>
+           The previous version put the tall things in one column and the short things in
+           another, so the short column ran out of content long before the tall one and left a
+           band of empty page under it. CSS grid cannot reflow a card up into a gap the way a
+           masonry layout would, so the balancing has to be done by choosing what goes where:
+           one tall card and one short card per column, rather than all the tall ones together.
+
+           Roughly: dial + tiles ≈ pace + alerts ≈ contributors + timer. *@
+        <div class="grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3">
+
+            @* ── Column 1: what the dictionary looks like ───────────────── *@
+            <div class="flex flex-col gap-4">
+
+                @* The dial is completeness, not a single table's coverage: a word counts as
+                   done when it has a meaning, a class and a part of speech, which is what
+                   "finished" means to the teachers. *@
+                <HeroGauge Ratio="@Completeness"
+                           Title="تەواوی فەرهەنگ"
+                           Subtitle="وشە بە واتا و پۆل و جۆری وشەوە"
+                           Caption="وشەکان تەواون"
+                           Delta="@Ku.Delta(_stats.WordsAddedLast7Days)"
+                           Icon="book" />
+
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <SparkTile Label="وشەی تۆمارکراو" Value="@_stats.TotalWords" Unit="وشە"
+                               Href="/words" Series="@WeekCounts" />
+
+                    <SparkTile Label="واتای تۆمارکراو" Value="@_stats.TotalMeanings" Unit="واتا"
+                               Href="/words" Ratio="@MeaningCoverage"
+                               Footnote="@($"{Ku.P(MeaningCoverage)} وشەکان واتایان هەیە")" />
+
+                    <SparkTile Label="پەیوەندی" Value="@_stats.TotalRelations"
+                               Href="/relations" Ratio="@RelationCoverage"
+                               State="@RelationState" Footnote="@RelationFootnote" />
+
+                    <SparkTile Label="پۆلەکان" Value="@_stats.TotalCategories" Unit="پۆل"
+                               Href="/taxonomy/manage" State="@CategoryState" Footnote="@CategoryFootnote" />
+                </div>
+            </div>
+
+            @* ── Column 2: how fast, and what is wrong ──────────────────── *@
+            <div class="flex flex-col gap-4">
+
+                @* Beside the dial rather than under it: "how much is done" and "so when is it
+                   finished" are the same question asked twice, and they belong at the same
+                   height rather than one scrolling past the other. *@
+                <PaceCard Pace="@_pace" />
+
+                @* Rows appear because a threshold was crossed — a clean dictionary shows an
+                   empty rail, not four green ticks. *@
+                <section class="card flex flex-col">
+                    <div class="mb-4 flex items-center gap-2.5">
+                        <span class="card-badge"><Icon Name="alert" Class="h-4 w-4" /></span>
+                        <h2 class="card-title">ئاگادارییەکان</h2>
+                        <span class="pill @(Alerts.Count == 0 ? "pill-ok" : "pill-warn") ms-auto">
+                            <bdi>@Ku.N(Alerts.Count)</bdi> چالاک
                         </span>
-                        <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-200">زیندوو</span>
-
-                        @if (_updatedAt is { } updated)
-                        {
-                            <span class="text-[11px] font-medium text-indigo-200/80" dir="ltr">
-                                @updated.ToString("HH:mm:ss")
-                            </span>
-                        }
-
-                        <button @onclick="RefreshAsync" disabled="@_refreshing" type="button"
-                                title="نوێکردنەوە"
-                                class="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-0.5 text-[11px] font-bold text-white transition-colors hover:bg-white/25 disabled:opacity-50">
-                            <span class="@(_refreshing ? "inline-block animate-spin" : "")">⟳</span>
-                            نوێکردنەوە
-                        </button>
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-white">داشبۆردی فەرھەنگ</h1>
-                    <p class="text-sm text-indigo-100 mt-1.5">
-                        تێڕوانینێکی گشتی بۆ هەموو داتاکانی فەرھەنگی کوردی — وشە، واتا، پەیوەندی و پۆلەکان
-                    </p>
-                    <div class="flex flex-wrap gap-2 mt-5">
-                        <a href="/words" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-indigo-700 hover:bg-indigo-50 text-xs font-bold rounded-xl shadow-lg shadow-indigo-900/20 transition-colors">
-                            📖 بەڕێوەبردنی وشەکان
-                        </a>
-                        <a href="/relations" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/20 transition-colors">
-                            🕸 پەیوەندییەکان
-                        </a>
-                        <a href="/taxonomy" class="inline-flex items-center gap-1.5 px-4 py-2 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl border border-white/20 transition-colors">
-                            🏷 پۆل و جۆرەکان
-                        </a>
-                    </div>
-                </div>
 
-                <!-- 14-day activity -->
-                <div class="shrink-0 w-full lg:w-72 bg-white/15 border border-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-[11px] font-bold text-white/90">چالاکی ١٤ ڕۆژی ڕابردوو</span>
-                        <span class="text-[11px] font-black text-emerald-200">+@_stats.WordsAddedLast7Days ئەم حەفتەیە</span>
-                    </div>
-                    <div class="flex items-end gap-1 h-16" dir="ltr">
-                        @foreach (var d in _stats.DailyAdded)
-                        {
-                            int max = Math.Max(1, _stats.DailyAdded.Max(x => x.Count));
-                            double h = d.Count == 0 ? 6 : Math.Max(12, d.Count * 100.0 / max);
-                            <div class="flex-1 rounded-t-sm @(d.Count > 0 ? "bg-gradient-to-t from-white/70 to-white" : "bg-white/20")"
-                                 style="height:@(h.ToString("0"))%"
-                                 title="@d.Date.ToString("yyyy-MM-dd") — @d.Count وشە"></div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════════════
-             KPI CARDS
-        ══════════════════════════════════════════════════════════ -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-lg shadow-indigo-200 hover:-translate-y-0.5 transition-transform">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl">📖</span>
-                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">گشتی</span>
-                </div>
-                <p class="text-3xl font-black mt-3">@_stats.TotalWords.ToString("N0")</p>
-                <p class="text-xs text-indigo-100 mt-1">وشەی تۆمارکراو</p>
-            </div>
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-emerald-500 to-teal-700 text-white shadow-lg shadow-emerald-200 hover:-translate-y-0.5 transition-transform">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl">🕸</span>
-                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">تۆڕ</span>
-                </div>
-                <p class="text-3xl font-black mt-3">@_stats.TotalRelations.ToString("N0")</p>
-                <p class="text-xs text-emerald-100 mt-1">پەیوەندی نێوان وشەکان</p>
-            </div>
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-amber-400 to-orange-600 text-white shadow-lg shadow-amber-200 hover:-translate-y-0.5 transition-transform">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl">💡</span>
-                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">ناوەڕۆک</span>
-                </div>
-                <p class="text-3xl font-black mt-3">@_stats.TotalMeanings.ToString("N0")</p>
-                <p class="text-xs text-amber-100 mt-1">واتای تۆمارکراو</p>
-            </div>
-            <div class="rounded-2xl p-5 bg-gradient-to-br from-rose-500 to-pink-700 text-white shadow-lg shadow-rose-200 hover:-translate-y-0.5 transition-transform">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl">🏷</span>
-                    <span class="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full">پۆلێن</span>
-                </div>
-                <p class="text-3xl font-black mt-3">@_stats.TotalCategories.ToString("N0")</p>
-                <p class="text-xs text-rose-100 mt-1">پۆلی وشەکان</p>
-            </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════════════
-             CONTRIBUTOR LEADERBOARD — editors ranked by owned words.
-             Each rank carries its own metal/gem tier styling.
-        ══════════════════════════════════════════════════════════ -->
-        @if (_editors.Count > 0)
-        {
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-
-                <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 bg-gradient-to-l from-amber-50 via-white to-white">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-300 to-yellow-600 text-lg shadow-md shadow-amber-200">🏆</span>
-                        <div class="min-w-0">
-                            <p class="text-sm font-black text-gray-900">پێشەنگانی فەرھەنگ</p>
-                            <p class="text-[11px] text-gray-400">ڕیزبەندی دەستکاریکەران بەپێی ژمارەی وشەی تۆمارکراو</p>
-                        </div>
-                    </div>
-                    <div class="shrink-0 text-left">
-                        <p class="text-xl font-black text-gray-900">@_editors.Sum(u => u.WordCount).ToString("N0")</p>
-                        <p class="text-[10px] text-gray-400">@_editors.Count دەستکاریکەر</p>
-                    </div>
-                </div>
-
-                <div class="p-3 sm:p-4 space-y-2.5">
-                    @{
-                        int rank = 0;
-                        int topCount = Math.Max(1, _editors.Max(u => u.WordCount));
-                    }
-                    @foreach (var u in _editors)
+                    @if (Alerts.Count == 0)
                     {
-                        rank++;
-                        var tier = TierFor(rank);
-
-                        <div class="group relative flex items-center gap-3 sm:gap-4 rounded-2xl border p-3 sm:p-3.5 transition-all duration-300 hover:-translate-y-0.5 @tier.Row @tier.Glow">
-
-                            <!-- rank -->
-                            <div class="w-8 sm:w-10 shrink-0 text-center">
-                                @if (rank == 1)
-                                {
-                                    <span class="block text-sm leading-none">👑</span>
-                                }
-                                <span class="block text-base sm:text-lg font-black leading-tight @tier.Accent">@rank</span>
-                            </div>
-
-                            <!-- avatar + tier medal -->
-                            <div class="relative shrink-0">
-                                <span class="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-gradient-to-br @tier.Metal text-base font-black text-white shadow-sm @(rank == 1 ? "ring-2 ring-offset-2 ring-amber-300" : "")">
-                                    @Initial(u.UserName)
-                                </span>
-                                <span class="absolute -bottom-1.5 -left-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] shadow-sm border border-gray-100">
-                                    @tier.Icon
-                                </span>
-                            </div>
-
-                            <!-- name + tier + progress -->
-                            <div class="min-w-0 flex-1">
-                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                    <span class="text-sm font-black text-gray-900 truncate">
-                                        @(string.IsNullOrWhiteSpace(u.FullName) ? u.UserName : u.FullName)
-                                    </span>
-                                    <span class="shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-black @tier.Chip">
-                                        @tier.Name
-                                    </span>
-                                </div>
-                                <div class="mt-2 h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-l @tier.Metal transition-all duration-700"
-                                         style="width:@(Math.Max(4, Pct(u.WordCount, topCount)))%"></div>
-                                </div>
-                            </div>
-
-                            <!-- count -->
-                            <div class="shrink-0 text-left ps-1">
-                                <p class="text-lg sm:text-xl font-black text-gray-900 leading-none">@u.WordCount.ToString("N0")</p>
-                                <p class="text-[10px] text-gray-400 mt-1">وشە</p>
-                            </div>
+                        <div class="flex flex-1 flex-col items-center justify-center gap-2 py-8 text-center">
+                            <Icon Name="check" Class="h-8 w-8 text-green" />
+                            <p class="text-sm text-ink-1">هیچ ئاگادارییەک نییە</p>
                         </div>
                     }
-                </div>
+                    else
+                    {
+                        <div class="space-y-2">
+                            @foreach (var a in Alerts)
+                            {
+                                <a href="@a.Href" class="flex items-center gap-3 rounded-chip border border-line-soft bg-page p-3 transition-colors hover:border-green-soft">
+                                    <span class="card-badge !h-7 !w-7"><Icon Name="@a.Icon" Class="h-3.5 w-3.5" /></span>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="truncate text-sm text-ink-1">@a.Title</p>
+                                        <p class="truncate text-11 text-ink-3">@a.Detail</p>
+                                    </div>
+                                    <span class="shrink-0 text-13 text-warn"><bdi>@Ku.N(a.Count)</bdi></span>
+                                </a>
+                            }
+                        </div>
+                    }
+                </section>
+            </div>
+
+            @* ── Column 3: who is doing it ──────────────────────────────────
+                   Last in the DOM, which in RTL puts it at the TOP LEFT.
+
+                   Sorted by word count because the tier ladder is built on it and a list that
+                   jumps around alphabetically hides the thing the tiers are for. Still not a
+                   scoreboard: no rank number, no comparison between people, and the only
+                   progress bar on a row measures YOUR distance to YOUR next tier. *@
+            <div class="flex flex-col gap-4 lg:col-span-2 xl:col-span-1">
+
+                <section class="card flex flex-col">
+                    <div class="mb-4 flex items-center gap-2.5">
+                        <span class="card-badge card-badge-users"><Icon Name="users" Class="h-4 w-4" /></span>
+                        <h2 class="card-title">وشەچنەکان</h2>
+                        <span class="pill pill-users"><bdi>@Ku.N(_editors.Count)</bdi></span>
+                        <AuthorizeView Roles="Admin">
+                            <a href="/users" class="btn-secondary ms-auto !py-1.5 !text-11">
+                                <Icon Name="plus" Class="h-3 w-3" />
+                                نوێ
+                            </a>
+                        </AuthorizeView>
+                    </div>
+
+                    @if (_editors.Count == 0)
+                    {
+                        <div class="flex flex-1 flex-col items-center justify-center gap-2 py-8 text-center">
+                            <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+                            <p class="text-sm text-ink-1">هێشتا وشەچنێک نییە</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @* EVERYONE, on the dashboard itself. No "see all" link: the point of this
+                           card is that a وشەچن can look at the dashboard and see what the team is
+                           doing, and a card that shows six of eleven and sends you elsewhere for
+                           the rest answers a different question.
+
+                           Two across where this column is full width, so the list does not become
+                           a very long ribbon at lg. The column scrolls once it outgrows the space
+                           beside it rather than stretching the row. *@
+                        <div class="grid max-h-[520px] gap-2 overflow-y-auto pe-1 lg:grid-cols-2 xl:grid-cols-1">
+                            @foreach (var u in RankedEditors)
+                            {
+                                <ContributorRow Contributor="@u" />
+                            }
+                        </div>
+                    }
+                </section>
+
+                <SessionTimer />
+            </div>
+        </div>
+
+
+        @* ── Row 2: the work queue ─────────────────────────────────────── *@
+        <div class="flex items-center gap-2">
+            <h2 class="card-title">کەمووکوڕی وشەکان</h2>
+            <a href="/queue" class="btn-secondary ms-auto !py-1.5 !text-11">هەموو</a>
+        </div>
+
+        @if (_queue is null)
+        {
+            <div class="card flex flex-col items-center gap-2 py-8 text-center">
+                <span class="hatch h-8 w-8 rounded-full border border-line"></span>
+                <p class="text-sm text-ink-2">کەمووکوڕی وشەکان نەهاتەوە</p>
+            </div>
+        }
+        else if (TopBuckets.Count == 0)
+        {
+            <div class="card flex flex-col items-center gap-2 py-8 text-center">
+                <Icon Name="check" Class="h-8 w-8 text-green" />
+                <p class="text-sm text-ink-1">هیچ کارێکی ماوە نییە</p>
+            </div>
+        }
+        else
+        {
+            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                @foreach (var b in TopBuckets)
+                {
+                    <ProgressCard Title="@b.Label" Subtitle="@b.Hint"
+                                  Href="@($"/queue?bucket={(int)b.Bucket}")"
+                                  Remaining="@b.Count" Total="@_stats.TotalMeanings"
+                                  Configured="@b.IsConfigured" Icon="queue" />
+                }
             </div>
         }
 
-        <!-- ══════════════════════════════════════════════════════════
-             DISTRIBUTION CHARTS (light cards)
-        ══════════════════════════════════════════════════════════ -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        @* ── Row 3: recent words and the week, side by side ────────────────
+           These used to share a tab rail with the contributors. The rail is gone at the
+           client's request: on a wide screen all of it fits without anything shrinking, and
+           a dashboard whose sections you have to click to reach is one that gets read once. *@
+        <div class="grid items-start gap-4 xl:grid-cols-12">
 
-            <!-- Speech panes -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-bold text-gray-900">🗂 جۆرەکانی وشە</span>
-                    <a href="/taxonomy" class="text-[11px] font-semibold text-violet-600 hover:text-violet-700 transition-colors">بەڕێوەبردن ←</a>
+            <section class="card xl:col-span-8">
+                <div class="mb-4 flex items-center gap-2.5">
+                    <span class="card-badge"><Icon Name="book" Class="h-4 w-4" /></span>
+                    <h2 class="card-title">نوێترین وشەکان</h2>
+                    <a href="/words" class="btn-secondary ms-auto !py-1.5 !text-11">
+                        <Icon Name="plus" Class="h-3 w-3" />
+                        وشەی نوێ
+                    </a>
                 </div>
-                @if (!_stats.SpeechPanes.Any(s => s.Count > 0))
-                {
-                    <p class="text-xs text-gray-400 py-8 text-center">هێشتا داتا نییە</p>
-                }
-                else
-                {
-                    <div class="space-y-2.5">
-                        @foreach (var sp in _stats.SpeechPanes.Where(s => s.Count > 0).Take(8))
-                        {
-                            <div>
-                                <div class="flex items-center justify-between text-xs mb-1">
-                                    <span class="font-semibold text-gray-600">@sp.Name</span>
-                                    <span class="font-black text-violet-600">@sp.Count</span>
+
+                <TelerikGrid Data="@_stats.RecentWords" Sortable="true" Height="340px" Class="dash-grid">
+                    <GridColumns>
+                        <GridColumn Field="@nameof(RecentWordDto.Kurdish)" Title="وشە" Width="200px">
+                            <Template>
+                                @{ var w = (RecentWordDto)context; }
+                                <div class="flex items-center gap-2.5">
+                                    <span class="card-badge !h-7 !w-7 text-13">
+                                        @(w.Kurdish.Length > 0 ? w.Kurdish[..1] : "؟")
+                                    </span>
+                                    <span class="font-medium text-ink-1">@w.Kurdish</span>
                                 </div>
-                                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-l from-violet-500 to-fuchsia-400 transition-all duration-700"
-                                         style="width:@(Pct(sp.Count, MaxCount(_stats.SpeechPanes)))%"></div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
-
-            <!-- Categories -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-bold text-gray-900">🏷 پۆلەکان</span>
-                    <a href="/taxonomy" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">بەڕێوەبردن ←</a>
-                </div>
-                @if (!_stats.Categories.Any())
-                {
-                    <p class="text-xs text-gray-400 py-8 text-center">هێشتا هیچ پۆلێک نییە</p>
-                }
-                else
-                {
-                    <div class="space-y-2.5">
-                        @foreach (var cat in _stats.Categories.Take(8))
-                        {
-                            <div>
-                                <div class="flex items-center justify-between text-xs mb-1">
-                                    <span class="font-semibold text-gray-600 truncate ml-2">@cat.Name</span>
-                                    <span class="font-black text-indigo-600 shrink-0">@cat.Count</span>
-                                </div>
-                                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                    <div class="h-full rounded-full bg-gradient-to-l from-indigo-500 to-sky-400 transition-all duration-700"
-                                         style="width:@(Pct(cat.Count, MaxCount(_stats.Categories)))%"></div>
-                                </div>
-                            </div>
-                        }
-                        @if (_stats.Categories.Count > 8)
-                        {
-                            <p class="text-[11px] text-gray-400 pt-1">+@(_stats.Categories.Count - 8) پۆلی دیکە</p>
-                        }
-                    </div>
-                }
-            </div>
-
-            <!-- Gender donut + relation types -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm md:col-span-2 xl:col-span-1">
-                <span class="text-sm font-bold text-gray-900 block mb-4">⚧ ڕەگەزی ڕێزمانی</span>
-
-                <div class="flex items-center gap-5">
-                    <div class="relative shrink-0 w-28 h-28 rounded-full" style="background:@GenderDonutStyle()">
-                        <div class="absolute inset-3 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
-                            <span class="text-lg font-black text-gray-900">@_stats.TotalWords.ToString("N0")</span>
-                            <span class="text-[9px] text-gray-400">وشە</span>
-                        </div>
-                    </div>
-                    <div class="flex-1 space-y-2 min-w-0">
-                        @foreach (var g in _stats.Genders.OrderByDescending(x => x.Count))
-                        {
-                            <div class="flex items-center gap-2 text-xs">
-                                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:@GenderColor(g.Name)"></span>
-                                <span class="flex-1 text-gray-600 font-semibold truncate">@g.Name</span>
-                                <span class="font-black text-gray-900">@g.Count.ToString("N0")</span>
-                            </div>
-                        }
-                    </div>
-                </div>
-
-                <div class="border-t border-gray-100 mt-5 pt-4">
-                    <span class="text-xs font-bold text-gray-400 block mb-3">جۆرەکانی پەیوەندی</span>
-                    <div class="flex flex-wrap gap-1.5">
-                        @foreach (var rt in _stats.RelationTypes)
-                        {
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold @RelChipClass(rt.Name)">
-                                @RelLabel(rt.Name)
-                                <span class="opacity-70">@rt.Count.ToString("N0")</span>
-                            </span>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════════════
-             DATA QUALITY + RECENT WORDS (light cards)
-        ══════════════════════════════════════════════════════════ -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
-
-            <!-- Data quality -->
-            <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="text-sm font-bold text-gray-900">🩺 کوالیتی داتا</span>
-                    <span class="relative flex w-2 h-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full @(HasQualityIssues ? "bg-amber-400" : "bg-emerald-400") opacity-75"></span>
-                        <span class="relative inline-flex rounded-full w-2 h-2 @(HasQualityIssues ? "bg-amber-400" : "bg-emerald-400")"></span>
-                    </span>
-                </div>
-
-                <div class="space-y-4">
-                    @foreach (var q in QualityRows)
-                    {
-                        int covered = _stats.TotalWords - q.Missing;
-                        int pct = Pct(covered, _stats.TotalWords);
-                        <div>
-                            <div class="flex items-center justify-between text-xs mb-1.5">
-                                <a href="@q.Href" class="font-semibold text-gray-600 hover:text-gray-900 transition-colors">@q.Label</a>
-                                @if (q.Missing == 0)
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(RecentWordDto.SpeechPane)" Title="جۆری وشە">
+                            <Template>
+                                @{ var w = (RecentWordDto)context; }
+                                @if (string.IsNullOrWhiteSpace(w.SpeechPane))
                                 {
-                                    <span class="font-black text-emerald-600">✓ تەواو</span>
+                                    <span class="pill pill-warn">دیارینەکراو</span>
                                 }
                                 else
                                 {
-                                    <span class="font-black @(pct >= 80 ? "text-emerald-600" : pct >= 50 ? "text-amber-600" : "text-rose-600")">
-                                        @q.Missing.ToString("N0") کەموکوڕی
+                                    <span class="pill pill-muted">@w.SpeechPane</span>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(RecentWordDto.Category)" Title="پۆل">
+                            <Template>
+                                @{ var w = (RecentWordDto)context; }
+                                <span class="text-ink-2">@(string.IsNullOrWhiteSpace(w.Category) ? "—" : w.Category)</span>
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(RecentWordDto.MeaningCount)" Title="واتا" Width="90px">
+                            <Template>
+                                @{ var w = (RecentWordDto)context; }
+                                <span class="pill @(w.MeaningCount > 0 ? "pill-ok" : "pill-danger")">
+                                    <bdi>@Ku.N(w.MeaningCount)</bdi>
+                                </span>
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field="@nameof(RecentWordDto.CreatedAt)" Title="زیادکرا" Width="160px">
+                            <Template>
+                                @{ var w = (RecentWordDto)context; }
+                                <span class="text-ink-2">@Ago(w.CreatedAt)</span>
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                    <NoDataTemplate>
+                        <div class="flex flex-col items-center gap-3 py-10 text-center">
+                            <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+                            <p class="text-sm text-ink-1">هێشتا هیچ وشەیەک نییە</p>
+                        </div>
+                    </NoDataTemplate>
+                </TelerikGrid>
+            </section>
+
+            <section class="card xl:col-span-4">
+                <div class="mb-4 flex items-center gap-2.5">
+                    <span class="card-badge card-badge-chart"><Icon Name="chart" Class="h-4 w-4" /></span>
+                    <h2 class="card-title">چالاکی هەفتانە</h2>
+                    <span class="ms-auto text-xs text-ink-2">
+                        <bdi>@Ku.Delta(_stats.WordsAddedLast7Days)</bdi> وشە
+                    </span>
+                </div>
+
+                @* A week with no activity is an empty STATE, not an empty card: every bar is
+                   hatched at a readable height so the row still reads as seven days.
+                   The row must STRETCH, not end-align — with items-end each column shrinks to
+                   its content, the flex-1 track gets no height, and every bar collapses. *@
+                <div class="flex h-40 gap-2 sm:h-56 xl:h-72">
+                    @foreach (var d in LastSevenDays)
+                    {
+                        <div class="flex min-w-0 flex-1 flex-col items-center gap-2">
+                            <div class="relative flex w-full flex-1 items-end">
+                                @if (d.Count > 0 && d.Count == PeakCount)
+                                {
+                                    <span class="absolute -top-1 start-1/2 -translate-x-1/2 rounded-chip px-1.5 py-0.5 text-11 text-white"
+                                          style="background: var(--grad-chart);">
+                                        <bdi>@Ku.N(d.Count)</bdi>
                                     </span>
                                 }
+                                @* Today is still in progress, so it is hatched rather than solid —
+                                   grey would read as "disabled", hatch reads as "not yet". *@
+                                @* Royal blue, from the client palette sheet: every bar that plots
+                                   TIME is this colour. Green is reserved for completion, and a
+                                   busy Tuesday is not an achievement — it is just a Tuesday. *@
+                                <div class="w-full rounded-card @(IsSolid(d) ? "chart-bar" : "hatch border border-line")"
+                                     style="height:@(BarHeight(d.Count))%"
+                                     title="@d.Date.ToString("yyyy-MM-dd")"></div>
                             </div>
-                            <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full transition-all duration-700 @(pct >= 80 ? "bg-gradient-to-l from-emerald-500 to-teal-400" : pct >= 50 ? "bg-gradient-to-l from-amber-500 to-yellow-400" : "bg-gradient-to-l from-rose-500 to-red-400")"
-                                     style="width:@pct%"></div>
-                            </div>
-                            <p class="text-[10px] text-gray-400 mt-1">%@pct لە وشەکان @(q.Label)یان هەیە</p>
+                            <span class="text-11 text-ink-3">@DayInitial(d.Date)</span>
                         </div>
                     }
                 </div>
-            </div>
-
-            <!-- Recent words -->
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden xl:col-span-2">
-                <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50/60">
-                    <span class="text-sm font-bold text-gray-900">🕘 نوێترین وشەکان</span>
-                    <a href="/words" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">هەموو وشەکان ←</a>
-                </div>
-                @if (!_stats.RecentWords.Any())
-                {
-                    <p class="text-xs text-gray-400 py-10 text-center">هێشتا هیچ وشەیەک نییە</p>
-                }
-                else
-                {
-                    <div class="divide-y divide-gray-50">
-                        @foreach (var w in _stats.RecentWords)
-                        {
-                            <div class="flex items-center gap-3 px-5 py-3 hover:bg-indigo-50/40 transition-colors">
-                                <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 border border-indigo-200 flex items-center justify-center text-sm font-black text-indigo-600">
-                                    @(w.Kurdish.Length > 0 ? w.Kurdish[..1] : "؟")
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <span class="text-sm font-bold text-gray-900 truncate">@w.Kurdish</span>
-                                        @if (!string.IsNullOrEmpty(w.SpeechPane))
-                                        {
-                                            <span class="text-[10px] font-semibold px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full">@w.SpeechPane</span>
-                                        }
-                                        @if (!string.IsNullOrEmpty(w.Category))
-                                        {
-                                            <span class="text-[10px] font-medium px-2 py-0.5 bg-indigo-50 text-indigo-600 border border-indigo-100 rounded-full">@w.Category</span>
-                                        }
-                                    </div>
-                                    <p class="text-[10px] text-gray-400 mt-0.5">@w.MeaningCount واتا</p>
-                                </div>
-                                <span class="shrink-0 text-[10px] font-semibold text-gray-400">@Ago(w.CreatedAt)</span>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
+            </section>
         </div>
+
     </div>
 }
 
+</TelerikScope>
+
 @code {
     DashboardDto? _stats;
+    PaceDto? _pace;
     List<ContributorDto> _editors = new();
     bool _loading = true;
     bool _refreshing;
     DateTime? _updatedAt;
 
-    // The dashboard aggregates work done by *other* editors, so it goes stale the moment someone else
-    // saves. The backend pushes every committed write down the activity hub, so the numbers move on
-    // their own — no polling, no reload, and only the changed DOM nodes cross the circuit.
-    readonly CancellationTokenSource _cts = new();
+    /// <summary>
+    /// Contributors, most work done first — written plus fixed.
+    ///
+    /// Ordered rather than alphabetical because the tier ladder is built on the word count, and
+    /// a list that sorts by name scatters the tiers so the badges say nothing. Ordering is NOT
+    /// a rank: no position number is shown, and a row never compares one person to another.
+    /// </summary>
+    List<ContributorDto> RankedEditors =>
+        _editors.OrderByDescending(u => u.TotalContribution)
+                .ThenByDescending(u => u.WordsUpdated)
+                .ThenBy(u => u.UserName, StringComparer.Ordinal)
+                .ToList();
 
-    // A bulk import fires one push per row. Collapsing them into a single re-pull keeps a 200-word
-    // paste from queueing 200 dashboard aggregations.
-    static readonly TimeSpan Debounce = TimeSpan.FromMilliseconds(600);
-    CancellationTokenSource? _debounce;
+    /// <summary>Something changed since this page loaded. Shown as a nudge, never auto-applied.</summary>
+    bool _stale;
+
+    /// <summary>Sits under the page title; carries the live-refresh time rather than a "زیندوو" badge.</summary>
+    string Subtitle => _stale
+        ? "ژمارەکان گۆڕاون — نوێی بکەرەوە"
+        : _updatedAt is { } t
+            ? $"دوایین نوێکردنەوە {Ku.Sub(t.ToString("HH:mm"))}"
+            : "پوختەی فەرهەنگ و ئەو کارەی ماوە";
+
+    // The dashboard aggregates work done by *other* editors, so it goes stale the moment someone else
+    // saves. The backend pushes every committed write down the activity hub, so we hear about it
+    // immediately — but we only mark the page stale, we do not re-pull. See OnActivityAsync.
+    readonly CancellationTokenSource _cts = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -452,44 +396,31 @@ else
         await Stream.StartAsync();
     }
 
-    /// <summary>Every audited write touches the totals, so anything that arrives is worth a re-pull.</summary>
+    /// <summary>
+    /// A write happened somewhere. The dashboard does not re-pull itself for it — it just notes
+    /// that the numbers on screen are behind, and the reader refreshes when they care.
+    ///
+    /// Live totals sound useful and mostly are not: the figures move every few seconds during a
+    /// busy afternoon, the page re-renders under whoever is reading it, and every one of those
+    /// re-pulls is a six-way aggregate. The notification bell still arrives instantly, because
+    /// that one IS worth knowing about the moment it happens.
+    /// </summary>
     Task OnActivityAsync(IReadOnlyList<AuditLogDto> entries)
     {
-        DebouncedRefresh();
-        return Task.CompletedTask;
+        _stale = true;
+        return InvokeAsync(StateHasChanged);
     }
 
-    /// <summary>Pushes sent while the socket was down are gone for good — re-pull to catch up.</summary>
+    /// <summary>Pushes sent while the socket was down are gone for good, so the totals may be stale.</summary>
     Task OnReconnectedAsync()
     {
-        DebouncedRefresh();
-        return Task.CompletedTask;
-    }
-
-    void DebouncedRefresh()
-    {
-        _debounce?.Cancel();
-        _debounce?.Dispose();
-        _debounce = CancellationTokenSource.CreateLinkedTokenSource(_cts.Token);
-        var token = _debounce.Token;
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(Debounce, token);
-                await InvokeAsync(RefreshAsync);
-            }
-            catch (OperationCanceledException)
-            {
-                // Superseded by a newer push, or the page went away.
-            }
-        }, token);
+        _stale = true;
+        return InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
     /// Re-pulls in place. Unlike <see cref="Load"/> it never raises the skeleton, so the numbers tick
-    /// over under the user instead of the page collapsing to placeholders every 20 seconds.
+    /// over under the user instead of the page collapsing to placeholders.
     /// </summary>
     async Task RefreshAsync()
     {
@@ -501,11 +432,16 @@ else
         {
             var stats = await WordSvc.GetDashboardAsync();
             var editors = await Auth.GetLeaderboardAsync();
+            var queue = await Queue.GetSummaryAsync(fresh: true);
+            var pace = await WordSvc.GetPaceAsync();
 
             // Assigned together so a half-updated dashboard never renders.
             _stats = stats;
             _editors = editors;
+            _queue = queue;
+            _pace = pace;
             _updatedAt = DateTime.Now;
+            _stale = false;
         }
         catch
         {
@@ -524,9 +460,14 @@ else
         try { _stats = await WordSvc.GetDashboardAsync(); }
         catch { _stats = null; }
 
-        // Visible to every signed-in user — the ranking is meant to motivate, not to audit.
         try { _editors = await Auth.GetLeaderboardAsync(); }
         catch { _editors = new(); }
+
+        try { _queue = await Queue.GetSummaryAsync(); }
+        catch { _queue = null; }
+
+        try { _pace = await WordSvc.GetPaceAsync(); }
+        catch { _pace = null; }
 
         _updatedAt = DateTime.Now;
         _loading = false;
@@ -539,112 +480,150 @@ else
 
         await _cts.CancelAsync();
         _cts.Dispose();
-        _debounce?.Dispose();
     }
 
+    // ── Thresholds ──────────────────────────────────────────────────────────
+    // Semantic colour is COMPUTED, never assigned per tile. Both of these encode a
+    // defect the handoff calls out: an empty relations table, and category sprawl.
+
+    /// <summary>26 → 79 in a month is the sprawl this warns about. Above it, the tile goes warn.</summary>
+    const int CategoryBudget = 30;
+
+    SparkTile.Tone RelationState =>
+        _stats!.TotalRelations == 0 ? SparkTile.Tone.Danger : SparkTile.Tone.Normal;
+
+    SparkTile.Tone CategoryState =>
+        _stats!.TotalCategories > CategoryBudget ? SparkTile.Tone.Warn : SparkTile.Tone.Normal;
+
+    string RelationFootnote => _stats!.TotalRelations == 0
+        ? "هیچ وشەیەک پەیوەندی نییە"
+        : $"{Ku.P(RelationCoverage)} وشەکان پەیوەندییان هەیە";
+
+    string CategoryFootnote => _stats!.TotalCategories > CategoryBudget
+        ? $"{Ku.N(_stats.TotalCategories - CategoryBudget)} زیاتر لە سنووری پێشنیارکراو"
+        : "لە سنووردا";
+
+    double MeaningCoverage => Ratio(_stats!.TotalWords - _stats.WordsWithoutMeanings, _stats.TotalWords);
+    double RelationCoverage => Ratio(_stats!.TotalWords - _stats.WordsWithoutRelations, _stats.TotalWords);
+
+    /// <summary>
+    /// The dial. A word is "done" when it has a meaning, a class and a part of speech — the three
+    /// things the station screen asks for. Relations are excluded on purpose: with an empty
+    /// relations table they would peg the whole dictionary near zero and the dial would stop
+    /// moving as people work, which is the one thing it has to do.
+    ///
+    /// Counted as the worst of the three rather than an average, so a gap cannot be hidden by
+    /// two full columns.
+    /// </summary>
+    double Completeness
+    {
+        get
+        {
+            var total = _stats!.TotalWords;
+            if (total <= 0) return 0;
+
+            var worst = Math.Max(_stats.WordsWithoutMeanings,
+                        Math.Max(_stats.WordsWithoutCategory, _stats.WordsWithoutSpeechPane));
+            return Ratio(total - worst, total);
+        }
+    }
+
+    static double Ratio(int part, int total) => total <= 0 ? 0 : Math.Clamp(part / (double)total, 0, 1);
+
+    // ── Alerts ──────────────────────────────────────────────────────────────
+    record Alert(string Title, string Detail, int Count, string Href, string Icon);
+
+    /// <summary>
+    /// Only real problems. A row exists because a count is non-zero or a budget was crossed, so
+    /// an empty rail genuinely means there is nothing to look at — which is what makes the rail
+    /// worth glancing at every morning.
+    /// </summary>
+    List<Alert> Alerts
+    {
+        get
+        {
+            if (_stats is null) return new();
+
+            var list = new List<Alert>();
+
+            if (_stats.WordsWithoutMeanings > 0)
+                list.Add(new("وشە بەبێ واتا", "وشەی بەبێ هیچ واتایەک", _stats.WordsWithoutMeanings, "/words", "book"));
+
+            if (_stats.WordsWithoutSpeechPane > 0)
+                list.Add(new("وشە بەبێ جۆری وشە", "ناو، کردار… دیاری نەکراوە", _stats.WordsWithoutSpeechPane, "/queue", "tag"));
+
+            if (_stats.WordsWithoutCategory > 0)
+                list.Add(new("وشە بەبێ پۆل", "بواری بەکارهێنان دیاری نەکراوە", _stats.WordsWithoutCategory, "/taxonomy/manage", "tag"));
+
+            if (_stats.TotalRelations == 0)
+                list.Add(new("هیچ پەیوەندییەک نییە", "هاومانا و پێچەوانە بەتاڵن", _stats.TotalWords, "/relations", "relations"));
+            else if (_stats.WordsWithoutRelations > 0)
+                list.Add(new("وشە بەبێ پەیوەندی", "هاومانا یان پێچەوانەی نییە", _stats.WordsWithoutRelations, "/relations", "relations"));
+
+            if (_stats.TotalCategories > CategoryBudget)
+                list.Add(new("پۆلەکان زۆر بوون", $"سنووری پێشنیارکراو {Ku.Raw(CategoryBudget)}ە", _stats.TotalCategories, "/settings", "alert"));
+
+            return list;
+        }
+    }
+
+    // ── Weekly bars ─────────────────────────────────────────────────────────
+    List<DailyCountDto> LastSevenDays =>
+        _stats!.DailyAdded.OrderBy(d => d.Date).TakeLast(7).ToList();
+
+    /// <summary>The same seven days, as bare counts for the tile sparkline.</summary>
+    List<int> WeekCounts => LastSevenDays.Select(d => d.Count).ToList();
+
+    int PeakCount => LastSevenDays.Count == 0 ? 0 : LastSevenDays.Max(d => d.Count);
+
+    /// <summary>
+    /// A zero day still shows a stub so the row reads as seven days rather than four. With no
+    /// activity at all the whole week draws at a uniform low height, hatched.
+    /// </summary>
+    int BarHeight(int count) =>
+        PeakCount <= 0 ? 18 : Math.Max(8, (int)Math.Round(count * 100.0 / PeakCount));
+
+    /// <summary>
+    /// Solid = finished and real. Today is still in progress and a zero day has nothing to show,
+    /// so both hatch — grey would read as "disabled", hatch reads as "not yet".
+    /// </summary>
+    static bool IsSolid(DailyCountDto d) => d.Count > 0 && d.Date.Date != DateTime.Now.Date;
+
+    static string DayInitial(DateTime d) => d.DayOfWeek switch
+    {
+        DayOfWeek.Saturday  => "ش",
+        DayOfWeek.Sunday    => "ی",
+        DayOfWeek.Monday    => "د",
+        DayOfWeek.Tuesday   => "س",
+        DayOfWeek.Wednesday => "چ",
+        DayOfWeek.Thursday  => "پ",
+        _                   => "ه",
+    };
+
+    // ── Work queue (پڕۆمپت ٦) ───────────────────────────────────────────────
+    WorkQueueDto? _queue;
+
+    /// <summary>
+    /// The three cheapest buckets that still have work. Unconfigured buckets are kept rather than
+    /// filtered out — they render as «ڕێکنەخراوە», because an unknown backlog is not an empty one
+    /// and hiding it is how it stays unknown.
+    /// </summary>
+    List<WorkQueueBucketDto> TopBuckets =>
+        _queue is null
+            ? new()
+            : _queue.Buckets.Where(b => !b.IsConfigured || b.Count > 0).Take(3).ToList();
+
     // ── Helpers ─────────────────────────────────────────────────────────────
-    static int MaxCount(List<NameCountDto> items) => Math.Max(1, items.Any() ? items.Max(i => i.Count) : 1);
-
-    static int Pct(int value, int total) => total <= 0 ? 0 : (int)Math.Round(value * 100.0 / total);
-
-    bool HasQualityIssues =>
-        _stats is not null &&
-        (_stats.WordsWithoutRelations > 0 || _stats.WordsWithoutMeanings > 0 ||
-         _stats.WordsWithoutCategory > 0 || _stats.WordsWithoutSpeechPane > 0);
-
-    record QualityRow(string Label, int Missing, string Href);
-
-    List<QualityRow> QualityRows => _stats is null ? new() : new()
-    {
-        new("واتا",      _stats.WordsWithoutMeanings,  "/words"),
-        new("پەیوەندی",  _stats.WordsWithoutRelations, "/relations"),
-        new("پۆل",       _stats.WordsWithoutCategory,  "/taxonomy"),
-        new("جۆری وشە",  _stats.WordsWithoutSpeechPane,"/taxonomy"),
-    };
-
-    // ── Leaderboard tiers ───────────────────────────────────────────────────
-    // Ten ranked states, saturated and glowing at the top, muted and flat at the
-    // bottom — so the ladder reads as a hierarchy even before you read a number.
-    record Tier(string Name, string Icon, string Metal, string Chip, string Row, string Accent, string Glow);
-
-    static readonly Tier[] Tiers =
-    {
-        new("ئەڵماس",   "💎", "from-cyan-400 to-sky-600",      "bg-cyan-50 text-cyan-700 border-cyan-200",       "border-cyan-200 bg-gradient-to-l from-cyan-50 via-sky-50/40 to-white",       "text-cyan-600",   "shadow-lg shadow-cyan-100"),
-        new("پلاتین",   "🔷", "from-violet-400 to-indigo-600", "bg-violet-50 text-violet-700 border-violet-200", "border-violet-200 bg-gradient-to-l from-violet-50 via-indigo-50/40 to-white", "text-violet-600", "shadow-lg shadow-violet-100"),
-        new("زێڕ",      "🥇", "from-amber-300 to-yellow-600",  "bg-amber-50 text-amber-700 border-amber-200",    "border-amber-200 bg-gradient-to-l from-amber-50 via-yellow-50/40 to-white",   "text-amber-600",  "shadow-lg shadow-amber-100"),
-        new("زیو",      "🥈", "from-slate-300 to-slate-500",   "bg-slate-50 text-slate-600 border-slate-200",    "border-slate-200 bg-gradient-to-l from-slate-50 to-white",                    "text-slate-500",  "shadow-md shadow-slate-100"),
-        new("برۆنز",    "🥉", "from-orange-400 to-amber-700",  "bg-orange-50 text-orange-700 border-orange-200", "border-orange-200 bg-gradient-to-l from-orange-50 to-white",                  "text-orange-600", "shadow-md shadow-orange-100"),
-        new("مس",       "🔶", "from-rose-400 to-rose-600",     "bg-rose-50 text-rose-700 border-rose-200",       "border-rose-200 bg-gradient-to-l from-rose-50 to-white",                      "text-rose-500",   "shadow-sm"),
-        new("پۆڵا",     "🔩", "from-sky-400 to-blue-600",      "bg-sky-50 text-sky-700 border-sky-200",          "border-sky-200 bg-gradient-to-l from-sky-50 to-white",                        "text-sky-600",    "shadow-sm"),
-        new("ئەلمنیۆم", "⬜", "from-zinc-300 to-zinc-500",     "bg-zinc-50 text-zinc-600 border-zinc-200",       "border-zinc-200 bg-white",                                                    "text-zinc-500",   "shadow-sm"),
-        new("ئاسن",     "⚙️", "from-stone-400 to-stone-600",   "bg-stone-50 text-stone-600 border-stone-200",    "border-stone-200 bg-white",                                                   "text-stone-500",  ""),
-        new("قوڕقوشم",  "▫️", "from-gray-400 to-gray-600",     "bg-gray-50 text-gray-500 border-gray-200",       "border-gray-200 bg-white",                                                    "text-gray-400",   ""),
-    };
-
-    static Tier TierFor(int rank) => Tiers[Math.Clamp(rank, 1, Tiers.Length) - 1];
-
     static string Initial(string? name) =>
         string.IsNullOrWhiteSpace(name) ? "؟" : name.Trim()[..1].ToUpperInvariant();
 
-    static readonly Dictionary<string, string> GenderPalette = new()
-    {
-        ["نییە"]    = "#94a3b8",
-        ["نێر"]     = "#0ea5e9",
-        ["مێ"]      = "#ec4899",
-        ["بێلایەن"] = "#f59e0b",
-        ["دوولایەن"] = "#8b5cf6",
-    };
-
-    string GenderColor(string name) => GenderPalette.GetValueOrDefault(name, "#6366f1");
-
-    string GenderDonutStyle()
-    {
-        var genders = _stats?.Genders.Where(g => g.Count > 0).OrderByDescending(g => g.Count).ToList() ?? new();
-        int total = genders.Sum(g => g.Count);
-        if (total == 0) return "#e5e7eb";
-
-        var parts = new List<string>();
-        double cursor = 0;
-        foreach (var g in genders)
-        {
-            double end = cursor + g.Count * 100.0 / total;
-            parts.Add($"{GenderColor(g.Name)} {cursor:0.##}% {end:0.##}%");
-            cursor = end;
-        }
-        return $"conic-gradient({string.Join(", ", parts)})";
-    }
-
-    string Ago(DateTime utc)
+    static string Ago(DateTime utc)
     {
         var span = DateTime.UtcNow - utc;
         if (span.TotalMinutes < 1) return "ئێستا";
-        if (span.TotalHours < 1) return $"{(int)span.TotalMinutes} خولەک لەمەوبەر";
-        if (span.TotalDays < 1) return $"{(int)span.TotalHours} کاتژمێر لەمەوبەر";
-        if (span.TotalDays < 30) return $"{(int)span.TotalDays} ڕۆژ لەمەوبەر";
-        return utc.ToString("yyyy-MM-dd");
+        if (span.TotalHours < 1) return $"{Ku.Raw((int)span.TotalMinutes)} خولەک لەمەوبەر";
+        if (span.TotalDays < 1) return $"{Ku.Raw((int)span.TotalHours)} کاتژمێر لەمەوبەر";
+        if (span.TotalDays < 30) return $"{Ku.Raw((int)span.TotalDays)} ڕۆژ لەمەوبەر";
+        return Ku.Sub(utc.ToString("yyyy-MM-dd"));
     }
-
-    string RelLabel(string type) => type switch
-    {
-        "synonym"    => "هاوماناکە",
-        "antonym"    => "دژەوشە",
-        "related"    => "پەیوەندیدار",
-        "example"    => "نموونە",
-        "usage"      => "بکارهێنان",
-        "contextual" => "چارچێوەیی",
-        "partof"     => "بەشێکە لە وشەکە",
-        _            => type
-    };
-
-    string RelChipClass(string type) => type switch
-    {
-        "synonym"    => "bg-emerald-100 text-emerald-700",
-        "antonym"    => "bg-red-100 text-red-700",
-        "related"    => "bg-blue-100 text-blue-700",
-        "example"    => "bg-amber-100 text-amber-700",
-        "usage"      => "bg-purple-100 text-purple-700",
-        "contextual" => "bg-cyan-100 text-cyan-700",
-        "partof"     => "bg-orange-100 text-orange-700",
-        _            => "bg-gray-100 text-gray-600"
-    };
 }

@@ -1,0 +1,216 @@
+@page "/queue"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize]
+@inject WorkQueueService Queue
+
+<PageTitle>کەمووکوڕی وشەکان — ژینزار</PageTitle>
+
+<HatchDefs />
+
+<PageHeader Title="کەمووکوڕی وشەکان" Subtitle="@Subtitle">
+    <Actions>
+        <button @onclick="Load" class="btn-secondary">نوێکردنەوە</button>
+    </Actions>
+</PageHeader>
+
+@if (_loading)
+{
+    <div class="grid gap-4 lg:grid-cols-[1.2fr_2fr]">
+        <div class="space-y-2">
+            @for (var i = 0; i < 6; i++)
+            {
+                <div class="skeleton h-16 rounded-card"></div>
+            }
+        </div>
+        <div class="skeleton h-96 rounded-card"></div>
+    </div>
+}
+else if (_summary is null)
+{
+    <div class="card flex flex-col items-center gap-3 py-16 text-center">
+        <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+        <p class="text-sm text-ink-1">ناتوانرێت کەمووکوڕی وشەکان بهێنرێت</p>
+        <button @onclick="Load" class="btn-primary mt-1">هەوڵدانەوە</button>
+    </div>
+}
+else
+{
+    <div class="grid gap-4 page-enter lg:grid-cols-[1.2fr_2fr]">
+
+        @* ── The six buckets, cheapest to fix first ─────────────────────────
+           The order is not a priority ranking: bucket 1 is one click per sense and bucket 6 needs
+           a linguist to think. Cheap work first means ten spare minutes can finish something. *@
+        <div class="space-y-2">
+            @foreach (var bucket in _summary.Buckets)
+            {
+                var isSelected = _selected == bucket.Bucket;
+
+                <button @onclick="() => Select(bucket.Bucket)"
+                        disabled="@(!bucket.IsConfigured || bucket.Count == 0)"
+                        class="@BucketClass(isSelected, bucket)">
+
+                    <span class="@OrdinalClass(isSelected, bucket)">
+                        <bdi>@Ku.N((int)bucket.Bucket)</bdi>
+                    </span>
+
+                    <span class="min-w-0 flex-1 text-start">
+                        <span class="block truncate text-sm font-medium text-ink-1">@bucket.Label</span>
+                        <span class="block truncate text-xs text-ink-2">@bucket.Hint</span>
+                    </span>
+
+                    @if (!bucket.IsConfigured)
+                    {
+                        @* Not the same as zero. A bucket whose axes nobody has configured has an
+                           unknown backlog, and showing "٠" would claim the work is done. *@
+                        <span class="shrink-0 rounded-full bg-page px-2 py-0.5 text-11 text-ink-3">
+                            ڕێکنەخراوە
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="@CountClass(bucket.Count)"><bdi>@Ku.N(bucket.Count)</bdi></span>
+                    }
+                </button>
+            }
+        </div>
+
+        @* ── The rows in the selected bucket ────────────────────────────── *@
+        <section class="card p-0">
+            @if (_selected is null)
+            {
+                <div class="flex flex-col items-center gap-3 py-20 text-center">
+                    <span class="hatch h-12 w-12 rounded-card border border-line"></span>
+                    <p class="text-sm text-ink-1">بەشێک هەڵبژێرە</p>
+                    <p class="text-xs text-ink-2">لە لیستەکەوە بەشێک هەڵبژێرە بۆ بینینی وشەکانی</p>
+                </div>
+            }
+            else
+            {
+                <div class="flex items-center justify-between gap-3 border-b border-line bg-page px-5 py-3.5">
+                    <span class="card-title">@SelectedLabel</span>
+                    <span class="text-xs text-ink-2">
+                        <bdi>@Ku.N(_items.Count)</bdi> لە <bdi>@Ku.N(SelectedCount)</bdi> نیشاندراوە
+                    </span>
+                </div>
+
+                @if (_itemsLoading)
+                {
+                    <div class="space-y-2 p-5">
+                        @for (var i = 0; i < 8; i++)
+                        {
+                            <div class="skeleton h-12 rounded-chip"></div>
+                        }
+                    </div>
+                }
+                else if (_items.Count == 0)
+                {
+                    <div class="flex flex-col items-center gap-2 py-16 text-center">
+                        <Icon Name="check" Class="h-8 w-8 text-green" />
+                        <p class="text-sm text-ink-1">هیچ شتێک لەم بەشەدا نەماوە</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var item in _items)
+                    {
+                        @* The whole row is the link. A queue is only useful if a row lands you on
+                           the field that needs typing, not merely on the right page. *@
+                        <a href="@item.Href"
+                           class="flex items-center gap-3 border-b border-line px-5 py-3 transition-colors last:border-0 hover:bg-page">
+                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-chip bg-green-tint text-sm font-medium text-on-tint">
+                                @(item.Word.Length > 0 ? item.Word[..1] : "؟")
+                            </span>
+
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm font-medium text-ink-1">@item.Word</span>
+                                @if (!string.IsNullOrWhiteSpace(item.Definition))
+                                {
+                                    <span class="block truncate text-xs text-ink-2">@item.Definition</span>
+                                }
+                            </span>
+
+                            <span class="shrink-0 rounded-full bg-warn-tint px-2.5 py-1 text-11 text-warn">
+                                @item.Reason
+                            </span>
+
+                            <Icon Name="arrow-out" Class="h-3.5 w-3.5 shrink-0 text-ink-3" Mirror="true" />
+                        </a>
+                    }
+
+                    @if (_items.Count < SelectedCount)
+                    {
+                        <div class="border-t border-line px-5 py-3 text-center text-xs text-ink-2">
+                            یەکەم <bdi>@Ku.N(_items.Count)</bdi> نیشاندراوە — کارەکان تەواو بکە بۆ بینینی زیاتر
+                        </div>
+                    }
+                }
+            }
+        </section>
+    </div>
+}
+
+@code {
+    WorkQueueDto? _summary;
+    List<WorkQueueItemDto> _items = new();
+    WorkQueueBucket? _selected;
+    bool _loading = true;
+    bool _itemsLoading;
+
+    string Subtitle => _summary is null
+        ? "ئەو کارەی ماوە"
+        : $"{Ku.N(_summary.Total)} شت چاوەڕێی کارکردنن";
+
+    string SelectedLabel =>
+        _summary?.Buckets.FirstOrDefault(b => b.Bucket == _selected)?.Label ?? "";
+
+    int SelectedCount =>
+        _summary?.Buckets.FirstOrDefault(b => b.Bucket == _selected)?.Count ?? 0;
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    async Task Load()
+    {
+        _loading = true;
+        try { _summary = await Queue.GetSummaryAsync(fresh: true); }
+        catch { _summary = null; }
+        _loading = false;
+
+        // Open the first bucket that actually has work, so the page is useful on arrival rather
+        // than asking the reader to pick before they know where the work is.
+        var first = _summary?.Buckets.FirstOrDefault(b => b.IsConfigured && b.Count > 0);
+        if (first is not null) await Select(first.Bucket);
+        else _selected = null;
+    }
+
+    async Task Select(WorkQueueBucket bucket)
+    {
+        _selected = bucket;
+        _itemsLoading = true;
+        StateHasChanged();
+
+        try { _items = await Queue.GetItemsAsync(bucket); }
+        catch { _items = new(); }
+
+        _itemsLoading = false;
+    }
+
+    static string BucketClass(bool selected, WorkQueueBucketDto bucket)
+    {
+        var baseClass = "flex w-full items-center gap-3 rounded-card border p-4 text-start transition-colors";
+
+        if (selected) return $"{baseClass} border-line bg-green-tint";
+
+        return bucket.IsConfigured && bucket.Count > 0
+            ? $"{baseClass} border-line bg-card hover:bg-page"
+            : $"{baseClass} border-line bg-card opacity-60";
+    }
+
+    static string OrdinalClass(bool selected, WorkQueueBucketDto bucket) =>
+        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-medium " +
+        (selected ? "bg-green-deep text-white" : "bg-page text-ink-2");
+
+    /// <summary>Zero is done, not a warning — only outstanding work is coloured.</summary>
+    static string CountClass(int count) => count == 0
+        ? "shrink-0 rounded-full bg-green-tint px-2.5 py-1 text-11 text-on-tint"
+        : "shrink-0 rounded-full bg-warn-tint px-2.5 py-1 text-11 text-warn";
+}

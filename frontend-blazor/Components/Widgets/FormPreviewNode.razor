@@ -1,0 +1,160 @@
+@* One dropdown in the shape preview, and every sub-list hanging off its options.
+
+   This is the «list inside a list» drawn as a list inside a list. The interactive preview beside it
+   shows the form as a TEACHER meets it — one dropdown at a time, the next appearing only once an
+   answer opens it — which is correct for checking wording and wrong for checking shape: to see
+   whether کار's cascade goes three levels you had to sit there choosing values, and a branch you
+   never clicked was indistinguishable from one that does not exist.
+
+   So this view shows the whole configuration at once: each dropdown, its options, and nested under
+   any option that opens one, the sub-dropdown it opens — recursively, with no depth limit.
+
+   It mirrors the entry form's VISIBILITY rules rather than dumping the table. A deactivated dropdown
+   and one with no options yet are both absent here, because both are absent on the real form, and a
+   preview that showed them would send somebody hunting for a dropdown the teacher will never meet. *@
+
+<div class="@IndentClass">
+
+    @* ── The dropdown ──────────────────────────────────────────────────────── *@
+    <div class="mb-1 flex flex-wrap items-baseline gap-2">
+        <span class="text-13 text-ink-1">@Axis.Ask</span>
+
+        @if (!string.IsNullOrWhiteSpace(Axis.PromptKu))
+        {
+            @* Both strings, because this pane is read by the person who owns both. The teacher sees
+               only the question above; the short label is here so it is obvious WHICH dropdown the
+               question belongs to without cross-referencing the tree. *@
+            <span class="text-11 text-ink-3">(@Axis.NameKu)</span>
+        }
+        else
+        {
+            <span class="pill pill-warn" title="مامۆستا ناوی کورت دەبینێت — پرسیارێکی ئاسان بنووسە">
+                بێ پرسیار
+            </span>
+        }
+
+        @if (Axis.MaxSelections != 1)
+        {
+            <span class="pill pill-muted">@SelectionLabel</span>
+        }
+    </div>
+
+    @* The closed control, drawn as it opens: on the empty prompt, never on a real value. *@
+    <div class="flex w-full max-w-xs items-center justify-between gap-2 rounded-chip border border-line bg-page px-3 py-1.5">
+        <span class="text-13 text-ink-3">— هەڵبژێرە —</span>
+        <Icon Name="chevron" Class="h-3 w-3 shrink-0 text-ink-3" />
+    </div>
+
+    @* ── Its options, and what each of them opens ──────────────────────────── *@
+    <ul class="mt-1 space-y-1">
+        @foreach (var value in Offered)
+        {
+            <li>
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="h-1 w-1 shrink-0 rounded-full bg-green-soft"></span>
+                    <span class="text-13 text-ink-2">@value.NameKu</span>
+
+                    @if (VisibleChildren(value).Count is var count && count > 0)
+                    {
+                        @* Which options branch, said before you go looking. *@
+                        <span class="pill pill-ok" title="ئەم بژاردە پرسیاری ژێرەوە دەکاتەوە">
+                            <bdi>@Ku.N(count)</bdi> پرسیاری ژێرەوە
+                        </span>
+                    }
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(value.OptionHintKu))
+                {
+                    <p class="ps-3 text-11 leading-relaxed text-ink-3">نموونە: @value.OptionHintKu</p>
+                }
+
+                @* A sub-question that exists but cannot be asked yet, because it has no options.
+                   Named here rather than silently omitted: you built it, so its absence from the
+                   form looks like the cascade is broken instead of like unfinished work. *@
+                @if (UnbuiltChildren(value) is { Count: > 0 } unbuilt)
+                {
+                    <p class="ps-3 text-11 leading-relaxed text-warn">
+                        <bdi>@Ku.N(unbuilt.Count)</bdi> پرسیاری ژێرەوە هەیە بەڵام هێشتا نرخی نییە،
+                        بۆیە دەرناکەوێت — @string.Join(" · ", unbuilt.Select(c => c.NameKu))
+                    </p>
+                }
+
+                @* ── The sub-list. This is the recursion. ────────────────────
+                   Rendered INSIDE the option's own list item, so the nesting on screen is the
+                   nesting in the data — not a flat list that happens to be indented. *@
+                @foreach (var child in VisibleChildren(value))
+                {
+                    <div class="mt-1.5">
+                        <p class="ps-3 text-11 text-ink-3">
+                            ئەگەر <span class="text-on-tint">@value.NameKu</span> هەڵبژێردرا
+                        </p>
+
+                        <FormPreviewNode Axis="child" Depth="Depth + 1" />
+                    </div>
+                }
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public TaxonomyTreeAxisDto Axis { get; set; } = default!;
+
+    /// <summary>
+    /// Nesting level, passed down rather than read off the DTO's own Depth.
+    ///
+    /// The tree DTO's Depth is absolute, and this component may be handed a subtree — so relying on
+    /// it would indent a child group by where it sits in the whole part of speech instead of by where
+    /// it sits in what is being drawn.
+    /// </summary>
+    [Parameter] public int Depth { get; set; }
+
+    /// <summary>
+    /// The options a teacher will actually be offered. Deactivated values are absent, matching the
+    /// entry form — retiring an option hides it from NEW entries.
+    /// </summary>
+    List<TaxonomyTreeValueDto> Offered => Axis.Values.Where(v => v.IsActive).ToList();
+
+    /// <summary>
+    /// The sub-dropdowns under one option that the form would really render.
+    ///
+    /// The same two exclusions <c>OptionsTree.Resolve</c> applies: a deactivated group, and a group
+    /// with no options yet. Both are absent on the real form — a dropdown with nothing in it cannot be
+    /// answered and cannot be dismissed — so showing them here would make this preview disagree with
+    /// the thing it is previewing.
+    /// </summary>
+    static List<TaxonomyTreeAxisDto> VisibleChildren(TaxonomyTreeValueDto value) =>
+        value.Children
+            .Where(c => c.IsActive && c.Values.Any(v => v.IsActive))
+            .ToList();
+
+    /// <summary>
+    /// Sub-questions that exist under this option but have no options of their own, so the form
+    /// cannot ask them. Reported rather than hidden — this is the state a half-built cascade is in,
+    /// and it is indistinguishable from a broken one unless somebody says which it is.
+    /// </summary>
+    static List<TaxonomyTreeAxisDto> UnbuiltChildren(TaxonomyTreeValueDto value) =>
+        value.Children
+            .Where(c => c.IsActive && !c.Values.Any(v => v.IsActive))
+            .ToList();
+
+    /// <summary>
+    /// Indent by depth with a rule on the start edge, capped at four steps — past that the
+    /// indentation eats the readable width of a narrow pane and the «ئەگەر X هەڵبژێردرا» line is
+    /// what actually carries the relationship.
+    /// </summary>
+    string IndentClass => Depth switch
+    {
+        0 => "",
+        1 => "ms-2 border-s border-line ps-2.5",
+        2 => "ms-3 border-s border-line ps-2.5",
+        3 => "ms-4 border-s border-line ps-2.5",
+        _ => "ms-5 border-s border-line ps-2.5",
+    };
+
+    string SelectionLabel => Axis.MaxSelections switch
+    {
+        null => "هەرچەند بێت",
+        var n => $"تا {Ku.N(n!.Value)}",
+    };
+}

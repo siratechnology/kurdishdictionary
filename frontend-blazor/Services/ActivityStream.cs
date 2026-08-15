@@ -16,6 +16,9 @@ public sealed class ActivityStream : IAsyncDisposable
     /// <summary>Must match <c>ActivityHub.ActivityEvent</c> in the backend.</summary>
     private const string ActivityEvent = "ActivityHappened";
 
+    /// <summary>Must match <c>ActivityHub.TaxonomyEvent</c> in the backend.</summary>
+    private const string TaxonomyEvent = "TaxonomyChanged";
+
     private readonly IConfiguration _config;
     private readonly AuthenticationStateProvider _auth;
     private readonly ILogger<ActivityStream> _log;
@@ -44,6 +47,23 @@ public sealed class ActivityStream : IAsyncDisposable
     /// missed outright — SignalR does not replay — so listeners use this to re-pull and catch up.
     /// </summary>
     public event Func<Task>? Reconnected;
+
+    /// <summary>
+    /// Raised when an admin changes the taxonomy — a group added, renamed, re-parented, retired.
+    ///
+    /// Deliberately its own event rather than part of <see cref="Received"/>. A content change
+    /// refreshes a list; a taxonomy change re-shapes the form somebody may be typing into, and
+    /// that has to be handled without ever discarding their unsaved input. Merging the two would
+    /// make it impossible to treat them differently, and the safe treatment is the whole point.
+    /// <para>
+    /// Handlers run on a thread-pool thread. Marshal back with <c>InvokeAsync</c> before touching
+    /// component state.
+    /// </para>
+    /// </summary>
+    public event Func<TaxonomyChangedDto, Task>? TaxonomyChanged;
+
+    /// <summary>The latest taxonomy version this circuit has been told about. 0 until the first push.</summary>
+    public long TaxonomyVersion { get; private set; }
 
     public bool IsConnected => _connection?.State == HubConnectionState.Connected;
 
@@ -86,6 +106,14 @@ public sealed class ActivityStream : IAsyncDisposable
         {
             if (Received is { } handler)
                 await handler.Invoke(entries);
+        });
+
+        _connection.On<TaxonomyChangedDto>(TaxonomyEvent, async change =>
+        {
+            TaxonomyVersion = change.Version;
+
+            if (TaxonomyChanged is { } handler)
+                await handler.Invoke(change);
         });
 
         _connection.Reconnected += async _ =>

@@ -1,0 +1,1084 @@
+@page "/settings"
+@page "/settings/taxonomy"
+@page "/settings/tree"
+@page "/settings/tree/{PartOfSpeechId:int}"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@* LinguisticOwner is named explicitly rather than relied on: parzhin happens to hold Editor as well
+   today, and the one person who is supposed to build this tree must not be locked out of it by a
+   role change nobody connected to this screen. *@
+@attribute [Authorize(Roles = "Admin,Editor,LinguisticOwner")]
+@implements IAsyncDisposable
+@inject TaxonomyAdminService Taxonomy
+@inject ActivityStream Stream
+@inject Toast Toast
+@inject AuthenticationStateProvider Auth
+
+<PageTitle>درەختی بژاردەکان — ژینزار</PageTitle>
+
+@* The options tree: بەشی ئاخاوتن ← تەوەر ← نرخ ← تەوەر ← …
+   Choose a part of speech → a set of options appears → any one of those options may itself open a
+   further set → and so on, with no fixed limit.
+
+   The data model has not changed. These are the same PartOfSpeechAxis rows the flat table showed,
+   drawn as the tree they always were. What changed is that you can now SEE the shape you are
+   building — the previous screen made you configure a sub-group by picking a "required value" out of
+   a list of every value in the system, which is technically identical and impossible to reason
+   about, so nobody used it.
+
+   Beside the tree is the ACTUAL entry form the tree produces, resolved on the server by the same
+   code the real form uses. Without it you configure blind and find out after two hundred words. *@
+
+<TelerikScope>
+    <div class="mb-5 flex flex-wrap items-start gap-3">
+        <div>
+            <h1 class="text-28 font-medium text-ink-1">درەختی بژاردەکان</h1>
+            <p class="mt-1 text-sm text-ink-2">
+                بەشێکی ئاخاوتن هەڵبژێرە، ئینجا بژاردەکانی ڕێک بخە — هەر بژاردەیەک دەتوانێت بژاردەی
+                ژێرەوەی هەبێت، بێ سنوور
+            </p>
+        </div>
+
+        <div class="ms-auto flex items-center gap-2">
+            @if (_staleVersion)
+            {
+                @* A non-blocking notice, never a modal — see the entry form for why. *@
+                <button type="button" @onclick="Reload" class="btn-secondary py-2 text-xs">
+                    <Icon Name="alert" Class="h-3.5 w-3.5 text-warn" />
+                    گۆڕانکاری نوێ هەیە — نوێ بکەرەوە
+                </button>
+            }
+            <a href="/settings/values" class="btn-secondary py-2 text-xs">خشتەی نرخەکان</a>
+        </div>
+    </div>
+
+    @if (!_canEdit)
+    {
+        @* Extending the taxonomy is tier 2 and sits with the single linguistic owner on purpose:
+           the disease in this project is category sprawl — 26 categories became 79 in a month
+           because creating one was easy. So an administrator READS this screen.
+
+           Saying so up front matters. The previous behaviour was a full set of buttons that each
+           returned 403, which reads as a broken page rather than a deliberate permission. *@
+        <div class="mb-4 flex items-center gap-2 rounded-card border border-line bg-page px-4 py-3 text-sm text-ink-2">
+            <Icon Name="alert" Class="h-4 w-4 shrink-0 text-ink-3" />
+            <span>تەنها بۆ بینین — گۆڕینی درەختی بژاردەکان لەلایەن خاوەنی زمانەوانییەوە دەکرێت.</span>
+        </div>
+    }
+
+    @* ── Part of speech: the root of the tree ────────────────────────────── *@
+    @if (_parts.Count > 0)
+    {
+        <div class="mb-4 flex flex-wrap gap-1.5">
+            @foreach (var part in _parts)
+            {
+                <button type="button" @onclick="() => Select(part.Id)"
+                        class="@(part.Id == _partOfSpeechId
+                                 ? "rounded-full bg-green-deep px-3.5 py-2 text-sm font-medium text-white"
+                                 : "rounded-full bg-page px-3.5 py-2 text-sm text-ink-2 transition-colors hover:bg-green-tint hover:text-on-tint")">
+                    @part.NameKu
+                    <span class="ms-1.5 text-11 opacity-70"><bdi>@Ku.N(part.WordCount)</bdi></span>
+                </button>
+            }
+        </div>
+    }
+
+    @if (_loading)
+    {
+        <div class="grid gap-4 xl:grid-cols-[1.6fr_1fr]">
+            <div class="skeleton h-96 rounded-card"></div>
+            <div class="skeleton h-96 rounded-card"></div>
+        </div>
+    }
+    else if (_tree is null)
+    {
+        <div class="card flex flex-col items-center gap-3 py-16 text-center">
+            <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+            <p class="text-sm text-ink-1">بەشێکی ئاخاوتن هەڵبژێرە</p>
+        </div>
+    }
+    else
+    {
+        <div class="grid gap-4 page-enter xl:grid-cols-[1.6fr_1fr]">
+
+            @* ── The tree ────────────────────────────────────────────────── *@
+            <section class="card">
+                <div class="mb-3 flex flex-wrap items-center gap-2">
+                    <span class="card-title">بژاردەکانی «@_tree.PartOfSpeechName»</span>
+
+                    <span class="pill pill-ok" title="ئەو وشانەی ئەم بەشی ئاخاوتنیان هەیە">
+                        <bdi>@Ku.N(_tree.WordCount)</bdi> وشە
+                    </span>
+
+                    @* The shape of this part of speech, in words.
+                       DERIVED from the tree, never stored. A saved "type" field would be a second
+                       source of truth: ناو could claim to be parallel while its tree said otherwise,
+                       and nothing would catch it. The tree IS the definition — this only reads it
+                       back so you can see at a glance what you have built. *@
+                    <span class="pill pill-muted" title="@ShapeHint">@ShapeLabel</span>
+
+                    <span class="ms-auto flex items-center gap-1.5">
+                        <button type="button" @onclick="ExpandAll" class="btn-secondary py-1.5 text-11">کردنەوەی هەموو</button>
+                        <button type="button" @onclick="CollapseAll" class="btn-secondary py-1.5 text-11">داخستنی هەموو</button>
+                    </span>
+                </div>
+
+                @* What this tree currently DOES, in a sentence. Read back out of the tree, never
+                   stored — so it cannot claim one shape while the data says another. Without it you
+                   only find out that کار is producing three dropdowns by going and looking at the
+                   entry form. *@
+                <p class="mb-3 rounded-chip bg-page px-3 py-2 text-11 leading-relaxed text-ink-2">
+                    @ShapeHint
+                </p>
+
+                @* ── The questions still to write ──────────────────────────────
+                   Two different states, and they are not the same job:
+
+                     · NO question written — the teacher is reading a raw grammatical label. Nobody
+                       invented wording on their behalf, which is correct: a plausible-but-wrong
+                       question gets answered confidently, and a bare label gets asked about.
+                     · A SUGGESTED question — a starting point the system filled in. Read it and
+                       either keep it or fix it; editing anything clears the flag.
+
+                   Listed here rather than left to be discovered by scrolling, because the work is
+                   "go through these seven" and a list is what makes that finishable. *@
+                @if (Unwritten.Count > 0 || NeedsReview.Count > 0)
+                {
+                    <div class="mb-3 rounded-card border border-line bg-warn-tint px-3 py-2.5">
+                        <p class="flex items-center gap-1.5 text-11 font-medium text-ink-1">
+                            <Icon Name="alert" Class="h-3.5 w-3.5 shrink-0 text-warn" />
+                            دەقی پرسیارەکان
+                        </p>
+
+                        @if (NeedsReview.Count > 0)
+                        {
+                            <p class="mt-1.5 text-11 leading-relaxed text-ink-2">
+                                <bdi>@Ku.N(NeedsReview.Count)</bdi> پرسیار پێشنیارکراوە و پێداچوونەوەی
+                                پێویستە — بخوێنەوە و ڕاستی بکەرەوە:
+                            </p>
+
+                            <ul class="mt-1 space-y-0.5">
+                                @foreach (var axis in NeedsReview)
+                                {
+                                    <li class="text-11 text-ink-2">
+                                        <span class="text-ink-3">@axis.NameKu</span> — «@axis.PromptKu»
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        @if (Unwritten.Count > 0)
+                        {
+                            <p class="mt-1.5 text-11 leading-relaxed text-ink-2">
+                                <bdi>@Ku.N(Unwritten.Count)</bdi> دانەخوازە هێشتا پرسیاری ئاسانی
+                                نییە — مامۆستا ناوی کورت دەبینێت:
+                            </p>
+
+                            <ul class="mt-1 space-y-0.5">
+                                @foreach (var axis in Unwritten)
+                                {
+                                    <li class="text-11 text-ink-2">@axis.NameKu</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                }
+
+                @if (_tree.Axes.Count == 0)
+                {
+                    @* Day one. The taxonomy ships empty and that is correct, not broken. *@
+                    <div class="flex flex-col items-center gap-2 py-10 text-center">
+                        <span class="hatch h-10 w-10 rounded-full border border-line"></span>
+                        <p class="text-sm text-ink-1">هێشتا هیچ بژاردەیەک بۆ ئەم بەشە ڕێکنەخراوە</p>
+                        <p class="text-xs text-ink-2">لە خوارەوە یەکەم بژاردە زیاد بکە</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="divide-y divide-line">
+                        @foreach (var axis in _tree.Axes)
+                        {
+                            <OptionsTreeNode Axis="axis"
+                                             CanEdit="_canEdit"
+                                             Collapsed="_collapsed"
+                                             OnAddGroup="AddChildGroup"
+                                             OnAddValue="AddValue"
+                                             OnRename="RenameGroup"
+                                             OnRenameValue="RenameValue"
+                                             OnSetPrompt="SetPrompt"
+                                             OnSetHint="SetOptionHint"
+                                             OnToggleActive="ToggleActive"
+                                             OnRemove="RemoveGroup"
+                                             OnEditSelectionMode="OpenSelectionMode"
+                                             OnToggleCollapse="ToggleCollapse" />
+                        }
+                    </div>
+                }
+
+                @* Adding a FIRST-LEVEL group is the same gesture as adding one under a value. *@
+                <div class="mt-4 border-t border-line pt-4">
+                    @if (!_canEdit)
+                    {
+                        <p class="text-11 text-ink-3">بۆ زیادکردنی بژاردە پێویستە خاوەنی زمانەوانی بیت.</p>
+                    }
+                    else if (_addingRoot)
+                    {
+                        <div class="flex flex-wrap items-center gap-2">
+                            <input @bind="_newRootName" @bind:event="oninput" @onkeydown="OnAddRootKey"
+                                   placeholder="ناوی بژاردەی نوێ…" class="field w-56 py-2 text-sm" autofocus />
+                            <button type="button" @onclick="CommitAddRoot" class="btn-primary py-2 text-xs">زیادکردن</button>
+                            <button type="button" @onclick="() => _addingRoot = false" class="btn-secondary py-2 text-xs">پاشگەز</button>
+                        </div>
+                    }
+                    else
+                    {
+                        @* Demoted from btn-primary on purpose. Adding a PARALLEL question is the
+                           rarer intention — ناو wants five, most others want one — and while this
+                           was the loudest control on the screen it is what people pressed when they
+                           meant "and then ask this next", which is the button on the value rows. *@
+                        <button type="button" @onclick="OpenAddRoot" class="btn-secondary py-2 text-xs">
+                            <Icon Name="plus" Class="h-3.5 w-3.5" />
+                            پرسیارێکی سەربەخۆ زیاد بکە
+                        </button>
+
+                        <p class="mt-2 text-11 leading-relaxed text-ink-3">
+                            پرسیاری سەربەخۆ هاوکات لەگەڵ ئەوانی تر دەردەکەوێت — وەک @("ناو")ی
+                            <bdi>@Ku.N(5)</bdi> پرسیارە.<br />
+                            ئەگەر دەتەوێت پرسیارێک تەنها <span class="text-ink-2">دوای</span>
+                            هەڵبژاردنی نرخێک دەربکەوێت، لە تەنیشت ئەو نرخە
+                            «<span class="text-on-tint">+ پرسیاری دواتر لەژێر ئەمە</span>» لێبدە.
+                        </p>
+                    }
+                </div>
+            </section>
+
+            @* ── Preview: two views of the same tree ──────────────────────────
+               They answer two different questions and neither substitutes for the other:
+
+                 شێوە   — the whole configuration at once, as lists inside lists. This is how you
+                          check SHAPE: whether کار really cascades three levels, which options
+                          branch, which dropdowns still have no question. Nothing to click.
+                 مامۆستا — the real entry form, resolved ON THE SERVER by the same code the station
+                          runs. This is how you check WORDING and behaviour, one answer at a time.
+
+               The shape view is the default because it is the one you want after every edit. The
+               teacher view used to be the only one, and it hid exactly what an editor most needs to
+               see: a branch you never clicked looked identical to a branch that does not exist. *@
+            <section class="card self-start">
+                <div class="mb-3 flex flex-wrap items-center gap-2">
+                    <span class="card-title">پێشبینین</span>
+
+                    <span class="ms-auto flex items-center gap-1">
+                        <button type="button" @onclick="() => _previewAsTeacher = false"
+                                class="@PreviewTabClass(!_previewAsTeacher)"
+                                title="هەموو بژاردەکان و ژێرەوەکانیان بە یەک نیگا">
+                            شێوە
+                        </button>
+                        <button type="button" @onclick="() => _previewAsTeacher = true"
+                                class="@PreviewTabClass(_previewAsTeacher)"
+                                title="فۆرمی ڕاستەقینەی تۆمارکردن، وەک چۆن مامۆستا دەیبینێت">
+                            وەک مامۆستا
+                        </button>
+                    </span>
+                </div>
+
+                @if (_previewAsTeacher)
+                {
+                    <p class="mb-3 text-xs leading-relaxed text-ink-2">
+                        ئەمە هەمان فۆرمی تۆمارکردنە. بژاردەیەک هەڵبژێرە بۆ ئەوەی بژاردەکانی ژێرەوەی
+                        ببینیت — بەڕاست هەروەکو لە کاتی کارکردن.
+                    </p>
+
+                    @if (_preview.Count == 0)
+                    {
+                        <div class="flex flex-col items-center gap-2 py-8 text-center">
+                            <span class="hatch h-10 w-10 rounded-full border border-line"></span>
+                            <p class="text-xs text-ink-2">هیچ بژاردەیەک بۆ نیشاندان نییە</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="space-y-3">
+                            @foreach (var axis in _preview)
+                            {
+                                <AxisField Axis="axis"
+                                           ShowName="@ShowAxisName(axis)"
+                                           Interactive="true"
+                                           OnPick="PreviewPick" />
+                            }
+                        </div>
+
+                        @if (_previewSelection.Count > 0)
+                        {
+                            <button type="button" @onclick="ResetPreview"
+                                    class="mt-4 text-11 text-ink-3 transition-colors hover:text-ink-1">
+                                پاککردنەوەی پێشبینین
+                            </button>
+                        }
+                    }
+                }
+                else
+                {
+                    <p class="mb-3 text-xs leading-relaxed text-ink-2">
+                        هەموو دانەخوازەکان و ئەوانەی ژێرەوەیان، بە یەک نیگا — بێ کلیک. هەر بژاردەیەک
+                        کە پرسیاری ژێرەوەی هەبێت، لیستەکەی لەژێر خۆیدا دەردەکەوێت.
+                    </p>
+
+                    @if (ShapePreviewRoots.Count == 0)
+                    {
+                        <div class="flex flex-col items-center gap-2 py-8 text-center">
+                            <span class="hatch h-10 w-10 rounded-full border border-line"></span>
+                            <p class="text-xs text-ink-2">هیچ بژاردەیەک بۆ نیشاندان نییە</p>
+                            <p class="text-11 leading-relaxed text-ink-3">
+                                دانەخوازەیەک تا نرخی پێنەدرێت لە فۆرمی تۆمارکردندا دەرناکەوێت.
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="space-y-4">
+                            @foreach (var axis in ShapePreviewRoots)
+                            {
+                                <FormPreviewNode Axis="axis" Depth="0" />
+                            }
+                        </div>
+
+                        @* The count is read back out of what was just drawn, so it cannot claim a
+                           level the pane is not showing. *@
+                        <p class="mt-4 border-t border-line pt-3 text-11 leading-relaxed text-ink-3">
+                            <bdi>@Ku.N(ShapePreviewRoots.Count)</bdi> دانەخوازە پێکەوە دەردەکەون،
+                            @if (MaxDepth > 1)
+                            {
+                                <text>تا <bdi>@Ku.N(MaxDepth)</bdi> ئاستی ژێرەوە.</text>
+                            }
+                            else
+                            {
+                                <text>بێ ئاستی ژێرەوە.</text>
+                            }
+                        </p>
+                    }
+                }
+            </section>
+        </div>
+    }
+
+    @* ── «چەند بژاردە دەکرێت هەڵبژێردرێت؟» ───────────────────────────────── *@
+    <TelerikDialog @bind-Visible="_selectionOpen" Title="چەند بژاردە دەکرێت هەڵبژێردرێت؟" Width="520px">
+        <DialogContent>
+            @if (_selectionAxis is { } axis)
+            {
+                <p class="mb-4 text-sm text-ink-1">بژاردەی «<span class="font-medium">@axis.NameKu</span>»</p>
+
+                <div class="space-y-2">
+                    @foreach (var (label, max) in SelectionChoices)
+                    {
+                        <label class="flex cursor-pointer items-center gap-2.5 rounded-chip border border-line px-3 py-2.5 transition-colors hover:bg-page">
+                            <input type="radio" name="selection-mode" checked="@(_draftMax == max)"
+                                   @onchange="() => _draftMax = max"
+                                   class="h-4 w-4 border-line text-green-deep focus:ring-green" />
+                            <span class="text-sm text-ink-1">@label</span>
+                        </label>
+                    }
+
+                    @if (_draftMax is { } cap && cap > 1)
+                    {
+                        <label class="mt-2 block ps-8">
+                            <span class="field-label">ژمارەی زۆرترین</span>
+                            <TelerikNumericTextBox @bind-Value="_draftCap" Min="2" Max="20" Width="120px" />
+                        </label>
+                    }
+                </div>
+
+                @* MinSelections is a work-queue signal and nothing else, so the wording says so
+                   explicitly — a teacher must never be led to think it can block a save. *@
+                <label class="mt-4 flex items-center gap-2.5">
+                    <input type="checkbox" checked="@(_draftMin > 0)" @onchange="OnMinToggled"
+                           class="h-4 w-4 rounded border-line text-green-deep focus:ring-green" />
+                    <span class="text-sm text-ink-1">لە کەمووکوڕی وشەکاندا وەک ناتەواو نیشان بدرێت ئەگەر پڕنەکرابێتەوە</span>
+                </label>
+
+                <p class="mt-2 text-11 leading-relaxed text-ink-3">
+                    هیچ کات ڕێگری لە پاشەکەوتکردن ناکات — تەنها لە کەمووکوڕی وشەکاندا دەردەکەوێت.
+                </p>
+
+                @if (_capWarning is { } warning)
+                {
+                    <div class="mt-4 rounded-chip bg-warn-tint p-3">
+                        <p class="text-xs text-warn">@warning</p>
+
+                        @if (_capPreview is { } preview && preview.Affected.Count > 0)
+                        {
+                            <ul class="mt-2 space-y-1">
+                                @foreach (var sense in preview.Affected.Take(8))
+                                {
+                                    <li class="text-11 text-ink-2">
+                                        <a href="/words/@sense.WordId" class="hover:underline">@sense.Word</a>
+                                        — <bdi>@Ku.N(sense.HeldCount)</bdi> بژاردە
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                }
+            }
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="SaveSelectionMode" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                پاشەکەوت
+            </TelerikButton>
+            <TelerikButton OnClick="@(() => _selectionOpen = false)">پاشگەز</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
+
+    @* ── «پرسیار» or «نرخ»? ───────────────────────────────────────────────
+       The single most expensive confusion in this screen, and the reason for this dialog.
+
+       A پرسیار is a dropdown. A نرخ is a line inside one. تەواو and ناتەوە are values of «جۆری کار»
+       — one dropdown with two options — but adding them as questions is one click and produces two
+       dropdowns side by side, which looks almost right and is completely wrong. Once a part of
+       speech already has a question, adding a second one asks which was meant, and shows both
+       outcomes rather than describing them. *@
+    <TelerikDialog @bind-Visible="_addRootOpen" Title="پرسیاری نوێ یان نرخی نوێ؟" Width="620px">
+        <DialogContent>
+            <label class="mb-4 block">
+                <span class="field-label">ناوەکە</span>
+                <TelerikTextBox @bind-Value="_newRootName" Placeholder="بۆ نموونە: تەواو" Width="100%" />
+            </label>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+                @* Option A — a value inside an existing question. Listed FIRST because it is what
+                   is meant far more often. *@
+                <button type="button" @onclick="AddAsValue"
+                        class="rounded-card border border-line p-3 text-start transition-colors hover:bg-page">
+                    <p class="text-13 font-medium text-ink-1">نرخێکە لە پرسیارێکی ئێستادا</p>
+                    <p class="mt-1 text-11 leading-relaxed text-ink-2">
+                        دەبێتە هەڵبژاردەیەک لەناو یەک دانەخوازەدا.
+                    </p>
+
+                    <div class="mt-2 rounded-chip bg-page p-2 text-11 text-ink-2">
+                        [@(_targetGroup?.NameKu ?? "…") ▾]<br />
+                        <span class="ps-2">
+                            @string.Join(" · ", (_targetGroup?.Values ?? new()).Select(v => v.NameKu))
+                            @(string.IsNullOrEmpty(_newRootName) ? "" : " · " + _newRootName)
+                        </span>
+                    </div>
+
+                    @if (_tree is { } tree && tree.Axes.Count > 1)
+                    {
+                        <select @onchange="OnTargetChanged" @onclick:stopPropagation="true"
+                                class="field mt-2 py-1.5 text-11">
+                            @foreach (var axis in tree.Axes)
+                            {
+                                <option value="@axis.AxisId" selected="@(axis.AxisId == _targetGroupId)">
+                                    @axis.NameKu
+                                </option>
+                            }
+                        </select>
+                    }
+                </button>
+
+                @* Option B — a genuinely separate question. *@
+                <button type="button" @onclick="AddAsQuestion"
+                        class="rounded-card border border-line p-3 text-start transition-colors hover:bg-page">
+                    <p class="text-13 font-medium text-ink-1">پرسیارێکی سەربەخۆیە</p>
+                    <p class="mt-1 text-11 leading-relaxed text-ink-2">
+                        دانەخوازەیەکی نوێ دەبێت کە هاوکات لەگەڵ ئەوانی تر دەردەکەوێت.
+                    </p>
+
+                    <div class="mt-2 rounded-chip bg-page p-2 text-11 text-ink-2">
+                        @foreach (var axis in (_tree?.Axes ?? new()).Take(2))
+                        {
+                            <text>[@axis.NameKu ▾]</text><br />
+                        }
+                        [@(string.IsNullOrEmpty(_newRootName) ? "…" : _newRootName) ▾]
+                    </div>
+                </button>
+            </div>
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="@(() => _addRootOpen = false)">پاشگەز</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
+
+    @* ── Add a child group under a value ─────────────────────────────────── *@
+    <TelerikDialog @bind-Visible="_addGroupOpen" Title="بژاردەی زیاتر" Width="460px">
+        <DialogContent>
+            @if (_addGroupParent is { } parent)
+            {
+                <p class="mb-4 text-sm text-ink-1">
+                    ئەم بژاردەیە تەنها دەردەکەوێت کاتێک «<span class="font-medium">@parent.NameKu</span>»
+                    هەڵبژێردرابێت.
+                </p>
+
+                <label class="block">
+                    <span class="field-label">ناوی بژاردەی نوێ</span>
+                    <TelerikTextBox @bind-Value="_newGroupName" Placeholder="بۆ نموونە: تێپەڕی" Width="100%" />
+                </label>
+            }
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="ConfirmAddGroup" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                زیادکردن
+            </TelerikButton>
+            <TelerikButton OnClick="@(() => _addGroupOpen = false)">پاشگەز</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
+</TelerikScope>
+
+@code {
+    [Parameter] public int? PartOfSpeechId { get; set; }
+
+    List<TaxonomyPartOfSpeechDto> _parts = new();
+    TaxonomyTreeDto? _tree;
+
+    int _partOfSpeechId;
+    bool _loading = true;
+
+    /// <summary>
+    /// Collapse state lives here rather than in the node component: the tree is re-fetched after
+    /// every edit, and a component-local flag would spring the whole thing open on each save.
+    /// </summary>
+    readonly HashSet<int> _collapsed = new();
+
+    bool _addingRoot;
+    string _newRootName = "";
+
+    /// <summary>The «پرسیار or نرخ?» dialog, and which existing question a value would join.</summary>
+    bool _addRootOpen;
+    int _targetGroupId;
+
+    TaxonomyTreeAxisDto? _targetGroup =>
+        _tree?.Axes.FirstOrDefault(a => a.AxisId == _targetGroupId) ?? _tree?.Axes.FirstOrDefault();
+
+    // ── Live preview state ──────────────────────────────────────────────────
+    List<StationAxisDto> _preview = new();
+    readonly HashSet<int> _previewSelection = new();
+
+    /// <summary>
+    /// False = the shape view (lists inside lists, everything at once), true = the real entry form.
+    ///
+    /// Defaults to the shape view: it is the one worth looking at after an edit, and it needs no
+    /// clicking to reveal what was just built.
+    /// </summary>
+    bool _previewAsTeacher;
+
+    // ── Selection-mode dialog ───────────────────────────────────────────────
+    bool _selectionOpen;
+    TaxonomyTreeAxisDto? _selectionAxis;
+    int? _draftMax = 1;
+    int _draftCap = 3;
+    int _draftMin;
+    string? _capWarning;
+    SelectionCapPreviewDto? _capPreview;
+
+    static readonly (string Label, int? Max)[] SelectionChoices =
+    {
+        ("تەنها یەک", 1),
+        ("هەرچەند بێت", null),
+        ("تا ژمارەیەکی دیاریکراو", 3),
+    };
+
+    // ── Add-group dialog ────────────────────────────────────────────────────
+    bool _addGroupOpen;
+    TaxonomyTreeValueDto? _addGroupParent;
+    string _newGroupName = "";
+
+    /// <summary>
+    /// True when an admin elsewhere changed the taxonomy after this screen was drawn.
+    ///
+    /// Shown as an offer to reload rather than reloading automatically: this person may be halfway
+    /// through renaming a node, and yanking the tree out from under them is the same mistake the
+    /// entry form is explicitly forbidden from making.
+    /// </summary>
+    bool _staleVersion;
+
+    /// <summary>
+    /// Extending the taxonomy is tier 2 and belongs to the single linguistic owner. An Admin reads
+    /// this screen; the editing affordances are not rendered for them at all, because a button that
+    /// always returns 403 reads as a broken page rather than a deliberate permission.
+    ///
+    /// The rule is still enforced at the endpoint — this only stops the UI offering what the API
+    /// will refuse. A permission that lives in a component is not a permission.
+    /// </summary>
+    bool _canEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+        _canEdit = state.User.IsInRole("LinguisticOwner");
+
+        // Real time: the hub tells this circuit when anyone changes the taxonomy, so two admins
+        // working at once see each other's structure without a refresh.
+        Stream.TaxonomyChanged += OnTaxonomyChanged;
+        await Stream.StartAsync();
+
+        var overview = await Taxonomy.GetOverviewAsync();
+        _parts = overview?.PartsOfSpeech ?? new();
+
+        _partOfSpeechId = PartOfSpeechId ?? _parts.FirstOrDefault()?.Id ?? 0;
+        await Load();
+    }
+
+    async Task OnTaxonomyChanged(TaxonomyChangedDto change)
+    {
+        await InvokeAsync(async () =>
+        {
+            // Somebody else's change. If nothing on this screen is mid-edit, take it silently;
+            // otherwise flag it and let them choose.
+            if (_addGroupOpen || _selectionOpen || _addingRoot)
+            {
+                _staleVersion = true;
+                StateHasChanged();
+                return;
+            }
+
+            await Load();
+        });
+    }
+
+    async Task Select(int partId)
+    {
+        _partOfSpeechId = partId;
+        _previewSelection.Clear();
+        await Load();
+    }
+
+    async Task Reload()
+    {
+        _staleVersion = false;
+        await Load();
+    }
+
+    async Task Load()
+    {
+        if (_partOfSpeechId == 0) { _loading = false; return; }
+
+        _loading = true;
+        StateHasChanged();
+
+        _tree = await Taxonomy.GetTreeAsync(_partOfSpeechId);
+        _staleVersion = false;
+
+        await RefreshPreview();
+
+        _loading = false;
+    }
+
+    /// <summary>
+    /// Re-resolves the preview ON THE SERVER, against the same rule the real entry form uses.
+    ///
+    /// Doing the cascade locally would be faster and would be a confident lie the first time the
+    /// rule changed — which is exactly the failure this preview exists to prevent.
+    /// </summary>
+    async Task RefreshPreview()
+    {
+        _preview = await Taxonomy.PreviewFormAsync(_partOfSpeechId, _previewSelection);
+
+        // Selections that no longer resolve (their parent group closed) must not linger, or the
+        // preview drifts from what the form would actually show.
+        var live = _preview.SelectMany(a => a.Values).Select(v => v.ValueId).ToHashSet();
+        _previewSelection.RemoveWhere(id => !live.Contains(id));
+    }
+
+    /// <summary>
+    /// A click in the preview behaves exactly as it would in the real form, including the cap:
+    /// single-select replaces, multi-select toggles up to the limit.
+    /// </summary>
+    async Task PreviewPick((int AxisId, int ValueId) pick)
+    {
+        var axis = _preview.FirstOrDefault(a => a.AxisId == pick.AxisId);
+        if (axis is null) return;
+
+        if (axis.MaxSelections == 1)
+        {
+            foreach (var value in axis.Values)
+                _previewSelection.Remove(value.ValueId);
+
+            _previewSelection.Add(pick.ValueId);
+        }
+        else if (!_previewSelection.Remove(pick.ValueId))
+        {
+            var held = axis.Values.Count(v => _previewSelection.Contains(v.ValueId));
+
+            if (axis.MaxSelections is { } cap && held >= cap)
+            {
+                Toast.Error($"لەم بژاردەیەدا تەنها {Ku.N(cap)} دەکرێت هەڵبژێردرێت.");
+                return;
+            }
+
+            _previewSelection.Add(pick.ValueId);
+        }
+
+        await RefreshPreview();
+    }
+
+    /// <summary>
+    /// Mirrors the entry form's rule exactly — a preview that labelled things differently from the
+    /// real screen would be worse than no preview. See Station.razor for why the sole first-level
+    /// group goes unlabelled.
+    /// </summary>
+    bool ShowAxisName(StationAxisDto axis) =>
+        axis.Depth > 0 || _preview.Count(a => a.Depth == 0) > 1;
+
+    async Task ResetPreview()
+    {
+        _previewSelection.Clear();
+        await RefreshPreview();
+    }
+
+    /// <summary>
+    /// The first-level dropdowns the shape view draws.
+    ///
+    /// Filtered exactly as <c>OptionsTree.Resolve</c> filters them — a deactivated group, and a group
+    /// with no options yet, are both absent from the real form. The SETTINGS TREE on the other side of
+    /// this screen deliberately still shows them, because that is where somebody has to be able to see
+    /// and fix a half-built group; a preview that showed them would send you hunting for a dropdown
+    /// the teacher never meets.
+    /// </summary>
+    List<TaxonomyTreeAxisDto> ShapePreviewRoots =>
+        (_tree?.Axes ?? new())
+            .Where(a => a.IsActive && a.Values.Any(v => v.IsActive))
+            .ToList();
+
+    static string PreviewTabClass(bool active) => active
+        ? "rounded-full bg-green-deep px-2.5 py-1 text-11 font-medium text-white"
+        : "rounded-full bg-page px-2.5 py-1 text-11 text-ink-2 transition-colors hover:bg-green-tint hover:text-on-tint";
+
+    // ── Collapse ────────────────────────────────────────────────────────────
+
+    void ToggleCollapse(int axisId)
+    {
+        if (!_collapsed.Remove(axisId)) _collapsed.Add(axisId);
+    }
+
+    void CollapseAll()
+    {
+        _collapsed.Clear();
+        foreach (var id in AllAxisIds(_tree?.Axes)) _collapsed.Add(id);
+    }
+
+    void ExpandAll() => _collapsed.Clear();
+
+    // ── The shape, read back out of the tree ────────────────────────────────
+    //
+    // Two shapes exist and they are the two the grammar needs:
+    //
+    //   یەکلایەنە   — several groups at the first level, all asked at once. ناو: five dropdowns
+    //                 side by side, one answer each.
+    //   زەنجیرەیی   — one group at the first level whose answers open the next. کار: one dropdown,
+    //                 then another, then another.
+    //
+    // A part of speech does not carry a "type" field. Its shape is what its tree does, so building
+    // the tree IS defining the type — which is what makes it dynamic rather than a fixed pair of
+    // layouts somebody has to keep in step with the data.
+
+    int MaxDepth => _tree is null ? 0 : Depth(_tree.Axes);
+
+    static int Depth(List<TaxonomyTreeAxisDto> axes) =>
+        axes.Count == 0
+            ? 0
+            : 1 + axes.SelectMany(a => a.Values).Select(v => Depth(v.Children)).DefaultIfEmpty(0).Max();
+
+    string ShapeLabel
+    {
+        get
+        {
+            if (_tree is null || _tree.Axes.Count == 0) return "ڕێکنەخراوە";
+
+            var depth = MaxDepth;
+
+            if (depth <= 1)
+                return $"یەکلایەنە — {Ku.N(_tree.Axes.Count)} بژاردە پێکەوە";
+
+            return _tree.Axes.Count == 1
+                ? $"زەنجیرەیی — {Ku.N(depth)} ئاست"
+                : $"تێکەڵ — {Ku.N(_tree.Axes.Count)} سەرەکی، {Ku.N(depth)} ئاست";
+        }
+    }
+
+    /// <summary>
+    /// What the entry form will actually do, said plainly. Counts come from the tree, so this
+    /// cannot drift from what a teacher sees.
+    /// </summary>
+    string ShapeHint
+    {
+        get
+        {
+            if (_tree is null || _tree.Axes.Count == 0)
+                return "هێشتا هیچ پرسیارێک ڕێکنەخراوە — یەکەم پرسیار زیاد بکە.";
+
+            var roots = _tree.Axes.Count;
+            var depth = MaxDepth;
+
+            var head = roots == 1
+                ? "لە فۆرمی تۆمارکردندا یەک دانەخوازە دەردەکەوێت"
+                : $"لە فۆرمی تۆمارکردندا {Ku.N(roots)} دانەخوازە پێکەوە دەردەکەون";
+
+            var tail = depth <= 1
+                ? "و هیچ پرسیاری ژێرەوەی نییە."
+                : $"و تا {Ku.N(depth)} ئاستی ژێرەوەی هەیە — هەر نرخێک پرسیاری خۆی دەکاتەوە.";
+
+            return $"{head} {tail}";
+        }
+    }
+
+    // ── The prompt-writing worklist ─────────────────────────────────────────
+
+    /// <summary>Every group in the tree at every depth, flattened. Order is the tree's own.</summary>
+    IEnumerable<TaxonomyTreeAxisDto> AllAxes => Flatten(_tree?.Axes);
+
+    static IEnumerable<TaxonomyTreeAxisDto> Flatten(List<TaxonomyTreeAxisDto>? axes)
+    {
+        foreach (var axis in axes ?? new())
+        {
+            yield return axis;
+
+            foreach (var child in axis.Values.SelectMany(v => Flatten(v.Children)))
+                yield return child;
+        }
+    }
+
+    /// <summary>
+    /// Dropdowns a teacher currently meets as a raw grammatical label. Deliberately not auto-filled:
+    /// see the banner in the markup for why an invented question is worse than a bare one.
+    /// </summary>
+    List<TaxonomyTreeAxisDto> Unwritten =>
+        AllAxes.Where(a => string.IsNullOrWhiteSpace(a.PromptKu)).ToList();
+
+    /// <summary>Questions the system suggested. Editing any of them clears its flag.</summary>
+    List<TaxonomyTreeAxisDto> NeedsReview =>
+        AllAxes.Where(a => a.PromptNeedsReview && !string.IsNullOrWhiteSpace(a.PromptKu)).ToList();
+
+    static IEnumerable<int> AllAxisIds(List<TaxonomyTreeAxisDto>? axes)
+    {
+        foreach (var axis in axes ?? new())
+        {
+            yield return axis.AxisId;
+
+            foreach (var id in axis.Values.SelectMany(v => AllAxisIds(v.Children)))
+                yield return id;
+        }
+    }
+
+    // ── Edits. Every one reports through Toast: a refused save that changes
+    //    nothing on screen is indistinguishable from one that worked.
+    // ────────────────────────────────────────────────────────────────────────
+
+    void AddChildGroup(TaxonomyTreeValueDto parent)
+    {
+        _addGroupParent = parent;
+        _newGroupName = "";
+        _addGroupOpen = true;
+    }
+
+    async Task ConfirmAddGroup()
+    {
+        if (_addGroupParent is null) return;
+
+        var name = _newGroupName.Trim();
+        if (name.Length == 0) { Toast.Error("ناوێک بنووسە"); return; }
+
+        var error = await Taxonomy.AddGroupAsync(_partOfSpeechId, _addGroupParent.ValueId, name);
+        Toast.Result(error, $"«{name}» زیادکرا لە ژێر «{_addGroupParent.NameKu}»");
+
+        _addGroupOpen = false;
+        _addGroupParent = null;
+
+        await Load();
+    }
+
+    /// <summary>
+    /// The first question needs no dialog — there is nothing yet for it to be a value OF. From the
+    /// second onwards the choice is real, and getting it wrong is what produces two dropdowns where
+    /// one was meant.
+    /// </summary>
+    void OpenAddRoot()
+    {
+        _newRootName = "";
+
+        if (_tree is null || _tree.Axes.Count == 0)
+        {
+            _addingRoot = true;
+            return;
+        }
+
+        _targetGroupId = _tree.Axes[0].AxisId;
+        _addRootOpen = true;
+    }
+
+    void OnTargetChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var id)) _targetGroupId = id;
+    }
+
+    async Task AddAsValue()
+    {
+        var name = _newRootName.Trim();
+        if (name.Length == 0) { Toast.Error("ناوێک بنووسە"); return; }
+        if (_targetGroup is not { } target) return;
+
+        var error = await Taxonomy.AddValueAsync(target.AxisId, name, null);
+        Toast.Result(error, $"«{name}» بووە نرخێک لە «{target.NameKu}»");
+
+        _addRootOpen = false;
+        await Load();
+    }
+
+    async Task AddAsQuestion()
+    {
+        var name = _newRootName.Trim();
+        if (name.Length == 0) { Toast.Error("ناوێک بنووسە"); return; }
+
+        var error = await Taxonomy.AddGroupAsync(_partOfSpeechId, null, name);
+        Toast.Result(error, $"دانەخوازەی «{name}» زیادکرا");
+
+        _addRootOpen = false;
+        await Load();
+    }
+
+    async Task CommitAddRoot()
+    {
+        var name = _newRootName.Trim();
+        _newRootName = "";
+        _addingRoot = false;
+
+        if (name.Length == 0) return;
+
+        var error = await Taxonomy.AddGroupAsync(_partOfSpeechId, null, name);
+        Toast.Result(error, $"«{name}» زیادکرا");
+
+        await Load();
+    }
+
+    async Task OnAddRootKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await CommitAddRoot();
+        else if (e.Key == "Escape") { _addingRoot = false; _newRootName = ""; }
+    }
+
+    async Task AddValue((TaxonomyTreeAxisDto Axis, string Name) args)
+    {
+        var error = await Taxonomy.AddValueAsync(args.Axis.AxisId, args.Name, null);
+        Toast.Result(error, $"«{args.Name}» زیادکرا");
+        await Load();
+    }
+
+    async Task RenameGroup((TaxonomyTreeAxisDto Axis, string Name) args)
+    {
+        var error = await Taxonomy.RenameAxisAsync(args.Axis.AxisId, args.Name, args.Axis.Description);
+        Toast.Result(error, $"ناوەکە بوو بە «{args.Name}»");
+        await Load();
+    }
+
+    async Task RenameValue((TaxonomyTreeValueDto Value, string Name) args)
+    {
+        var error = await Taxonomy.RenameValueAsync(args.Value.ValueId, args.Name);
+        Toast.Result(error, $"ناوەکە بوو بە «{args.Name}»");
+        await Load();
+    }
+
+    /// <summary>
+    /// The plain-language question a teacher reads. Null clears it and the form falls back to the
+    /// short label — said out loud in the toast, because "cleared" and "broken" look identical
+    /// otherwise.
+    /// </summary>
+    async Task SetPrompt((TaxonomyTreeAxisDto Axis, string? Prompt) args)
+    {
+        var error = await Taxonomy.SetPromptAsync(args.Axis.AxisId, args.Prompt);
+
+        Toast.Result(error, args.Prompt is null
+            ? $"پرسیارەکە لابردرا — مامۆستا «{args.Axis.NameKu}» دەبینێت"
+            : $"مامۆستا ئێستا دەخوێنێتەوە: «{args.Prompt}»");
+
+        await Load();
+    }
+
+    async Task SetOptionHint((TaxonomyTreeValueDto Value, string? Hint) args)
+    {
+        var error = await Taxonomy.SetOptionHintAsync(args.Value.ValueId, args.Hint);
+
+        Toast.Result(error, args.Hint is null
+            ? $"نموونەی «{args.Value.NameKu}» لابردرا"
+            : $"نموونەی «{args.Value.NameKu}» پاشەکەوتکرا");
+
+        await Load();
+    }
+
+    async Task ToggleActive(TaxonomyTreeAxisDto axis)
+    {
+        var error = await Taxonomy.SetAxisActiveAsync(axis.AxisId, !axis.IsActive);
+
+        Toast.Result(error, axis.IsActive
+            ? $"«{axis.NameKu}» ناچالاک کرا — وەڵامەکانی پێشوو نەسڕدراونەتەوە"
+            : $"«{axis.NameKu}» چالاک کرایەوە");
+
+        await Load();
+    }
+
+    async Task RemoveGroup(TaxonomyTreeAxisDto axis)
+    {
+        var error = await Taxonomy.RemoveGroupAsync(_partOfSpeechId, axis.AxisId);
+        Toast.Result(error, $"«{axis.NameKu}» لابرا");
+        await Load();
+    }
+
+    // ── Selection mode ──────────────────────────────────────────────────────
+
+    void OpenSelectionMode(TaxonomyTreeAxisDto axis)
+    {
+        _selectionAxis = axis;
+        _draftMax = axis.MaxSelections;
+        _draftCap = axis.MaxSelections is { } max && max > 1 ? max : 3;
+        _draftMin = axis.MinSelections;
+        _capWarning = null;
+        _capPreview = null;
+        _selectionOpen = true;
+    }
+
+    void OnMinToggled(ChangeEventArgs e) => _draftMin = e.Value is true ? 1 : 0;
+
+    async Task SaveSelectionMode()
+    {
+        if (_selectionAxis is not { } axis) return;
+
+        // "تا ژمارەیەکی دیاریکراو" carries its own number; the other two choices are the number.
+        var max = _draftMax is null ? (int?)null : (_draftMax == 1 ? 1 : _draftCap);
+
+        // Ask what it would cost BEFORE applying it. Truncating somebody's third answer to fit a new
+        // limit is a data loss in a place nobody would look for it.
+        if (max is { } cap)
+        {
+            _capPreview = await Taxonomy.PreviewSelectionCapAsync(axis.AxisId, cap);
+
+            if (_capPreview is { IsSafe: false } unsafePreview)
+            {
+                _capWarning =
+                    $"{Ku.N(unsafePreview.AffectedSenseCount)} مانا زیاتر لە {Ku.N(cap)} بژاردەیان هەیە. " +
+                    "سەرەتا ئەوان ڕاست بکەرەوە — ئەم گۆڕانکارییە وەڵامەکانیان ناسڕێتەوە.";
+
+                StateHasChanged();
+                return;
+            }
+        }
+
+        var min = Math.Min(_draftMin, max ?? int.MaxValue);
+        var error = await Taxonomy.SetSelectionModeAsync(axis.AxisId, min, max);
+
+        Toast.Result(error, $"«{axis.NameKu}» — {Describe(max)}");
+
+        _selectionOpen = false;
+        await Load();
+    }
+
+    static string Describe(int? max) => max switch
+    {
+        1 => "تەنها یەک بژاردە",
+        null => "هەرچەند بژاردە بێت",
+        var n => $"تا {Ku.N(n!.Value)} بژاردە",
+    };
+
+    public async ValueTask DisposeAsync()
+    {
+        Stream.TaxonomyChanged -= OnTaxonomyChanged;
+        await Task.CompletedTask;
+    }
+}

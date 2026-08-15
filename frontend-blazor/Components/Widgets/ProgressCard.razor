@@ -1,0 +1,63 @@
+@* One work-queue bucket, shown as progress rather than as a backlog count.
+
+   "٤٨٤ sense missing a part of speech" is a number that only ever goes down slowly and reads
+   as failure every morning. The same fact stated as "٨٦٪ done, ٤٨٤ left" is the identical
+   data and is the one people keep working on. The remainder is hatched, never grey. *@
+
+<a href="@Href" class="card flex flex-col gap-3 transition-colors hover:border-green-soft">
+    <div class="flex items-start gap-3">
+        <span class="card-badge"><Icon Name="@Icon" Class="h-4 w-4" /></span>
+        <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium text-ink-1">@Title</p>
+            <p class="truncate text-xs text-ink-2">@Subtitle</p>
+        </div>
+    </div>
+
+    @if (!Configured)
+    {
+        @* An unconfigured axis has an UNKNOWN backlog, not an empty one. Reporting 100٪ here
+           would quietly tell the team they had finished work they have not started. *@
+        <p class="pill pill-muted self-start">ڕێکنەخراوە</p>
+    }
+    else
+    {
+        <div class="flex items-baseline gap-2">
+            <span class="text-20 font-medium text-ink-1"><bdi>@Ku.P(Ratio)</bdi></span>
+            <span class="text-11 text-ink-2">تەواو</span>
+            <span class="ms-auto text-11 @(Remaining == 0 ? "text-ink-2" : "text-warn")">
+                @if (Remaining == 0)
+                {
+                    <text>هیچ نەماوە</text>
+                }
+                else
+                {
+                    <bdi>@Ku.N(Remaining)</bdi>
+                    <text> ماوە</text>
+                }
+            </span>
+        </div>
+
+        <div class="progress-track">
+            <div class="progress-fill" style="width:@(Pct)%"></div>
+        </div>
+    }
+</a>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public string Subtitle { get; set; } = "";
+    [Parameter] public string Href { get; set; } = "";
+    [Parameter] public string Icon { get; set; } = "queue";
+
+    /// <summary>Items still to fix.</summary>
+    [Parameter, EditorRequired] public int Remaining { get; set; }
+
+    /// <summary>The universe this bucket is measured against — usually the total sense count.</summary>
+    [Parameter, EditorRequired] public int Total { get; set; }
+
+    /// <summary>False when the taxonomy this bucket depends on has not been set up yet.</summary>
+    [Parameter] public bool Configured { get; set; } = true;
+
+    double Ratio => Total <= 0 ? 0 : Math.Clamp((Total - Remaining) / (double)Total, 0, 1);
+    int Pct => (int)Math.Round(Ratio * 100);
+}

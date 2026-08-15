@@ -1,0 +1,490 @@
+@* One node of the settings tree, and its whole subtree.
+
+   Recursive on purpose — the component renders itself under any value, which is what makes the
+   depth unlimited in the UI as well as in the data. There is no `if (Depth == 2)` here, and adding
+   one would put a ceiling on the grammar that the schema does not have.
+
+   The vocabulary on screen is deliberately not the vocabulary of the schema. The person building
+   کار's cascade is a language teacher: they see «بژاردە» and «نرخ» and «بژاردەی زیاتر زیاد بکە»,
+   never "axis", "conditional" or "requires value".
+
+   Every group shows TWO strings, one above the other and both editable in place:
+
+     · the LABEL   — the short technical name, for whoever is reading this screen.
+     · the QUESTION — the sentence the teacher actually reads on the entry form.
+
+   Both, always, and the question is shown exactly as it will appear rather than described. The whole
+   reason the entry form read like a schema dump is that this screen only ever offered one field, so
+   «جۆری کار» was simultaneously the admin's shorthand and the teacher's instruction, and improving
+   one meant damaging the other. *@
+
+<div class="@(Axis.Depth == 0 ? "" : "border-s border-line ps-4")">
+
+    @* ── The group ──────────────────────────────────────────────────────── *@
+    <div class="flex flex-wrap items-center gap-2 py-2">
+
+        <button type="button" @onclick="() => Toggle()"
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-chip text-ink-3 transition-colors hover:bg-page"
+                title="@(IsCollapsed ? "کردنەوە" : "داخستن")">
+            <Icon Name="chevron" Class="@($"h-3.5 w-3.5 transition-transform {(IsCollapsed ? "-rotate-90" : "")}")" Mirror="true" />
+        </button>
+
+        @if (IsRenaming)
+        {
+            <input @bind="_draftName" @bind:event="oninput" @onkeydown="OnRenameKey"
+                   class="field w-48 py-1.5 text-sm" autofocus />
+
+            <button type="button" @onclick="CommitRename" class="btn-primary py-1.5 text-xs">پاشەکەوت</button>
+            <button type="button" @onclick="CancelRename" class="btn-secondary py-1.5 text-xs">پاشگەز</button>
+        }
+        else
+        {
+            <button type="button" @onclick="StartRename" disabled="@(!CanEdit)"
+                    class="text-15 font-medium text-ink-1 transition-colors enabled:hover:text-green"
+                    title="@(CanEdit ? "کلیک بۆ گۆڕینی ناو" : null)">
+                @Axis.NameKu
+            </button>
+
+            @if (!Axis.IsActive)
+            {
+                <span class="pill pill-muted">ناچالاک</span>
+            }
+
+            @* A group with no values does not render on the entry form — a dropdown with nothing in
+               it cannot be answered. Saying so HERE is the whole point: otherwise you build the
+               group, look at the form, see nothing, and conclude the cascade is broken. *@
+            @if (Axis.Values.Count == 0)
+            {
+                <span class="pill pill-warn" title="لە فۆرمی تۆمارکردندا دەرناکەوێت تا نرخی پێبدەیت">
+                    هێشتا نرخی نییە
+                </span>
+            }
+
+            @* Live usage on every node — the number that makes the long tail visible. *@
+            <span class="@(Axis.UsageCount > 0 ? "pill pill-ok" : "pill pill-warn")"
+                  title="ئەو وشانەی وەڵامیان لەم بژاردەیەدا هەیە">
+                <bdi>@Ku.N(Axis.UsageCount)</bdi> وشە
+            </span>
+
+            @* «چەند بژاردە دەکرێت هەڵبژێردرێت؟» — plain language, never the field name. *@
+            <button type="button" @onclick="() => OnEditSelectionMode.InvokeAsync(Axis)" disabled="@(!CanEdit)"
+                    class="pill pill-muted transition-colors enabled:hover:bg-page"
+                    title="چەند بژاردە دەکرێت هەڵبژێردرێت؟">
+                @SelectionLabel(Axis)
+            </button>
+
+            @if (Axis.MinSelections > 0 || Axis.IsRequired)
+            {
+                <span class="pill pill-warn" title="لە کەمووکوڕی وشەکاندا دەردەکەوێت — بەڵام هەرگیز ڕێگری لە پاشەکەوت ناکات">
+                    کەمووکوڕی وشەکان
+                </span>
+            }
+
+            @if (CanEdit)
+            {
+                <span class="ms-auto flex items-center gap-1.5">
+                    <button type="button" @onclick="() => OnToggleActive.InvokeAsync(Axis)"
+                            class="btn-ghost-icon" title="@(Axis.IsActive ? "ناچالاککردن" : "چالاککردنەوە")">
+                        <Icon Name="eye" Class="h-3.5 w-3.5" />
+                    </button>
+
+                    <button type="button" @onclick="() => OnRemove.InvokeAsync(Axis)"
+                            class="btn-ghost-icon" title="لابردن">
+                        <Icon Name="trash" Class="h-3.5 w-3.5" />
+                    </button>
+                </span>
+            }
+        }
+    </div>
+
+    @* ── The question the teacher reads ───────────────────────────────────────
+       Shown as the sentence itself, not as a form field with a name — so what is on this line is
+       literally what will be on the entry form. When it is empty, the fallback is spelled out rather
+       than left blank, because an empty field here does not look like «the teacher will see جۆری کار». *@
+    <div class="mb-2 flex flex-wrap items-start gap-2 ps-6">
+        @if (IsEditingPrompt)
+        {
+            <span class="pt-1.5 text-11 text-ink-3">مامۆستا دەخوێنێتەوە</span>
+
+            <input @bind="_draftPrompt" @bind:event="oninput" @onkeydown="OnPromptKey"
+                   placeholder="@($"بۆ نموونە: {Axis.NameKu}ی وشەکە چییە؟")"
+                   class="field w-72 max-w-full py-1.5 text-sm" autofocus />
+
+            <button type="button" @onclick="CommitPrompt" class="btn-primary py-1.5 text-xs">پاشەکەوت</button>
+            <button type="button" @onclick="() => IsEditingPrompt = false" class="btn-secondary py-1.5 text-xs">پاشگەز</button>
+
+            @* Clearing is a real choice, not a mistake: the form falls back to the label, which is
+               honest. Better a bare category name the team asks about than an invented question a
+               teacher answers confidently. *@
+            @if (!string.IsNullOrWhiteSpace(Axis.PromptKu))
+            {
+                <button type="button" @onclick="ClearPrompt"
+                        class="py-1.5 text-11 text-ink-3 transition-colors hover:text-warn"
+                        title="پرسیارەکە لابدە — فۆرمەکە دەگەڕێتەوە بۆ ناوی کورت">
+                    لابردنی پرسیار
+                </button>
+            }
+        }
+        else
+        {
+            <span class="pt-0.5 text-11 text-ink-3">مامۆستا دەخوێنێتەوە</span>
+
+            <button type="button" @onclick="StartEditPrompt" disabled="@(!CanEdit)"
+                    class="text-start text-13 text-ink-1 transition-colors enabled:hover:text-green"
+                    title="@(CanEdit ? "کلیک بۆ گۆڕینی پرسیارەکە" : null)">
+                @if (string.IsNullOrWhiteSpace(Axis.PromptKu))
+                {
+                    @* No question written. Say what the teacher gets instead, in their own words. *@
+                    <span class="text-ink-3">
+                        «@Axis.NameKu» — پرسیارێکی ئاسان نەنووسراوە
+                    </span>
+                }
+                else
+                {
+                    <span>«@Axis.PromptKu»</span>
+                }
+            </button>
+
+            @if (Axis.PromptNeedsReview)
+            {
+                @* A suggestion, not a decision. It stops being flagged the moment somebody edits it. *@
+                <span class="pill pill-warn"
+                      title="ئەم پرسیارە پێشنیارکراوە — بخوێنەوە و ڕاستی بکەرەوە">
+                    پێداچوونەوە پێویستە
+                </span>
+            }
+        }
+    </div>
+
+    @if (!IsCollapsed)
+    {
+        <div class="ps-6">
+            @* ── Its values, and what each of them opens ─────────────────── *@
+            @foreach (var value in Axis.Values)
+            {
+                <div class="py-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-green-soft"></span>
+
+                        @if (RenamingValueId == value.ValueId)
+                        {
+                            <input @bind="_draftValueName" @bind:event="oninput" @onkeydown="e => OnValueRenameKey(e, value)"
+                                   class="field w-44 py-1.5 text-sm" autofocus />
+
+                            <button type="button" @onclick="() => CommitValueRename(value)"
+                                    class="btn-primary py-1.5 text-xs">پاشەکەوت</button>
+                            <button type="button" @onclick="CancelValueRename"
+                                    class="btn-secondary py-1.5 text-xs">پاشگەز</button>
+                        }
+                        else
+                        {
+                            <button type="button" @onclick="() => StartValueRename(value)" disabled="@(!CanEdit)"
+                                    class="text-sm text-ink-1 transition-colors enabled:hover:text-green"
+                                    title="@(CanEdit ? "کلیک بۆ گۆڕینی ناو" : null)">
+                                @value.NameKu
+                            </button>
+
+                            @if (!value.IsActive)
+                            {
+                                <span class="pill pill-muted">ناچالاک</span>
+                            }
+
+                            @* How many senses hold THIS value. Every node shows its own count. *@
+                            <span class="@(value.WordCount > 0 ? "pill pill-ok" : "pill pill-warn")">
+                                <bdi>@Ku.N(value.WordCount)</bdi>
+                            </span>
+
+                            @* The whole interaction: one button, at any depth.
+
+                               Deliberately the LOUDEST control on the row. It used to be a small
+                               dashed link and the loud button was the one at the foot of the page
+                               that adds a PARALLEL question — so that is the one people pressed,
+                               and کار kept ending up with three dropdowns side by side instead of
+                               one that opens the next. The prominence now matches which action is
+                               actually wanted. *@
+                            @if (CanEdit)
+                            {
+                                @if (value.Children.Count == 0)
+                                {
+                                    <button type="button" @onclick="() => OnAddGroup.InvokeAsync(value)"
+                                            class="rounded-full bg-green-tint px-2.5 py-1 text-11 text-on-tint transition-opacity hover:opacity-80"
+                                            title="پرسیارێک کە تەنها دوای هەڵبژاردنی ئەم نرخە دەردەکەوێت">
+                                        + پرسیاری دواتر لەژێر ئەمە
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" @onclick="() => OnAddGroup.InvokeAsync(value)"
+                                            class="rounded-full border border-dashed border-line px-2.5 py-1 text-11 text-ink-2 transition-colors hover:bg-green-tint hover:text-on-tint"
+                                            title="پرسیارێکی تری ژێرەوە">
+                                        + پرسیاری تر
+                                    </button>
+                                }
+                            }
+                        }
+                    </div>
+
+                    @* ── The worked example for this option ──────────────────
+                       Optional everywhere. A teacher who understands the question can still be
+                       unsure which of two options their word is, and one example settles that
+                       faster than any amount of rewording the question. *@
+                    @if (HintValueId == value.ValueId)
+                    {
+                        <div class="mt-1 flex flex-wrap items-center gap-2 ps-3.5">
+                            <input @bind="_draftHint" @bind:event="oninput"
+                                   @onkeydown="e => OnHintKey(e, value)"
+                                   placeholder="نموونەیەکی کورت…"
+                                   class="field w-64 max-w-full py-1.5 text-11" autofocus />
+
+                            <button type="button" @onclick="() => CommitHint(value)"
+                                    class="btn-primary py-1.5 text-xs">پاشەکەوت</button>
+                            <button type="button" @onclick="() => HintValueId = null"
+                                    class="btn-secondary py-1.5 text-xs">پاشگەز</button>
+                        </div>
+                    }
+                    else if (!string.IsNullOrWhiteSpace(value.OptionHintKu))
+                    {
+                        <button type="button" @onclick="() => StartEditHint(value)" disabled="@(!CanEdit)"
+                                class="mt-0.5 block ps-3.5 text-start text-11 text-ink-3 transition-colors enabled:hover:text-ink-1"
+                                title="@(CanEdit ? "کلیک بۆ گۆڕینی نموونە" : null)">
+                            نموونە: @value.OptionHintKu
+                        </button>
+                    }
+                    else if (CanEdit)
+                    {
+                        <button type="button" @onclick="() => StartEditHint(value)"
+                                class="mt-0.5 ps-3.5 text-11 text-ink-3 transition-colors hover:text-ink-1"
+                                title="نموونەیەکی کورت کە لەژێر دانەخوازەکەدا دەردەکەوێت">
+                            + نموونە
+                        </button>
+                    }
+
+                    @* The recursion. A value's child groups are rendered by this same component. *@
+                    @foreach (var child in value.Children)
+                    {
+                        <div class="ms-3 mt-1">
+                            <OptionsTreeNode Axis="child"
+                                             CanEdit="CanEdit"
+                                             Collapsed="Collapsed"
+                                             OnAddGroup="OnAddGroup"
+                                             OnAddValue="OnAddValue"
+                                             OnRename="OnRename"
+                                             OnRenameValue="OnRenameValue"
+                                             OnSetPrompt="OnSetPrompt"
+                                             OnSetHint="OnSetHint"
+                                             OnToggleActive="OnToggleActive"
+                                             OnRemove="OnRemove"
+                                             OnEditSelectionMode="OnEditSelectionMode"
+                                             OnToggleCollapse="OnToggleCollapse" />
+                        </div>
+                    }
+                </div>
+            }
+
+            @* ── Add a value to this group ───────────────────────────────── *@
+            @if (!CanEdit)
+            {
+                @* nothing: adding a value is tier 2 *@
+            }
+            else if (IsAddingValue)
+            {
+                <div class="flex flex-wrap items-center gap-2 py-1.5">
+                    <input @bind="_draftValueAdd" @bind:event="oninput" @onkeydown="OnAddValueKey"
+                           placeholder="ناوی نرخی نوێ…" class="field w-44 py-1.5 text-sm" autofocus />
+
+                    <button type="button" @onclick="CommitAddValue" class="btn-primary py-1.5 text-xs">زیادکردن</button>
+                    <button type="button" @onclick="() => IsAddingValue = false" class="btn-secondary py-1.5 text-xs">پاشگەز</button>
+                </div>
+            }
+            else
+            {
+                <button type="button" @onclick="() => IsAddingValue = true"
+                        class="mt-1 rounded-full border border-dashed border-line px-2.5 py-1 text-11 text-ink-3 transition-colors hover:bg-page hover:text-ink-1">
+                    + نرخ
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public TaxonomyTreeAxisDto Axis { get; set; } = default!;
+
+    /// <summary>
+    /// Collapse state lives on the PAGE, keyed by axis id, not in this component.
+    ///
+    /// The tree is re-fetched after every edit, so a component-local flag would be destroyed on
+    /// each save and the whole tree would spring back open under whoever was working in it.
+    /// </summary>
+    [Parameter] public HashSet<int> Collapsed { get; set; } = new();
+
+    /// <summary>
+    /// Whether this user may change the tree. Extending the taxonomy is tier 2 and belongs to the
+    /// single linguistic owner; an Admin reads this screen. The editing affordances are not
+    /// rendered at all rather than rendered and refused — a button that always 403s reads as a
+    /// broken page, not as a deliberate permission. Enforcement stays at the endpoint.
+    /// </summary>
+    [Parameter] public bool CanEdit { get; set; }
+
+    [Parameter] public EventCallback<TaxonomyTreeValueDto> OnAddGroup { get; set; }
+    [Parameter] public EventCallback<(TaxonomyTreeAxisDto Axis, string Name)> OnAddValue { get; set; }
+    [Parameter] public EventCallback<(TaxonomyTreeAxisDto Axis, string Name)> OnRename { get; set; }
+    [Parameter] public EventCallback<(TaxonomyTreeValueDto Value, string Name)> OnRenameValue { get; set; }
+
+    /// <summary>
+    /// The plain-language question. Null Prompt means CLEAR it — the entry form falls back to the
+    /// label, which is a supported outcome rather than an error state.
+    /// </summary>
+    [Parameter] public EventCallback<(TaxonomyTreeAxisDto Axis, string? Prompt)> OnSetPrompt { get; set; }
+
+    /// <summary>The worked example on one option. Null Hint clears it.</summary>
+    [Parameter] public EventCallback<(TaxonomyTreeValueDto Value, string? Hint)> OnSetHint { get; set; }
+
+    [Parameter] public EventCallback<TaxonomyTreeAxisDto> OnToggleActive { get; set; }
+    [Parameter] public EventCallback<TaxonomyTreeAxisDto> OnRemove { get; set; }
+    [Parameter] public EventCallback<TaxonomyTreeAxisDto> OnEditSelectionMode { get; set; }
+    [Parameter] public EventCallback<int> OnToggleCollapse { get; set; }
+
+    bool IsCollapsed => Collapsed.Contains(Axis.AxisId);
+
+    bool IsRenaming;
+    bool IsAddingValue;
+    int? RenamingValueId;
+
+    bool IsEditingPrompt;
+    int? HintValueId;
+
+    string _draftName = "";
+    string _draftValueName = "";
+    string _draftValueAdd = "";
+    string _draftPrompt = "";
+    string _draftHint = "";
+
+    Task Toggle() => OnToggleCollapse.InvokeAsync(Axis.AxisId);
+
+    // ── Inline rename: click the name, type, Enter ──────────────────────────
+
+    void StartRename()
+    {
+        _draftName = Axis.NameKu;
+        IsRenaming = true;
+    }
+
+    void CancelRename() => IsRenaming = false;
+
+    async Task CommitRename()
+    {
+        IsRenaming = false;
+        if (!string.IsNullOrWhiteSpace(_draftName) && _draftName != Axis.NameKu)
+            await OnRename.InvokeAsync((Axis, _draftName.Trim()));
+    }
+
+    async Task OnRenameKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await CommitRename();
+        else if (e.Key == "Escape") CancelRename();
+    }
+
+    // ── The teacher's question, and the worked examples ─────────────────────
+    //
+    // Both are editorial copy: they change what a teacher READS and nothing about the grammar the
+    // tree encodes. Committing an unchanged draft is skipped rather than sent, so opening a field to
+    // look at it does not clear the needs-review flag on a prompt nobody actually decided about.
+
+    void StartEditPrompt()
+    {
+        _draftPrompt = Axis.PromptKu ?? "";
+        IsEditingPrompt = true;
+    }
+
+    async Task CommitPrompt()
+    {
+        IsEditingPrompt = false;
+
+        var prompt = _draftPrompt.Trim();
+        if (prompt == (Axis.PromptKu ?? "")) return;
+
+        await OnSetPrompt.InvokeAsync((Axis, prompt.Length == 0 ? null : prompt));
+    }
+
+    async Task ClearPrompt()
+    {
+        IsEditingPrompt = false;
+        await OnSetPrompt.InvokeAsync((Axis, null));
+    }
+
+    async Task OnPromptKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await CommitPrompt();
+        else if (e.Key == "Escape") IsEditingPrompt = false;
+    }
+
+    void StartEditHint(TaxonomyTreeValueDto value)
+    {
+        _draftHint = value.OptionHintKu ?? "";
+        HintValueId = value.ValueId;
+    }
+
+    async Task CommitHint(TaxonomyTreeValueDto value)
+    {
+        HintValueId = null;
+
+        var hint = _draftHint.Trim();
+        if (hint == (value.OptionHintKu ?? "")) return;
+
+        await OnSetHint.InvokeAsync((value, hint.Length == 0 ? null : hint));
+    }
+
+    async Task OnHintKey(KeyboardEventArgs e, TaxonomyTreeValueDto value)
+    {
+        if (e.Key == "Enter") await CommitHint(value);
+        else if (e.Key == "Escape") HintValueId = null;
+    }
+
+    void StartValueRename(TaxonomyTreeValueDto value)
+    {
+        _draftValueName = value.NameKu;
+        RenamingValueId = value.ValueId;
+    }
+
+    void CancelValueRename() => RenamingValueId = null;
+
+    async Task CommitValueRename(TaxonomyTreeValueDto value)
+    {
+        RenamingValueId = null;
+        if (!string.IsNullOrWhiteSpace(_draftValueName) && _draftValueName != value.NameKu)
+            await OnRenameValue.InvokeAsync((value, _draftValueName.Trim()));
+    }
+
+    async Task OnValueRenameKey(KeyboardEventArgs e, TaxonomyTreeValueDto value)
+    {
+        if (e.Key == "Enter") await CommitValueRename(value);
+        else if (e.Key == "Escape") CancelValueRename();
+    }
+
+    async Task CommitAddValue()
+    {
+        var name = _draftValueAdd.Trim();
+        _draftValueAdd = "";
+        IsAddingValue = false;
+
+        if (name.Length > 0) await OnAddValue.InvokeAsync((Axis, name));
+    }
+
+    async Task OnAddValueKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await CommitAddValue();
+        else if (e.Key == "Escape") { IsAddingValue = false; _draftValueAdd = ""; }
+    }
+
+    /// <summary>
+    /// The selection count in words. MinSelections and MaxSelections are never shown — they are
+    /// implementation names, and a language teacher configuring کار should not have to learn them.
+    /// </summary>
+    static string SelectionLabel(TaxonomyTreeAxisDto axis) => axis.MaxSelections switch
+    {
+        1 => "تەنها یەک",
+        null => "هەرچەند بێت",
+        var n => $"تا {Ku.N(n!.Value)}",
+    };
+}

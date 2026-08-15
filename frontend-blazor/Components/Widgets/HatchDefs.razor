@@ -1,0 +1,11 @@
+@* The SVG counterpart of the .hatch CSS class. DOM elements can use the class; SVG strokes and
+   fills need a real <pattern>, so render this once per page that draws one. *@
+
+<svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+    <defs>
+        <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)"
+                 patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="var(--border)" stroke-width="2" />
+        </pattern>
+    </defs>
+</svg>

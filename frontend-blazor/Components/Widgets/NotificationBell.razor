@@ -8,19 +8,13 @@
    dropped, so the gap has to be closed by asking for everything after the last id we hold. *@
 
 <div class="relative">
-    <button type="button" @onclick="Toggle"
-            class="relative rounded-lg p-2 text-gray-600 transition hover:bg-gray-100"
-            aria-label="ئاگادارکردنەوەکان">
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-        </svg>
+    <button type="button" @onclick="Toggle" class="btn-topbar-icon" aria-label="ئاگادارکردنەوەکان">
+        <Icon Name="bell" Class="h-[18px] w-[18px]" />
 
+        @* A dot, never a number — the reference counts nothing in the top bar. *@
         @if (_unseen > 0)
         {
-            <span class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                @(_unseen > 9 ? "9+" : _unseen.ToString())
-            </span>
+            <span class="absolute end-2 top-2 h-1.5 w-1.5 rounded-full bg-green"></span>
         }
     </button>
 
@@ -29,10 +23,11 @@
         @* Click-away backdrop. *@
         <div class="fixed inset-0 z-30" @onclick="Close"></div>
 
-        <div class="absolute left-0 z-40 mt-2 w-80 origin-top-left overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
-            <div class="flex items-center justify-between border-b border-gray-100 px-4 py-2.5">
-                <p class="text-sm font-semibold text-gray-900">ئاگادارکردنەوەکان</p>
-                <a href="/activity" @onclick="Close" class="text-xs font-medium text-indigo-600 hover:underline">
+        @* end-0 = the LEFT edge in RTL, so the panel hangs inward from the bell. *@
+        <div class="absolute end-0 z-40 mt-2 w-80 overflow-hidden rounded-card border border-line bg-card shadow-shell">
+            <div class="flex items-center justify-between border-b border-line px-4 py-2.5">
+                <p class="text-sm font-medium text-ink-1">ئاگادارکردنەوەکان</p>
+                <a href="/activity" @onclick="Close" class="text-xs text-green hover:underline">
                     بینینی هەموو
                 </a>
             </div>
@@ -40,23 +35,23 @@
             <div class="max-h-96 overflow-y-auto">
                 @if (_items.Count == 0)
                 {
-                    <p class="px-4 py-8 text-center text-sm text-gray-400">هیچ چالاکییەک نییە</p>
+                    <p class="px-4 py-8 text-center text-sm text-ink-3">هیچ چالاکییەک نییە</p>
                 }
                 else
                 {
                     @foreach (var item in _items)
                     {
-                        <div class="flex gap-3 border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-gray-50">
-                            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs @ActionStyle(item.Action)">
-                                @ActionIcon(item.Action)
+                        <div class="flex gap-3 border-b border-line px-4 py-3 last:border-0 hover:bg-page">
+                            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full @ActionStyle(item.Action)">
+                                <Icon Name="@ActionIcon(item.Action)" Class="h-3.5 w-3.5" />
                             </span>
                             <div class="min-w-0 flex-1">
-                                <p class="text-xs leading-snug text-gray-800">
-                                    <span class="font-semibold">@(item.UserName ?? "نەناسراو")</span>
+                                <p class="text-xs leading-snug text-ink-2">
+                                    <span class="font-medium text-ink-1">@(item.UserName ?? "نەناسراو")</span>
                                     @ActionText(item.Action)
-                                    <span class="font-medium text-gray-900">@(item.Summary ?? EntityLabel(item.EntityType))</span>
+                                    <span class="font-medium text-ink-1">@(item.Summary ?? EntityLabel(item.EntityType))</span>
                                 </p>
-                                <p class="mt-0.5 text-[11px] text-gray-400">@Ago(item.CreatedAt)</p>
+                                <p class="mt-0.5 text-11 text-ink-3">@Ago(item.CreatedAt)</p>
                             </div>
                         </div>
                     }
@@ -149,22 +144,21 @@
 
     private static string ActionIcon(string action) => action switch
     {
-        "Create" => "＋",
-        "Update" => "✎",
-        "Delete" => "🗑",
-        "Login" => "→",
-        "LoginFailed" => "⚠",
-        _ => "•",
+        "Create" => "plus",
+        "Update" => "pencil",
+        "Delete" => "trash",
+        "Login" => "login",
+        "LoginFailed" => "alert",
+        _ => "check",
     };
 
+    /// <summary>Colour carries the KIND of action, never the person who did it.</summary>
     private static string ActionStyle(string action) => action switch
     {
-        "Create" => "bg-emerald-100 text-emerald-700",
-        "Update" => "bg-amber-100 text-amber-700",
-        "Delete" => "bg-red-100 text-red-700",
-        "LoginFailed" => "bg-red-100 text-red-700",
-        "Login" => "bg-blue-100 text-blue-700",
-        _ => "bg-gray-100 text-gray-600",
+        "Create" => "bg-green-tint text-on-tint",
+        "Update" => "bg-warn-tint text-warn",
+        "Delete" or "LoginFailed" => "bg-danger-tint text-danger",
+        _ => "bg-page text-ink-2",
     };
 
     private static string ActionText(string action) => action switch

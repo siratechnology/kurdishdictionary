@@ -1,0 +1,76 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@inject IPresenceStore Presence
+@inject AuthenticationStateProvider Auth
+
+@* Renders nothing. It exists to hold the DotNetObjectReference that the throttled JS listener
+   calls back into, and lives in MainLayout so every signed-in page carries it. *@
+
+@code {
+    private DotNetObjectReference<PresenceTracker>? _ref;
+    private IJSObjectReference? _module;
+    private Guid? _userId;
+
+    /// <summary>
+    /// Identifies THIS tracker to the browser script.
+    ///
+    /// Navigating creates the next page's tracker before disposing this one, so a stop() with no
+    /// identity would clear the reference the incoming tracker had just set — and every heartbeat
+    /// after the first page would be dropped on the floor.
+    /// </summary>
+    private readonly string _token = Guid.NewGuid().ToString("N");
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var state = await Auth.GetAuthenticationStateAsync();
+        if (state.User.Identity?.IsAuthenticated != true) return;
+
+        if (!Guid.TryParse(
+                state.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+                out var id))
+            return;
+
+        _userId = id;
+        _ref = DotNetObjectReference.Create(this);
+
+        try
+        {
+            await JS.InvokeVoidAsync("kurdishPresence.start", _ref, _token);
+        }
+        catch (JSDisconnectedException)
+        {
+            // The circuit closed between render and interop. Nothing to clean up that
+            // OnCircuitClosedAsync will not already handle.
+        }
+    }
+
+    /// <summary>
+    /// Called by the browser at most once every 30 seconds. This only bumps an in-memory value —
+    /// the database write happens on a 60-second flush, because writing a row per heartbeat would
+    /// mean an UPDATE every half minute per signed-in teacher, forever, to record that somebody
+    /// moved a mouse.
+    /// </summary>
+    [JSInvokable]
+    public void Heartbeat(string path, string reason)
+    {
+        if (_userId is { } id) Presence.Touch(id, path);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("kurdishPresence.stop", _token);
+        }
+        catch (JSDisconnectedException)
+        {
+            // Expected on navigation away or a dropped circuit.
+        }
+
+        _ref?.Dispose();
+
+        if (_module is not null) await _module.DisposeAsync();
+    }
+}

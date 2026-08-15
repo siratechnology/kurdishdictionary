@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Shared.Dtos;
 
@@ -43,6 +44,76 @@ public class AuthService
     {
         var http = await _api.CreateAsync();
         var response = await http.PostAsJsonAsync("api/auth/change-password", dto);
+        response.EnsureAuthorizedAndSuccess();
+        return await response.Content.ReadFromJsonAsync<AuthResultDto>()
+               ?? new AuthResultDto { Succeeded = false };
+    }
+
+    /// <summary>
+    /// Saves the signed-in user's own details. Roles and the active flag are not in
+    /// <see cref="UpdateProfileDto"/> at all, so this call cannot carry a privilege change even
+    /// if a caller tried — those stay on the admin-only user endpoint.
+    /// </summary>
+    public async Task<AuthResultDto> UpdateProfileAsync(UpdateProfileDto dto)
+    {
+        var http = await _api.CreateAsync();
+        var response = await http.PutAsJsonAsync("api/auth/me", dto);
+        response.EnsureAuthorizedAndSuccess();
+        return await response.Content.ReadFromJsonAsync<AuthResultDto>()
+               ?? new AuthResultDto { Succeeded = false };
+    }
+
+    /// <summary>
+    /// Uploads a profile picture. The server validates by DECODING the bytes and re-encodes what
+    /// it stores, so a rejection here is a real answer ("that is not an image", "too large") and
+    /// nothing the browser claims about the file is trusted.
+    /// </summary>
+    public async Task<AuthResultDto> UploadAvatarAsync(Stream content, string fileName, string contentType)
+    {
+        var http = await _api.CreateAsync();
+
+        using var form = new MultipartFormDataContent();
+        using var file = new StreamContent(content);
+        file.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+        // The name is sent because the multipart format wants one; the server discards it.
+        form.Add(file, "file", fileName);
+
+        var response = await http.PostAsync("api/auth/me/avatar", form);
+        response.EnsureAuthorizedAndSuccess();
+        return await response.Content.ReadFromJsonAsync<AuthResultDto>()
+               ?? new AuthResultDto { Succeeded = false };
+    }
+
+    public async Task<AuthResultDto> RemoveAvatarAsync()
+    {
+        var http = await _api.CreateAsync();
+        var response = await http.DeleteAsync("api/auth/me/avatar");
+        response.EnsureAuthorizedAndSuccess();
+        return await response.Content.ReadFromJsonAsync<AuthResultDto>()
+               ?? new AuthResultDto { Succeeded = false };
+    }
+
+    /// <summary>Admin-only: set another user's picture. Same validation as the self-service route.</summary>
+    public async Task<AuthResultDto> UploadUserAvatarAsync(Guid userId, Stream content, string fileName)
+    {
+        var http = await _api.CreateAsync();
+
+        using var form = new MultipartFormDataContent();
+        using var file = new StreamContent(content);
+        file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        form.Add(file, "file", fileName);
+
+        var response = await http.PostAsync($"api/auth/users/{userId}/avatar", form);
+        response.EnsureAuthorizedAndSuccess();
+        return await response.Content.ReadFromJsonAsync<AuthResultDto>()
+               ?? new AuthResultDto { Succeeded = false };
+    }
+
+    public async Task<AuthResultDto> RemoveUserAvatarAsync(Guid userId)
+    {
+        var http = await _api.CreateAsync();
+        var response = await http.DeleteAsync($"api/auth/users/{userId}/avatar");
         response.EnsureAuthorizedAndSuccess();
         return await response.Content.ReadFromJsonAsync<AuthResultDto>()
                ?? new AuthResultDto { Succeeded = false };

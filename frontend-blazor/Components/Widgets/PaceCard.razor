@@ -1,0 +1,233 @@
+@* How fast the work is going, and when it finishes.
+
+   The dial above answers "how much is done". This answers the question people ask straight
+   afterwards: at the rate we are actually working, how long is left? A figure that moves half a
+   point a week and one that moves half a point a day look identical on a dial.
+
+   Every number is MEASURED — from the words table and the audit log over a trailing window —
+   never configured. A quiet fortnight lengthens the estimate on its own, rather than waiting for
+   someone to remember to change a target that nobody owns.
+
+   The needle is speed, not completion: it sits against the fastest day in the window, so it says
+   "today versus our best", which is a thing a team can act on. Against an invented target it
+   would only ever say whether someone guessed well. *@
+
+<div class="card flex flex-col">
+
+    <div class="flex items-center gap-2.5">
+        <span class="card-badge card-badge-chart"><Icon Name="chart" Class="h-4 w-4" /></span>
+        <h2 class="card-title">خێرایی کار</h2>
+
+        @if (Pace is { ActiveDays: > 0 })
+        {
+            <span class="pill pill-chart ms-auto">
+                <bdi>@Ku.N(Pace.ActiveDays)</bdi> ڕۆژی کار
+            </span>
+        }
+    </div>
+
+    @if (Pace is null)
+    {
+        <div class="skeleton mt-4 h-40 rounded-card"></div>
+    }
+    else if (Pace.ProjectedDays is null)
+    {
+        @* Pace of zero is not an estimate of "never" — it is the absence of an estimate, and
+           printing ∞ days would be inventing a fact out of missing data. *@
+        <div class="flex flex-1 flex-col items-center justify-center gap-2 py-8 text-center">
+            <span class="hatch h-10 w-10 rounded-full border border-line"></span>
+            <p class="text-sm text-ink-1">هێشتا خێرایی نەپێودراوە</p>
+            <p class="text-11 text-ink-2">لەم <bdi>@Ku.N(Pace.WindowDays)</bdi> ڕۆژەدا وشەی نوێ زیاد نەکراوە</p>
+        </div>
+    }
+    else
+    {
+        <div class="mt-3 flex flex-wrap items-center gap-5">
+
+            @* ── The speedometer ── *@
+            <div class="relative shrink-0">
+                <svg viewBox="0 0 180 108" class="w-[200px]" role="img" aria-label="خێرایی کار">
+                    <defs>
+                        <linearGradient id="pace-arc" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" stop-color="#16276E" />
+                            <stop offset="100%" stop-color="#2B4AAE" />
+                        </linearGradient>
+                    </defs>
+
+                    @* Ticks around the rim, lit up to the current speed. *@
+                    @for (var i = 0; i <= Ticks; i++)
+                    {
+                        var lit = i <= (int)Math.Round(Ticks * SpeedRatio);
+                        <line x1="@X(TickAngle(i), 74)" y1="@Y(TickAngle(i), 74)"
+                              x2="@X(TickAngle(i), (i % 5 == 0 ? 62.0 : 66.0))" y2="@Y(TickAngle(i), (i % 5 == 0 ? 62.0 : 66.0))"
+                              stroke="@(lit ? "var(--chart-ink)" : "var(--border)")"
+                              stroke-width="@(i % 5 == 0 ? "2" : "1.2")" stroke-linecap="round" />
+                    }
+
+                    <path d="@ArcPath" fill="none" stroke="var(--border-soft)" stroke-width="10" stroke-linecap="round" />
+                    @if (SpeedRatio > 0)
+                    {
+                        <path d="@ArcPath" fill="none" stroke="url(#pace-arc)" stroke-width="10" stroke-linecap="round"
+                              stroke-dasharray="@ArcLength" stroke-dashoffset="@Offset" />
+                    }
+
+                    @* The needle. Drawn from the hub so it reads as an instrument rather than a
+                       second progress bar. *@
+                    <line x1="90" y1="90" x2="@X(NeedleAngle, 52)" y2="@Y(NeedleAngle, 52)"
+                          stroke="var(--text-1)" stroke-width="2.5" stroke-linecap="round" />
+                    <circle cx="90" cy="90" r="5" fill="var(--text-1)" />
+                </svg>
+
+                <div class="absolute inset-x-0 bottom-0 text-center">
+                    <p class="text-20 font-medium text-ink-1">
+                        <bdi>@Ku.Raw((int)Math.Round(Pace.WordsPerActiveDay))</bdi>
+                    </p>
+                    <p class="text-11 text-ink-3">وشە/ڕۆژ</p>
+                </div>
+            </div>
+
+            @* ── The answer ── *@
+            <div class="min-w-0 flex-1 space-y-3">
+                <div>
+                    <p class="text-11 text-ink-3">بە ئەم خێراییە تەواو دەبێت لە</p>
+                    <p class="flex items-baseline gap-1.5">
+                        <span class="text-34 font-medium num-users"><bdi>@RemainingLabel</bdi></span>
+                        <span class="text-13 text-ink-2">@RemainingUnit</span>
+                    </p>
+                    @if (Pace.ProjectedFinish is { } finish)
+                    {
+                        <p class="mt-0.5 text-11 text-ink-2">
+                            بەرواری خەمڵێنراو <bdi>@Ku.Sub(finish.ToString("yyyy-MM-dd"))</bdi>
+                        </p>
+                    }
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="rounded-chip border border-line-soft bg-page p-2.5">
+                        <p class="text-11 text-ink-3">ماوە</p>
+                        <p class="text-15 font-medium text-warn"><bdi>@Ku.N(Pace.RemainingWords)</bdi></p>
+                    </div>
+                    <div class="rounded-chip border border-line-soft bg-page p-2.5">
+                        <p class="text-11 text-ink-3">کاری ڕۆژانە</p>
+                        <p class="text-15 font-medium text-ink-1">
+                            <bdi>@Ku.Raw((int)Math.Round(Pace.ItemsPerActiveDay))</bdi>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* ── Daily work across the window ── *@
+        <div class="mt-4">
+            <div class="mb-1.5 flex items-center gap-2">
+                <span class="text-11 text-ink-3">
+                    کاری <bdi>@Ku.N(Pace.WindowDays)</bdi> ڕۆژی ڕابردوو
+                </span>
+                <span class="ms-auto text-11 text-ink-3">
+                    <bdi>@Ku.N(Pace.AddedInWindow)</bdi> نوێ ·
+                    <bdi>@Ku.N(Pace.EditedInWindow)</bdi> دەستکاری
+                </span>
+            </div>
+
+            <div class="flex h-12 items-end gap-[2px]" aria-hidden="true">
+                @foreach (var day in Pace.Days)
+                {
+                    <span class="min-w-0 flex-1 rounded-sm @(day.Total > 0 ? "chart-bar !rounded-sm" : "hatch border border-line-soft")"
+                          style="height:@(BarHeight(day.Total))%"
+                          title="@($"{day.Date:yyyy-MM-dd} — {day.Total}")"></span>
+                }
+            </div>
+        </div>
+
+        @* ── Who is doing it ── *@
+        @if (Pace.Contributors.Count > 0)
+        {
+            <div class="mt-4 border-t border-line-soft pt-3">
+                <p class="mb-2 text-11 text-ink-3">کاراترین وشەچنەکان</p>
+
+                <div class="space-y-1.5">
+                    @foreach (var c in Pace.Contributors.Take(4))
+                    {
+                        <div class="flex items-center gap-2.5">
+                            <Avatar Url="@c.AvatarUrl" Name="@(c.FullName ?? c.UserName)" Size="24" />
+                            <span class="min-w-0 flex-1 truncate text-11 text-ink-1">
+                                @(string.IsNullOrWhiteSpace(c.FullName) ? c.UserName : c.FullName)
+                            </span>
+
+                            @* Added and edited kept apart. They are different work — one grows the
+                               dictionary, the other finishes it — and a single total would let a
+                               day of edits look like a day of new words. *@
+                            <span class="pill pill-users shrink-0">+<bdi>@Ku.N(c.Added)</bdi></span>
+                            <span class="pill pill-chart shrink-0"><bdi>@Ku.N(c.Edited)</bdi></span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public PaceDto? Pace { get; set; }
+
+    const int Ticks = 30;
+
+    // 200° of arc, drawn bottom-right over the top to bottom-left, mirroring the dial above.
+    const double StartAngle = 10, Sweep = 200, R = 68;
+
+    /// <summary>
+    /// Today's rate against the BEST day in the window.
+    ///
+    /// Against an invented target the needle would only ever report whether somebody guessed
+    /// well. Against the team's own best day it says something they can act on: this is what we
+    /// have already proved we can do.
+    /// </summary>
+    double SpeedRatio
+    {
+        get
+        {
+            if (Pace is null || Pace.Days.Count == 0) return 0;
+
+            var peak = Pace.Days.Max(d => d.Total);
+            if (peak <= 0) return 0;
+
+            var today = Pace.Days.LastOrDefault()?.Total ?? 0;
+            return Math.Clamp(today / (double)peak, 0, 1);
+        }
+    }
+
+    int Peak => Pace is null || Pace.Days.Count == 0 ? 0 : Pace.Days.Max(d => d.Total);
+
+    int BarHeight(int v) => Peak <= 0 ? 12 : Math.Max(6, (int)Math.Round(v * 100.0 / Peak));
+
+    /// <summary>
+    /// Days once there is more than a day left, hours when there is not. "٠٫٣ ڕۆژ" is a worse
+    /// answer than "٢ کاتژمێر" to a question about when something finishes.
+    /// </summary>
+    string RemainingLabel => Pace?.ProjectedDays is not { } d
+        ? "—"
+        : d >= 1
+            ? Ku.Raw((int)Math.Ceiling(d))
+            : Ku.Raw((int)Math.Ceiling(Pace.ProjectedHours ?? 0));
+
+    string RemainingUnit => Pace?.ProjectedDays is { } d && d < 1 ? "کاتژمێر" : "ڕۆژ";
+
+    double NeedleAngle => StartAngle - Sweep * SpeedRatio;
+
+    static double X(double deg, double r) => Math.Round(90 + r * Math.Cos(deg * Math.PI / 180), 2);
+    static double Y(double deg, double r) => Math.Round(90 + r * Math.Sin(deg * Math.PI / 180), 2);
+
+    static double TickAngle(int i) => StartAngle - Sweep * i / Ticks;
+
+    string ArcPath =>
+        $"M {F(X(StartAngle, R))} {F(Y(StartAngle, R))} A {F(R)} {F(R)} 0 1 0 " +
+        $"{F(X(StartAngle - Sweep, R))} {F(Y(StartAngle - Sweep, R))}";
+
+    static double Length => Sweep / 360 * 2 * Math.PI * R;
+
+    static string ArcLength => F(Length);
+    string Offset => F(Length * (1 - SpeedRatio));
+
+    /// <summary>Invariant, or a comma-decimal machine turns one SVG number into two silently.</summary>
+    static string F(double v) => v.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}

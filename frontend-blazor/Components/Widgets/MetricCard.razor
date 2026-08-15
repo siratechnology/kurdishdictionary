@@ -1,0 +1,73 @@
+@* One of the four cards across the top of the dashboard.
+
+   The Hero fill is VISUAL HIERARCHY, not a "good" signal — a hero card can still be in a warn
+   state, which is why State and Hero are separate parameters. And State is always computed from
+   a threshold by the caller; never hardcode a colour per card position. *@
+
+<div class="relative rounded-card p-5 @ShellClass">
+
+    @if (!string.IsNullOrEmpty(Href))
+    {
+        @* ↗ mirrors to ↖ in RTL, and the corner sits on the END side (left). *@
+        <a href="@Href" class="absolute top-5 end-5 @ArrowClass" aria-label="@Label">
+            <Icon Name="arrow-out" Class="h-3.5 w-3.5" Mirror="true" />
+        </a>
+    }
+
+    <p class="text-13 @LabelClass">@Label</p>
+    <p class="mt-2 text-34 font-medium @NumberClass"><bdi>@Ku.N(Value)</bdi></p>
+
+    @if (!string.IsNullOrEmpty(Footnote))
+    {
+        <div class="mt-3 flex items-center gap-1.5">
+            <Icon Name="@FootIcon" Class="@($"h-4 w-4 shrink-0 {FootClass}")" />
+            <span class="truncate text-xs @FootClass">@Footnote</span>
+        </div>
+    }
+</div>
+
+@code {
+    public enum MetricState { Normal, Warn, Danger }
+
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter, EditorRequired] public long Value { get; set; }
+    [Parameter] public string? Footnote { get; set; }
+    [Parameter] public string FootIcon { get; set; } = "trend-up";
+    [Parameter] public string? Href { get; set; }
+
+    /// <summary>The filled dark card. Exactly one per row.</summary>
+    [Parameter] public bool Hero { get; set; }
+
+    [Parameter] public MetricState State { get; set; } = MetricState.Normal;
+
+    string ShellClass => (Hero, State) switch
+    {
+        (true, _)                  => "bg-green-deep",
+        (false, MetricState.Warn)  => "border border-line bg-warn-tint",
+        (false, MetricState.Danger) => "border border-line bg-danger-tint",
+        _                          => "border border-line bg-card",
+    };
+
+    string LabelClass => Hero ? "text-on-deep" : "text-ink-2";
+
+    // State wins over Hero for the number: the fill says "important", the colour says "wrong".
+    string NumberClass => State switch
+    {
+        MetricState.Warn   => "text-warn",
+        MetricState.Danger => "text-danger",
+        _                  => Hero ? "text-white" : "text-ink-1",
+    };
+
+    string FootClass => State switch
+    {
+        MetricState.Warn   => "text-warn",
+        MetricState.Danger => "text-danger",
+        _                  => Hero ? "text-on-deep" : "text-ink-2",
+    };
+
+    // On the hero fill there is no --border to outline against, so the button steps one rung up
+    // the ramp (--green on --green-deep) rather than borrowing a translucent white.
+    string ArrowClass => Hero
+        ? "flex h-7 w-7 items-center justify-center rounded-full bg-green text-white transition-opacity hover:opacity-80"
+        : "btn-ghost-icon";
+}

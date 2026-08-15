@@ -6,16 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <link rel="preload" href="/fonts/NRT-Reg.ttf" as="font" type="font/truetype" crossorigin />
+    @* Telerik's theme first, so our own tokens in app.css win every collision. *@
+    <link rel="stylesheet" href="_content/Telerik.UI.for.Blazor/css/kendo-theme-default/all.css" />
     <link rel="stylesheet" href="css/app.css?v=@AssetVersion" />
     <link rel="stylesheet" href="frontend-blazor.styles.css?v=@AssetVersion" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet />
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body class="min-h-screen bg-card">
     <Routes />
     <ReconnectModal />
+    <script src="_content/Telerik.UI.for.Blazor/js/telerik-blazor.js" defer></script>
     <script src="_framework/blazor.web.js"></script>
+    <script src="js/presence.js?v=@AssetVersion"></script>
+
+    @* D3, vendored from node_modules by `npm run sync:d3` — the admin has no bundler, and the
+       CDN is not an option on a network that may not reach it. A classic script, so it defines
+       window.d3 before schema-map.js reads it; deferring either one would reintroduce the load
+       order as a thing to get wrong. *@
+    <script src="js/d3.min.js?v=@AssetVersion"></script>
+    <script src="js/schema-map.js?v=@AssetVersion"></script>
 </body>
 
 </html>
@@ -23,5 +34,5 @@
 @code {
     // Busts browser CSS cache on every deploy (assembly is rewritten on each build)
     private static readonly string AssetVersion =
-        File.GetLastWriteTimeUtc(typeof(App).Assembly.Location).Ticks.ToString();
+        System.IO.File.GetLastWriteTimeUtc(typeof(App).Assembly.Location).Ticks.ToString();
 }

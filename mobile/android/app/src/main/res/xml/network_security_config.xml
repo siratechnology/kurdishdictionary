@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The dictionary API is served over plain HTTP on its origin — TLS is terminated
+  at Cloudflare in production, and during development the backend listens on
+  http://<host>:6000 (reachable from an emulator as 10.0.2.2, from a phone as the
+  machine's LAN address). Android blocks cleartext by default since API 28, so the
+  app would fail every request without this opt-in.
+
+  If the API ever gets a real certificate on the origin, delete this file and the
+  android:networkSecurityConfig attribute in AndroidManifest.xml.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -1,5 +1,7 @@
 using System.Text;
 using backend.Data;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using backend.Data.Models;
 using backend.Hubs;
 using backend.Services;
@@ -57,11 +59,41 @@ builder.Services.AddSingleton(jwt);
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
+builder.Services.AddScoped<SoftDeleteInterceptor>();
+builder.Services.AddScoped<NormalizationInterceptor>();
+
+// ── Lexicon rules (پڕۆمپت ٦) ───────────────────────────────────────────────
+// Service layer, not UI: a rule enforced in a Razor component is enforced only for people who go
+// through that component, and the API, imports and bulk edits all bypass it.
+// The options tree lives in a process-wide cache with a change notification, so a settings write
+// reaches every open session immediately instead of on the next page load (پڕۆمپت — ڕیاڵ تایم).
+builder.Services.AddSingleton<backend.Services.Lexicon.TaxonomyCache>();
+builder.Services.AddScoped<TaxonomyChangeInterceptor>();
+builder.Services.AddScoped<backend.Services.Lexicon.OptionsTreeService>();
+
+builder.Services.AddScoped<backend.Services.Lexicon.LexiconValidator>();
+builder.Services.AddScoped<backend.Services.Lexicon.RelationService>();
+builder.Services.AddScoped<backend.Services.Lexicon.WorkQueueService>();
+builder.Services.AddScoped<backend.Services.Lexicon.ClaimService>();
+builder.Services.AddScoped<backend.Services.Lexicon.ClassificationService>();
+builder.Services.AddScoped<backend.Services.Lexicon.ContributorCreditService>();
+builder.Services.AddScoped<backend.Services.Lexicon.TaxonomyAdminService>();
+builder.Services.AddScoped<backend.Services.Lexicon.TaxonomyTreeService>();
+builder.Services.AddScoped<backend.Services.Lexicon.MergeService>();
+builder.Services.AddScoped<backend.Services.Lexicon.StationService>();
+builder.Services.AddScoped<ContributionEventInterceptor>();
 
 // Pushes every audited write to the admin clients — AuditSaveChangesInterceptor broadcasts through
 // IActivityBroadcaster the moment its rows commit. Singleton, so a scoped interceptor can hold it.
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IActivityBroadcaster, ActivityBroadcaster>();
+
+// Pushes taxonomy changes to every open circuit. Hosted rather than called, so no settings endpoint
+// can be added next year that forgets to announce itself.
+builder.Services.AddHostedService<backend.Hubs.TaxonomyChangeBroadcaster>();
+
+// Profile pictures. Singleton because it only holds a configured folder path and creates it once.
+builder.Services.AddSingleton<AvatarService>();
 
 builder.Services.AddHttpClient<IGeoLocationService, GeoLocationService>(client =>
 {
@@ -72,7 +104,20 @@ builder.Services.AddHttpClient<IGeoLocationService, GeoLocationService>(client =
 builder.Services.AddDbContext<AppDbContext>((sp, options) =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>());
+
+    // Order matters. SoftDelete runs first and rewrites Deleted → Modified, so the ledger and the
+    // audit log both see a soft delete rather than a hard one. Registering it after them would let
+    // a DELETE be recorded that never actually happens.
+    options.AddInterceptors(
+        // First: derive Normalized, so the ledger and the audit log both record the finished row.
+        sp.GetRequiredService<NormalizationInterceptor>(),
+        sp.GetRequiredService<SoftDeleteInterceptor>(),
+        sp.GetRequiredService<ContributionEventInterceptor>(),
+        sp.GetRequiredService<AuditSaveChangesInterceptor>(),
+
+        // Last: the cache drop runs on SavedChanges, after the transaction has committed. Dropping
+        // it earlier would let a concurrent read re-cache the rows that are about to change.
+        sp.GetRequiredService<TaxonomyChangeInterceptor>());
 });
 
 builder.Services
@@ -155,6 +200,38 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+// ── Uploaded avatars ───────────────────────────────────────────────────────
+// Served from a configured folder that is NOT wwwroot, and mapped to its own request path.
+//
+// Two things make this safe to expose without auth. The folder holds nothing but images this
+// application itself encoded — AvatarService discards the uploaded name and re-encodes the
+// bytes — and the content type is pinned to image/jpeg rather than sniffed, so a file that
+// somehow was not a JPEG still cannot be served as script. A profile picture is shown to every
+// signed-in user anyway; gating it would buy nothing and cost a round trip per avatar.
+{
+    var avatars = app.Services.GetRequiredService<AvatarService>();
+
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(avatars.Folder),
+        RequestPath = "/avatars",
+        ContentTypeProvider = new FileExtensionContentTypeProvider(
+            new Dictionary<string, string> { [".jpg"] = "image/jpeg" }),
+
+        // Anything without a mapped extension is not served at all, rather than being handed
+        // over as application/octet-stream.
+        ServeUnknownFileTypes = false,
+
+        OnPrepareResponse = ctx =>
+        {
+            // Names are content-addressed by Guid and a new upload gets a new name, so a long
+            // cache is safe and saves a request per avatar per page.
+            ctx.Context.Response.Headers.CacheControl = "public,max-age=31536000,immutable";
+            ctx.Context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+        },
+    });
 }
 
 // HTTPS handled by Cloudflare — no redirect needed on origin

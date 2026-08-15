@@ -1,0 +1,86 @@
+@* One contributor, as a card in their tier's colour.
+
+   The word count is the only input. There is no accuracy score and no ranking against other
+   people — see the note at the top of Services/Tier.cs for why that boundary matters and where
+   it came from. A card says "you have written 418 words, that is زێڕ ٢, 82 more reaches زێڕ ١":
+   a target of your own, not a position in a race.
+
+   Colour comes from the TIER, never from the person. That distinction is what keeps this from
+   being the per-user colour coding the roster deliberately avoids — two people on زێڕ ٢ look
+   identical, and a card changes colour only when its owner earns it. *@
+
+<div class="contrib-card @($"contrib-{Level.Key}")">
+
+    <div class="flex items-center gap-3">
+        @* Ringed in their metal. With a picture the ring is the only tier mark on the avatar;
+           without one the fallback circle carries the metal itself, so the tier reads either way. *@
+        <Avatar Url="@Contributor.AvatarUrl"
+                Name="@(Contributor.FullName ?? Contributor.UserName)"
+                Size="40"
+                Ring="@($"tier-{Level.Key}-grad")"
+                FallbackBackground="@($"tier-{Level.Key}-grad text-white")" />
+
+        <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium text-ink-1">
+                @(string.IsNullOrWhiteSpace(Contributor.FullName) ? Contributor.UserName : Contributor.FullName)
+            </p>
+            @* Amethyst, from the client palette sheet: this counts a PERSON'S work. The green
+               figures on this dashboard all mean "done", and a contributor's total is not a
+               completion — it is a running tally that never finishes.
+
+               BOTH halves, always. Written and fixed are different jobs and most people do more
+               of one than the other: authorship alone misses the whole team's station work, since
+               the imported words have no author, and fixes alone miss whoever typed new headwords.
+               The big number is the sum; the two under it are what it is made of, so nobody has to
+               guess which kind of work it is counting. Zeros are printed rather than hidden — «٠
+               ڕێکخراو» is a true and useful thing to know about a new colleague. *@
+            <p class="mt-0.5 flex items-baseline gap-1">
+                <bdi class="num-users text-20 font-medium">@Ku.N(Contributor.TotalContribution)</bdi>
+                <span class="text-11 text-ink-3">کاری کراو</span>
+            </p>
+
+            <p class="mt-0.5 flex flex-wrap items-baseline gap-x-2 text-11 text-ink-3">
+                <span><bdi class="text-ink-2">@Ku.N(Contributor.WordCount)</bdi> نووسراو</span>
+                <span>·</span>
+                <span><bdi class="text-ink-2">@Ku.N(Contributor.WordsUpdated)</bdi> ڕێکخراو</span>
+            </p>
+        </div>
+
+        <span class="tier @($"tier-{Level.Key}") shrink-0 self-start">
+            <Icon Name="medal" Class="h-3.5 w-3.5" />
+            <bdi>@Level.Label</bdi>
+        </span>
+    </div>
+
+    @if (ShowProgress)
+    {
+        <div class="mt-3">
+            <div class="tier-track">
+                <div class="tier-fill @($"tier-{Level.Key}-grad")" style="width:@(Pct)%"></div>
+            </div>
+            <p class="mt-1.5 truncate text-11 text-ink-3">
+                @if (Tier.Next(Contributor.TotalContribution) is { } next)
+                {
+                    <bdi>@Ku.N(Tier.ToNext(Contributor.TotalContribution))</bdi>
+                    <text> وشەی تر بۆ </text>
+                    <bdi>@next.Label</bdi>
+                }
+                else
+                {
+                    <text>بەرزترین پلە</text>
+                }
+            </p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public ContributorDto Contributor { get; set; } = default!;
+
+    /// <summary>The bar to the next tier. Off in tight columns where the card has to stay short.</summary>
+    [Parameter] public bool ShowProgress { get; set; } = true;
+
+    TierLevel Level => Tier.For(Contributor.TotalContribution);
+
+    int Pct => (int)Math.Round(Tier.Progress(Contributor.TotalContribution) * 100);
+}

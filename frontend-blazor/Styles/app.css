@@ -2,37 +2,488 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── NRT Kurdish font ──────────────────────────────────────────────── */
+/* ── NRT ────────────────────────────────────────────────────────────────
+   The house Kurdish font, and the same one the public site uses — the admin
+   and the dictionary should not look like two different products.
+
+   NRT ships ONE weight file. Weight 500 is mapped to it deliberately rather
+   than left undeclared: an undeclared 500 lets the browser synthesise a bold,
+   and faux-bold on Arabic script thickens the letter joins unevenly. So
+   font-medium renders identically to font-normal, and emphasis is carried by
+   SIZE and COLOUR instead — which is how the reference dashboard does it too.
+
+   If a real NRT Bold/Medium file turns up, drop it in /fonts and point the 500
+   rule at it; nothing else has to change. */
+@font-face { font-family:'NRT'; font-weight:400; font-style:normal; font-display:swap;
+             src:url('/fonts/NRT-Reg.ttf') format('truetype'); }
+@font-face { font-family:'NRT'; font-weight:500; font-style:normal; font-display:swap;
+             src:url('/fonts/NRT-Reg.ttf') format('truetype'); }
+
+/* ── Digits: Calibri ────────────────────────────────────────────────────
+   Numbers are set in Calibri; everything else stays NRT.
+
+   Done with a unicode-range @font-face rather than a class on every number.
+   The browser consults this face ONLY for the characters listed, so a digit
+   inside a Kurdish sentence picks up Calibri and the Kurdish around it does
+   not — no markup changes, nothing to remember at a call site, and it cannot
+   be forgotten on a screen built next year.
+
+   The range covers digits and the punctuation that travels with them, so
+   "2,853", "96%" and "+966" render as one consistent run instead of Calibri
+   digits with NRT commas.
+
+   local() only: Calibri ships with Windows and is not ours to serve. Carlito
+   is the metric-compatible open clone, which is what Linux containers have —
+   listed second so the layout does not shift between dev and production. */
 @font-face {
-  font-family: 'nrt-reg';
-  src: url('/fonts/NRT-Reg.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
+  font-family: 'NumFont';
+  src: local('Calibri'), local('Carlito');
   font-display: swap;
+  unicode-range: U+0030-0039,   /* 0-9      */
+                 U+002C,        /* ,        */
+                 U+002E,        /* .        */
+                 U+0025,        /* %        */
+                 U+002B,        /* +        */
+                 U+002D,        /* -        */
+                 U+2212,        /* − minus  */
+                 U+003A,        /* :        */
+                 U+002F;        /* /        */
 }
 
-/* ── Base — apply nrt-reg to every element ─────────────────────────── */
+@font-face {
+  font-family: 'NumFont';
+  font-weight: 500;
+  src: local('Calibri'), local('Carlito');
+  font-display: swap;
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002B, U+002D, U+2212, U+003A, U+002F;
+}
+
+/* ── Tokens ─────────────────────────────────────────────────────────────
+   The single source of truth for colour. Tailwind's palette is not used at
+   all; every colour class in markup resolves back to one of these. */
 :root {
-  --font-main: 'nrt-reg', system-ui, -apple-system, sans-serif;
+  --page:        #F4F5F4;   /* white smoke behind cards */
+  --card:        #FFFFFF;
+
+  /* Borders carry the whole structure now that there are no shadows, so they are a real
+     grey rather than a hint of one. #E6EAE6 read as "almost nothing" against white and made
+     every card look unfinished; this is dark enough to draw an actual edge. */
+  --border:      #D9DCD9;
+  --border-soft: #E8EAE8;   /* inner rules — table rows, list separators */
+
+  /* ── Chrome ───────────────────────────────────────────────────────────
+     Kept as tokens, used by nothing. The sidebar and top bar were near-black for one
+     revision and are light again — see the sidebar reference. Left declared because
+     removing them would break any screen that still reaches for them, and re-deriving
+     the pair from scratch if a dark surface is ever wanted again is wasted work. */
+  --chrome:      #14181A;
+  --chrome-soft: #1F2528;
+  --on-chrome:   #F2F4F3;
+  --on-chrome-2: #8A9490;
+
+  /* Client palette — canonical, do not alter. */
+  --green:       #328E6E;   /* rgb(50, 142, 110)  */
+  --green-mid:   #67AE6E;   /* rgb(103, 174, 110) */
+  --green-soft:  #90C67C;   /* rgb(144, 198, 124) */
+  --green-tint:  #E1EEBC;   /* rgb(225, 238, 188) */
+
+  /* Derived: --green at hsl(159,50%,22%). The ramp has nothing dark enough to
+     carry white text — white on #328E6E is only 4.0:1. This is 6.2:1. */
+  --green-deep:  #1C5441;
+
+  --on-tint:     #1C5441;   /* text on --green-tint → 7.2:1 */
+  --on-deep:     #E1EEBC;   /* text on --green-deep → 7.2:1 */
+
+  --text-1:      #16211B;
+  --text-2:      #6A776E;
+  --text-3:      #9AA69E;
+
+  --warn:        #B45309;
+  --warn-bg:     #FDF3E3;
+  --danger:      #B42318;
+  --danger-bg:   #FCEBEB;
+
+  /* The mobile drawer scrim. A token rather than bg-ink-1/20, because colours are
+     declared as CSS vars and Tailwind cannot inject an alpha channel into one. */
+  --overlay:     rgba(22, 33, 27, 0.20);
+
+  /* ── Soft gradients ───────────────────────────────────────────────────
+     Built from the ramp above, in the style of md files/00_ALL_soft_gradients.png.
+
+     These are for DETAILS ONLY — a badge, a dot, a progress fill, a primary button.
+     Never a page, never a card, never a sidebar. The whole design is white cards on
+     pale paper; the gradients are the small saturated things you notice against it,
+     and the moment one of them is 300px wide it stops being a detail and the screen
+     starts looking like a template.
+
+     135° on everything, so a badge next to a button reads as the same material. That
+     also sidesteps RTL: a `to right` gradient does not mirror with direction, and two
+     of these sitting side by side would run opposite ways. */
+  --grad-brand:    linear-gradient(135deg, #328E6E 0%, #67AE6E 100%);
+  --grad-deep:     linear-gradient(135deg, #1C5441 0%, #328E6E 100%);
+  --grad-progress: linear-gradient(135deg, #328E6E 0%, #90C67C 100%);
+
+  /* ── The two borrowed families ────────────────────────────────────────
+     Taken from md files/00_ALL_soft_gradients.png — AMETHYST (08) and ROYAL BLUE (05),
+     kept at the source's own stops.
+
+     TWO, not ten. The sheet has a purple for every mood and using six of them would
+     make the dashboard a swatch page; these two earn their place by meaning something
+     specific, and each owns exactly one kind of thing:
+
+       AMETHYST     people — contributor counts, the ئامادەکاران badge
+       ROYAL BLUE   time — every bar in a chart
+
+     Green keeps what it always meant: done, progress, primary action. So a screen reads
+     "green = state of the work, purple = who, blue = when", and no colour is decorative.
+
+     The -ink values are the dark stop, safe for text on white and on their own tint. */
+  --grad-users:  linear-gradient(135deg, #4A1478 0%, #7A34B4 100%);
+  --users-ink:   #4A1478;
+  --users-tint:  #F2EAFA;
+
+  --grad-chart:  linear-gradient(135deg, #16276E 0%, #2B4AAE 100%);
+  --chart-ink:   #16276E;
+  --chart-tint:  #E9EDF9;
+
+  /* ── Contributor tiers ────────────────────────────────────────────────
+     Five metals, twenty positions. The only colours in the app that are not green
+     or semantic, and the exception is deliberate: a medal that is the same colour
+     as every other medal is not a medal.
+
+     Each family is a light tint + a dark ink (both from the same hue, so the text
+     always clears 4.5:1) plus a gradient for the medal glyph itself. The badge is
+     the TINT — the saturated gradient is 14px of icon, which keeps this inside the
+     "colour on details, never on surfaces" rule.
+
+     The ladder climbs from warm metal to cold jewel — bronze, steel, gold, blue-violet,
+     then ئەڵماس in BRAND PURPLE (swatch 01). ئەڵماس was briefly the house green; that was
+     wrong, because green already means "done" on every other surface and the top tier read
+     as a completion badge rather than a rarity.
+
+     Four values per family: -bg / -ink for the badge, -w1 / -w2 for the card wash. The
+     wash stops are both tinted — an earlier version faded to pure white by 60% and the
+     cards came out almost colourless. */
+  --tier-bronze-bg:   #F1DFCB;  --tier-bronze-ink:   #6B3E19;
+  --tier-bronze-w1:   #EEDAC2;  --tier-bronze-w2:    #FBF4EC;
+
+  --tier-silver-bg:   #DFE5EB;  --tier-silver-ink:   #414C58;
+  --tier-silver-w1:   #D9E0E7;  --tier-silver-w2:    #F5F7F9;
+
+  --tier-gold-bg:     #F7E6B8;  --tier-gold-ink:     #6E5008;
+  --tier-gold-w1:     #F6E3AE;  --tier-gold-w2:      #FDF8EA;
+
+  --tier-platinum-bg: #DEDBF8;  --tier-platinum-ink: #2E20BB;
+  --tier-platinum-w1: #D9D5F7;  --tier-platinum-w2:  #F4F3FD;
+
+  --tier-diamond-bg:  #E3D3F6;  --tier-diamond-ink:  #3E1080;
+  --tier-diamond-w1:  #DECBF4;  --tier-diamond-w2:   #F7F1FE;
+
+  --grad-bronze:   linear-gradient(135deg, #6B3E19 0%, #C08552 100%);
+  --grad-silver:   linear-gradient(135deg, #414C58 0%, #93A1AE 100%);
+  --grad-gold:     linear-gradient(135deg, #8A5F0C 0%, #E3B341 100%);
+  --grad-platinum: linear-gradient(135deg, #2E20BB 0%, #5140C8 100%);
+  --grad-diamond:  linear-gradient(135deg, #3E1080 0%, #6A2CC0 100%);
+
+  --font-main:   'NumFont', 'NRT', system-ui, -apple-system, sans-serif;
+  --font-mono:   ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, monospace;
 }
 
-html, body,
-h1, h2, h3, h4, h5, h6,
-p, span, div, a, li, td, th,
-button, input, select, textarea, optgroup, label {
-  font-family: var(--font-main);
+/* One declaration, inherited. Form controls don't inherit fonts by default,
+   which is the only reason the second rule exists. */
+html { font-family: var(--font-main); }
+input, select, textarea, button { font: inherit; }
+
+/* dir="rtl" lives on <html> in Components/App.razor. It must be the attribute
+   and not a CSS rule, because Tailwind's rtl: variant compiles to
+   [dir="rtl"] & and would never match a CSS-only direction. */
+
+/* ── The hatch ──────────────────────────────────────────────────────────
+   Incomplete, projected or remaining data is hatched, never grey. Grey reads
+   as "disabled"; hatch reads as "not yet". This is a PATTERN, not a fill, and it
+   is grey on purpose — the hatch marks what is NOT done, so it must never pick up
+   the brand gradient the finished half is painted with.
+   SVG strokes need the <pattern> in Widgets/HatchDefs.razor instead. */
+.hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--border) 0 2px,
+    transparent 2px 7px
+  );
 }
 
-html {
-  direction: rtl;
+/* ── Sidebar nav ────────────────────────────────────────────────────────
+   NavLink stamps "active" on the link for the current route, so both states
+   live here and the markup stays a single class name.
+
+   The active item is a PALE pill with a hairline and a small green dot — not a
+   solid green bar. Green is the accent in this design, and an accent that fills
+   a 200px block every time you navigate is no longer an accent. */
+.nav-item {
+  @apply flex items-center gap-3 rounded-chip px-3 py-2.5 text-15 text-ink-2
+         transition-colors;
+}
+.nav-item:hover        { @apply bg-page text-ink-1; }
+.nav-item.active       { @apply border border-line bg-page font-medium text-ink-1; }
+.nav-item.active:hover { @apply bg-page; }
+
+/* The dot. This is the whole of the green in the nav, and it is enough because it
+   is the only saturated thing in a column of grey. */
+.nav-item.active::after {
+  content: "";
+  @apply ms-auto h-1.5 w-1.5 shrink-0 rounded-full;
+  background: var(--grad-brand);
 }
 
-/* ── Skeleton shimmer (always light) ───────────────────────────────── */
+/* The active pill gains a border, so every other item needs the same 1px of space
+   or the list shifts sideways as you navigate. */
+.nav-item:not(.active) {
+  @apply border border-transparent;
+}
+
+.nav-label     { @apply inline; }
+.nav-badge     { @apply ms-auto rounded-full bg-green-tint px-2 py-0.5 text-11 text-on-tint; }
+.nav-badge-dot { @apply hidden; }
+
+/* ── The collapsed rail ──────────────────────────────────────────────────
+   Only between lg and xl. Below lg the sidebar is an off-canvas DRAWER at its
+   full width — it is not short of room, so hiding its labels there would be
+   collapsing a panel that is already 256px wide. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .nav-item { @apply relative justify-center px-0; }
+  .nav-item.active::after { content: none; }
+
+  .nav-label, .nav-badge { display: none; }
+
+  /* The count has nowhere to go at 64px, so it degrades to a dot: "there is work
+     here" survives, the number does not. */
+  .nav-badge-dot {
+    @apply absolute end-1.5 top-1.5 block h-1.5 w-1.5 rounded-full;
+    background: var(--grad-brand);
+  }
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────
+   Primary hover is opacity, not a second green: the ramp has no "green-deep
+   hover" value and inventing one splits the palette. */
+.btn-primary {
+  @apply inline-flex items-center gap-2 rounded-full px-4 py-2.5
+         text-sm font-medium text-white transition-opacity hover:opacity-90;
+  background: var(--grad-deep);
+}
+.btn-secondary {
+  @apply inline-flex items-center gap-2 rounded-full border border-line bg-card px-4 py-2.5
+         text-sm font-medium text-ink-1 transition-colors hover:bg-page;
+}
+.btn-ghost-icon {
+  @apply flex h-7 w-7 items-center justify-center rounded-full border border-line
+         text-ink-2 transition-colors hover:bg-page;
+}
+.btn-topbar-icon {
+  @apply relative flex h-9 w-9 items-center justify-center rounded-full border border-line
+         bg-card text-ink-2 transition-colors hover:bg-page hover:text-ink-1;
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────────
+   No shadows anywhere. The border does the work, which is why it had to get darker. */
+.card {
+  @apply rounded-card border border-line bg-card p-5;
+}
+.card-title {
+  @apply text-15 font-medium text-ink-1;
+}
+
+/* The one card per screen that gets extra weight. It earns it with a tinted ground
+   and a full border, NOT with a dark fill — the whole admin is light, and a single
+   near-black panel in the middle of it reads as a rendering bug rather than emphasis. */
+.card-feature {
+  @apply rounded-card border border-line bg-page p-5;
+}
+
+/* The small square badge that heads every card in the reference. Green by default; the
+   two modifiers below are the only way a badge gets another colour, and they follow the
+   card's subject — not the designer's mood. */
+.card-badge {
+  @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-chip text-white;
+  background: var(--grad-brand);
+}
+.card-badge-users { background: var(--grad-users); }
+.card-badge-chart { background: var(--grad-chart); }
+
+/* ── Chart bars ─────────────────────────────────────────────────────────
+   Every bar that plots time. A class rather than a utility because the gradient has to
+   sit alongside a `height` set inline, and Tailwind cannot express one of those. */
+.chart-bar {
+  @apply rounded-card;
+  background: var(--grad-chart);
+}
+
+/* A number that counts PEOPLE or their work. Amethyst, so a contributor's word count
+   never reads as a progress figure — the green ones all mean "done". */
+.num-users { color: var(--users-ink); }
+.pill-users { background: var(--users-tint); color: var(--users-ink); }
+.pill-chart { background: var(--chart-tint); color: var(--chart-ink); }
+
+/* ── Progress ───────────────────────────────────────────────────────────
+   The remainder is HATCHED, not grey — same rule as the week chart. It is work
+   left to do, not a disabled control. */
+.progress-track {
+  @apply hatch h-2.5 w-full overflow-hidden rounded-full border border-line-soft;
+}
+.progress-fill {
+  @apply h-full rounded-full transition-[width] duration-500;
+  background: var(--grad-progress);
+}
+
+/* The dashboard's recent-words grid. Telerik wants a pixel Height and CSS cannot reach that
+   parameter, so the small-screen size is imposed here instead — a fixed 340px is most of a
+   phone viewport before anything else on the page has been read. */
+@media (max-width: 640px) {
+  .k-grid.dash-grid,
+  .k-grid.dash-grid .k-grid-container { height: 240px !important; }
+}
+
+/* ── Tab strip ──────────────────────────────────────────────────────────
+   A dark rail of pill tabs, straight from the reference. Telerik's own TabStrip
+   is not used here: it owns its content panels, and these tabs switch a section
+   that has to stay a plain Razor branch. */
+.tab-rail {
+  @apply flex flex-wrap gap-1 rounded-card border border-line bg-page p-1.5;
+}
+.tab-pill {
+  @apply flex-1 whitespace-nowrap rounded-chip px-4 py-2.5 text-sm text-ink-2
+         transition-colors hover:text-ink-1;
+}
+/* Raised, not filled: the selected tab is the one that looks like the card below it. */
+.tab-pill.is-active {
+  @apply border border-line bg-card font-medium text-ink-1;
+}
+.tab-pill:not(.is-active) {
+  @apply border border-transparent;
+}
+
+/* ── Status pills ───────────────────────────────────────────────────────
+   Semantic, never decorative: a pill is green because the thing is done. */
+.pill {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-11;
+}
+.pill-ok     { @apply bg-green-tint text-on-tint; }
+
+/* ── Tier badges ────────────────────────────────────────────────────────
+   Flat tint behind, matching ink in front, medal glyph in the same ink. The metal
+   GRADIENT is spent on two things only: the avatar ring and the progress bar. A
+   gradient inside a 14px glyph is invisible anyway, and getting it there needs a
+   background-clip/mask trick that breaks the moment the icon changes. */
+.tier {
+  @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-11 font-medium;
+}
+
+.tier-bronze   { background: var(--tier-bronze-bg);   color: var(--tier-bronze-ink); }
+.tier-silver   { background: var(--tier-silver-bg);   color: var(--tier-silver-ink); }
+.tier-gold     { background: var(--tier-gold-bg);     color: var(--tier-gold-ink); }
+.tier-platinum { background: var(--tier-platinum-bg); color: var(--tier-platinum-ink); }
+.tier-diamond  { background: var(--tier-diamond-bg);  color: var(--tier-diamond-ink); }
+
+.tier-bronze-grad   { background: var(--grad-bronze); }
+.tier-silver-grad   { background: var(--grad-silver); }
+.tier-gold-grad     { background: var(--grad-gold); }
+.tier-platinum-grad { background: var(--grad-platinum); }
+.tier-diamond-grad  { background: var(--grad-diamond); }
+
+/* ── Contributor cards ──────────────────────────────────────────────────
+   A card per person, washed in their tier's metal.
+
+   Both stops of the wash are tinted, so the card is coloured corner to corner rather
+   than fading out halfway. The first attempt faded to pure white by 60% and the cards
+   came out looking like plain white cards with a smudge.
+
+   The ceiling is contrast, not taste: the badge sits ON this wash, so -w1 can only go
+   as dark as still leaves the badge tint distinguishable from it. If a family ever
+   needs to go darker than this, the badge has to gain a border in the same move.
+
+   The avatar carries the full-strength gradient. It is 40px, which is the size a
+   saturated gradient is allowed to be in this design. */
+.contrib-card {
+  @apply rounded-card border border-line-soft p-3 transition-colors;
+}
+.contrib-card:hover { @apply border-line; }
+
+.contrib-bronze   { background: linear-gradient(135deg, var(--tier-bronze-w1)   0%, var(--tier-bronze-w2)   100%); }
+.contrib-silver   { background: linear-gradient(135deg, var(--tier-silver-w1)   0%, var(--tier-silver-w2)   100%); }
+.contrib-gold     { background: linear-gradient(135deg, var(--tier-gold-w1)     0%, var(--tier-gold-w2)     100%); }
+.contrib-platinum { background: linear-gradient(135deg, var(--tier-platinum-w1) 0%, var(--tier-platinum-w2) 100%); }
+.contrib-diamond  { background: linear-gradient(135deg, var(--tier-diamond-w1)  0%, var(--tier-diamond-w2)  100%); }
+
+/* Full-strength metal, white initial. */
+.contrib-avatar {
+  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-medium text-white;
+}
+
+/* Progress to the next tier. Hatched remainder, same as every other bar in the app. */
+.tier-track { @apply hatch h-1 w-full overflow-hidden rounded-full; }
+.tier-fill  { @apply h-full rounded-full transition-[width] duration-500; }
+.pill-warn   { @apply bg-warn-tint text-warn; }
+.pill-danger { @apply bg-danger-tint text-danger; }
+.pill-muted  { @apply border border-line text-ink-2; }
+
+/* ── Form controls ──────────────────────────────────────────────────────── */
+
+/*
+ * ONE height for every single-line control in the admin.
+ *
+ * Our own `.field` and Telerik's pickers were sized by two unrelated rules — .field by its
+ * padding (42px), Kendo by its theme (~32px) — so a text box and a dropdown standing next to
+ * each other in the same filter row were visibly different heights. Nobody reads that as two
+ * component libraries; they read it as a mistake, and it is one on every screen that mixes them.
+ *
+ * min-height rather than height, because `.field` is also worn by textareas (Station.razor),
+ * which are legitimately taller and must stay free to grow.
+ */
+:root { --control-h: 2.625rem; }
+
+.field {
+  @apply w-full rounded-chip border border-line bg-card px-3 py-2.5 text-sm text-ink-1
+         placeholder:text-ink-3 focus:border-green focus:outline-none focus:ring-1
+         focus:ring-green;
+  min-height: var(--control-h);
+}
+.field-label { @apply mb-1.5 block text-13 text-ink-2; }
+.field-error { @apply mt-1 text-xs text-danger; }
+
+/*
+ * Chrome draws its OWN widgets inside input[type="search"] — a clear ✕ and, historically, a
+ * magnifier and a results dropdown arrow. They are engine chrome: they ignore our tokens, they
+ * ignore the NRT stack, and WebKit pins them to the physical right rather than the inline end,
+ * so under dir="rtl" they land on top of the magnifier we drew at `start-3`. The top-bar search
+ * is the one type="search" in the app and it renders on every page, so one stray symbol shows up
+ * on all of them.
+ *
+ * The type stays "search" — it is the honest semantic, it gives the field the right role for a
+ * screen reader, and it is what the on-screen keyboard reads to label its enter key. Only the
+ * engine's decoration is removed; the magnifier beside it is ours and stays.
+ */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Legacy Edge/IE draw their own ✕ and eye on text and password fields. Same reasoning. */
+input::-ms-clear,
+input::-ms-reveal {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ── Skeleton shimmer ───────────────────────────────────────────────────── */
 .skeleton {
   position: relative;
   overflow: hidden;
-  background-color: #e5e7eb; /* gray-200 */
-  border-radius: 0.75rem;
+  background-color: var(--page);
+  border-radius: 8px;
 }
 .skeleton::after {
   content: "";
@@ -46,24 +497,7 @@ html {
   100% { transform: translateX(100%); }
 }
 
-/* ── Sidebar nav items ─────────────────────────────────────────────────
-   NavLink stamps "active" on the link for the current route; both states are
-   defined here so the markup stays a single class name. */
-.nav-item {
-  @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium
-         text-slate-400 transition-colors;
-}
-.nav-item:hover {
-  @apply bg-slate-800 text-white;
-}
-.nav-item.active {
-  @apply bg-indigo-600 text-white shadow-sm shadow-indigo-900/40;
-}
-.nav-item.active:hover {
-  @apply bg-indigo-600;
-}
-
-/* ── Page fade-in on route change ──────────────────────────────────── */
+/* ── Page fade-in on route change ───────────────────────────────────────── */
 .page-enter {
   animation: page-fade-in 0.35s ease-out both;
 }
@@ -72,11 +506,233 @@ html {
   to   { opacity: 1; transform: none; }
 }
 
-/* ── Scrollbar ─────────────────────────────────────────────────────── */
-::-webkit-scrollbar       { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.28);
-  border-radius: 3px;
+/* ── The schema map ─────────────────────────────────────────────────────────
+   ژینزار ← ٧ بەشی ئاخاوتن ← تەوەر ← نرخ ← تەوەر ← … as a MIND MAP, not a list.
+
+   An indented tree was the first attempt and it was the wrong shape: indentation makes depth
+   readable but siblings compete for one vertical column, so seven limbs of Kurdish grammar
+   arrive as one long scroll and the thing you want to see — that ناو is broad and shallow while
+   کار is narrow and three deep — is exactly what an indented list flattens away. A node-link map
+   spends the horizontal axis on depth and the vertical on breadth, so the silhouette of each
+   limb IS the information.
+
+   ── Why this gets its own colour family ──
+   The rule is tokens only, and the exception is the one already written down for the contributor
+   tiers: "a medal the same colour as every other medal is not a medal." This is that case,
+   harder. In a single green every branch of the map reads as the same branch. So hue here is
+   DATA: it identifies the part of speech and is inherited by the whole limb, so a value four
+   levels out still says which one it belongs to.
+
+   The seven are the client's own swatches, reused rather than invented — ناو keeps the house
+   green, کار takes the royal blue already used by the charts, and the rest come from the tier
+   families. Each is a pale fill plus a dark ink that clears AA on white AND on its own fill. */
+:root {
+  --pos-1-line: #328E6E;  --pos-1-bg: #E1EEBC;  --pos-1-ink: #1C5441;  /* ناو      — house green */
+  --pos-2-line: #2B4AAE;  --pos-2-bg: #E9EDF9;  --pos-2-ink: #16276E;  /* کار      — royal blue  */
+  --pos-3-line: #7A34B4;  --pos-3-bg: #E3D3F6;  --pos-3-ink: #3E1080;  /* هاوەڵناو — amethyst    */
+  --pos-4-line: #0E7490;  --pos-4-bg: #D6EDF2;  --pos-4-ink: #0E4E5E;  /* هاوەڵکار — teal        */
+  --pos-5-line: #A16207;  --pos-5-bg: #F7E6B8;  --pos-5-ink: #6E5008;  /* جێناو    — gold        */
+  --pos-6-line: #B42318;  --pos-6-bg: #F8DDE0;  --pos-6-ink: #7A1F2B;  /* ئامڕاز   — rose        */
+  --pos-7-line: #4F46E5;  --pos-7-bg: #DEDBF8;  --pos-7-ink: #2E20BB;  /* چاوگ     — platinum    */
+
+  /* The trunk, ژینزار. Deliberately neutral rather than an eighth hue: it is what every family
+     hangs off, not one more family. */
+  --pos-0-line: #6A776E;  --pos-0-bg: #F1F2F0;  --pos-0-ink: #16211B;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.50); }
+
+/* The canvas scrolls, never the page. A wide map on a phone must not drag the layout sideways. */
+.map-canvas {
+  /* The diagram draws at full size and the card grows to its HEIGHT, so this scrolls on one axis
+     only — sideways, and only on the fully-open five-ring map, which is wider than any card. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  background:
+    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0) 0 0 / 24px 24px;
+}
+
+/* Nodes are <g> elements carrying a pill and its text. The whole group is the hit target. */
+.map-node { cursor: pointer; }
+.map-node rect, .map-node circle { transition: filter 0.12s ease-out; }
+.map-node:hover rect, .map-node:hover circle { filter: brightness(0.95); }
+
+/* A node nothing can expand should not advertise a click it will not honour. */
+.map-node.is-leaf { cursor: default; }
+.map-node.is-leaf:hover rect, .map-node.is-leaf:hover circle { filter: none; }
+
+/* Links sit under the nodes and never take pointer events, or they steal clicks near a node. */
+.map-link { fill: none; pointer-events: none; }
+
+/* SVG text does not inherit the page font stack through the Blazor render, so it is set
+   explicitly — without it the Kurdish labels fall back to a system Arabic face and stop matching
+   every other surface in the admin.
+
+   `central`, not `middle`: on Arabic script the two differ by a couple of pixels because the
+   scripts disagree about where the mathematical centre of a line sits, and `middle` left every
+   label riding slightly high inside its pill. */
+.map-canvas text {
+  font-family: var(--font-main);
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Counts are Latin digits sitting inside an RTL document. Left to inherit, a bare number next to
+   a Kurdish label gets reordered by the bidi algorithm and «١٢٣ مانا» comes out backwards. Each
+   count is its own <text> and each is pinned to LTR. */
+.map-num { direction: ltr; unicode-bidi: isolate; }
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────────
+   NOT styled. Left to the operating system on purpose.
+
+   It used to be a 5px green thumb, which was wrong twice over. Green is this design's
+   accent and it means "done" — spending it on a scrollbar dilutes the one signal the
+   dashboard depends on. And 5px is below the size a scrollbar has to be to be grabbed
+   with a mouse, which turned a standard control into a decoration you could only use
+   with the wheel.
+
+   Do not add ::-webkit-scrollbar rules here. If a specific panel ever genuinely needs a
+   thinner bar, scope it to that panel — never to the whole document. */
+
+
+/* ── Telerik, wearing our design system ─────────────────────────────────
+   Telerik ships its own theme, which is fine but is not this product: different greys, different
+   radii, a different font, and a blue accent. These rules are the seam. They are deliberately few
+   — restyling every internal class would break on the next Telerik upgrade, so this covers the
+   surfaces that actually show: the grid chrome, buttons, dialogs and inputs.
+
+   Everything here resolves to the same tokens the rest of the app uses, so a token change moves
+   Telerik with it. */
+
+.k-grid,
+.k-dialog,
+.k-window,
+.k-notification-group,
+.k-animation-container {
+  font-family: var(--font-main);
+}
+
+/* Grid ---------------------------------------------------------------- */
+/* Square, deliberately. Cards keep their 18px; grids do not get any.
+
+   A rounded grid only looks rounded until it has a header, a pager and a scrollbar, at which
+   point four inner rectangles push into the corners and the radius reads as a rendering
+   glitch. Kendo also rounds several of those inner parts on its own, so the reset has to
+   name them — clearing it on .k-grid alone leaves the header curved inside a square box. */
+.k-grid,
+.k-grid .k-grid-header,
+.k-grid .k-grid-header-wrap,
+.k-grid .k-grid-content,
+.k-grid .k-grid-toolbar,
+.k-grid .k-grid-pager,
+.k-grid .k-table,
+.k-grid .k-table-thead > tr > th:first-child,
+.k-grid .k-table-thead > tr > th:last-child {
+  border-radius: 0;
+}
+
+.k-grid {
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--text-1);
+}
+.k-grid .k-grid-header {
+  background: var(--page);
+  border-color: var(--border);
+}
+.k-grid .k-grid-header .k-header {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text-3);
+  border-color: var(--border);
+}
+.k-grid td,
+.k-grid .k-table-td {
+  border-color: var(--border-soft);
+  color: var(--text-1);
+  font-size: 14px;
+}
+.k-grid tr:hover td,
+.k-grid .k-table-row:hover .k-table-td {
+  background: var(--page);
+}
+.k-grid .k-grid-toolbar {
+  background: var(--card);
+  border-color: var(--border);
+  padding: 12px 16px;
+}
+.k-grid .k-alt,
+.k-grid .k-table-alt-row {
+  /* No zebra striping — the design separates rows with a rule, not a fill. */
+  background: transparent;
+}
+
+/* Buttons ------------------------------------------------------------- */
+/* Same material as .btn-primary — a Telerik toolbar button and a hand-written one sit
+   next to each other on several screens and must not read as two different products. */
+.k-button-solid-primary {
+  background: var(--grad-deep);
+  border-color: var(--green-deep);
+  color: #fff;
+  border-radius: 999px;
+}
+.k-button-solid-primary:hover { background: var(--grad-deep); opacity: .9; }
+
+.k-button-solid-base {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text-1);
+  border-radius: 999px;
+}
+.k-button-solid-base:hover { background: var(--page); }
+
+.k-button-solid-error {
+  background: var(--danger);
+  border-color: var(--danger);
+  border-radius: 999px;
+}
+
+/* Dialogs ------------------------------------------------------------- */
+.k-dialog,
+.k-window {
+  border-radius: 18px;
+  border-color: var(--border);
+}
+.k-dialog-titlebar,
+.k-window-titlebar {
+  background: var(--card);
+  color: var(--text-1);
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+.k-overlay { background: var(--overlay); }
+
+/* Inputs -------------------------------------------------------------- */
+.k-input,
+.k-picker {
+  border-radius: 10px;
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--text-1);
+
+  /* Matches `.field`. See --control-h above for why the two have to agree. */
+  min-height: var(--control-h);
+}
+
+/* Kendo centres the inner input with flex, so the extra height lands evenly above and below the
+   text on its own — but the inner element carries its own vertical padding, which would add to
+   ours and make the picker the taller control instead of the shorter one. */
+.k-input > .k-input-inner,
+.k-picker > .k-input-inner {
+  padding-block: 0;
+  font-size: 0.875rem;
+}
+.k-input:focus-within,
+.k-picker:focus-within {
+  border-color: var(--green);
+  box-shadow: 0 0 0 1px var(--green);
+}
+
+/* Notifications ------------------------------------------------------- */
+.k-notification { border-radius: 12px; font-size: 14px; }
+.k-notification-success { background: var(--green-deep); border-color: var(--green-deep); }
+.k-notification-error   { background: var(--danger); border-color: var(--danger); }

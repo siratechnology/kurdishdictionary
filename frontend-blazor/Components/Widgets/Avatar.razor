@@ -1,0 +1,72 @@
+@* A person's picture, with the initial-letter fallback.
+
+   Every surface that shows a user goes through this — the sidebar, the contributor cards, the
+   user grid — so the fallback rule lives in one place. Before, each of those hand-rolled its own
+   initial circle, which meant adding profile pictures would otherwise have been four edits and
+   at least one place that quietly kept showing a letter.
+
+   The tint is the same for everyone by default. Per-user colour coding turns a roster of
+   colleagues into a colour-keyed scoreboard; where a card needs colour it passes a Ring or a
+   Background that comes from the TIER, which is earned, rather than from the person. *@
+
+<span class="@RingClass" style="@RingStyle">
+    @if (HasImage)
+    {
+        @* No lazy loading and no fade: these are 40px and already cached by the proxy, and a
+           late-appearing face in a list that is being scanned is worse than a slightly later
+           first paint. *@
+        <img src="@Src" alt="@Name" width="@Size" height="@Size"
+             class="rounded-full object-cover" style="@SizeStyle" />
+    }
+    else
+    {
+        <span class="@FallbackClass" style="@SizeStyle">@Initial</span>
+    }
+</span>
+
+@code {
+    /// <summary>Relative URL from the API, or null for the fallback.</summary>
+    [Parameter] public string? Url { get; set; }
+
+    /// <summary>Used for the alt text and to derive the initial.</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Edge length in pixels.</summary>
+    [Parameter] public int Size { get; set; } = 36;
+
+    /// <summary>
+    /// A gradient class for the 2px ring — e.g. <c>tier-gold-grad</c>. The ring is how a
+    /// contributor card shows a tier without a second badge on the row.
+    /// </summary>
+    [Parameter] public string? Ring { get; set; }
+
+    /// <summary>Class for the fallback circle when there is no picture. Defaults to the green tint.</summary>
+    [Parameter] public string FallbackBackground { get; set; } = "bg-green-tint text-on-tint";
+
+    bool HasImage => !string.IsNullOrWhiteSpace(Url);
+
+    string Src => Url!;
+
+    string SizeStyle => $"width:{Size}px;height:{Size}px";
+
+    string RingClass => Ring is null
+        ? "inline-flex shrink-0"
+        : $"inline-flex shrink-0 rounded-full p-[2px] {Ring}";
+
+    string RingStyle => "";
+
+    string FallbackClass =>
+        $"flex items-center justify-center rounded-full font-medium {FallbackBackground} {TextSize}";
+
+    /// <summary>The letter has to shrink with the circle or it overflows a 28px avatar.</summary>
+    string TextSize => Size switch
+    {
+        <= 28 => "text-11",
+        <= 40 => "text-sm",
+        <= 56 => "text-base",
+        _ => "text-20",
+    };
+
+    string Initial =>
+        string.IsNullOrWhiteSpace(Name) ? "؟" : Name.Trim()[..1].ToUpperInvariant();
+}

@@ -1,0 +1,107 @@
+@* The dashboard's one feature panel: a 240° dial with a ticked rim.
+
+   It answers a single question — how much of the dictionary is actually finished — and it gets
+   the extra weight because it is the first thing you should read, not because the number is
+   good. A hero card in a warn state is still the hero. The weight comes from the tinted ground
+   and the size of the number, not from a dark fill: this admin is light throughout.
+
+   The arc and the ticks are hand-drawn SVG rather than TelerikArcGauge: the gauge component
+   paints its own track and tick colours from the theme, and every attempt to reach them lands
+   in `.k-arcgauge path` overrides that break on the next Telerik update. Thirty lines of
+   trigonometry that speak our tokens directly are the cheaper thing to own. *@
+
+<div class="card-feature flex flex-col">
+    <div class="flex items-center gap-2.5">
+        <span class="card-badge"><Icon Name="@Icon" Class="h-4 w-4" /></span>
+        <h2 class="card-title">@Title</h2>
+    </div>
+    <p class="mt-1 text-xs text-ink-2">@Subtitle</p>
+
+    <div class="relative mt-2 flex flex-1 items-end justify-center">
+        <svg viewBox="0 0 200 168" class="w-full max-w-[280px]" role="img" aria-label="@Caption">
+            @* SVG cannot read a CSS gradient, so the arc's own has to be declared here.
+               Same two stops and the same 135° feel as --grad-progress. *@
+            <defs>
+                <linearGradient id="gauge-arc" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="var(--green-deep)" />
+                    <stop offset="100%" stop-color="var(--green-soft)" />
+                </linearGradient>
+            </defs>
+
+            @* The rim. Ticks under the value are lit; the rest stay grey — the same
+               "done / not yet" split the hatch makes everywhere else. *@
+            @for (var i = 0; i <= TickCount; i++)
+            {
+                var lit = i <= (int)Math.Round(TickCount * Clamped);
+                <line x1="@X(TickAngle(i), 92)" y1="@Y(TickAngle(i), 92)"
+                      x2="@X(TickAngle(i), (i % 5 == 0 ? 99.0 : 96.0))" y2="@Y(TickAngle(i), (i % 5 == 0 ? 99.0 : 96.0))"
+                      stroke="@(lit ? "var(--green)" : "var(--border)")"
+                      stroke-width="@(i % 5 == 0 ? "2" : "1.2")" stroke-linecap="round" />
+            }
+
+            @* Track, then fill. At 0 the fill is not drawn at all — an empty dictionary
+               should look empty, never floored at a visible minimum. *@
+            <path d="@ArcPath" fill="none" stroke="var(--border-soft)" stroke-width="16" stroke-linecap="round" />
+            @if (Ratio > 0)
+            {
+                <path d="@ArcPath" fill="none" stroke="url(#gauge-arc)" stroke-width="16" stroke-linecap="round"
+                      stroke-dasharray="@ArcLength" stroke-dashoffset="@Offset" />
+            }
+        </svg>
+
+        <div class="absolute inset-x-0 bottom-6 flex flex-col items-center gap-2">
+            @if (!string.IsNullOrWhiteSpace(Delta))
+            {
+                <span class="pill pill-ok">
+                    <Icon Name="trend-up" Class="h-3 w-3" />
+                    <bdi>@Delta</bdi>
+                </span>
+            }
+            <p class="text-34 font-medium text-ink-1"><bdi>@Ku.P(Ratio)</bdi></p>
+            <p class="text-xs text-ink-2">@Caption</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    /// <summary>0..1. Pass 0.87, not 87.</summary>
+    [Parameter, EditorRequired] public double Ratio { get; set; }
+
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public string Subtitle { get; set; } = "";
+    [Parameter, EditorRequired] public string Caption { get; set; } = "";
+
+    /// <summary>Optional movement chip above the number, already formatted (e.g. "+12").</summary>
+    [Parameter] public string? Delta { get; set; }
+
+    [Parameter] public string Icon { get; set; } = "chart";
+
+    const int TickCount = 40;
+
+    // 240° of arc, drawn bottom-right → over the top → bottom-left, so in RTL the fill
+    // grows from the start edge. Angles are SVG-style: 0° is east, positive is down.
+    const double StartAngle = 30, Sweep = 240, R = 78;
+
+    double Clamped => Math.Clamp(Ratio, 0, 1);
+
+    static double X(double deg, double r) => Math.Round(100 + r * Math.Cos(deg * Math.PI / 180), 2);
+    static double Y(double deg, double r) => Math.Round(100 + r * Math.Sin(deg * Math.PI / 180), 2);
+
+    static double TickAngle(int i) => StartAngle - Sweep * i / TickCount;
+
+    // large-arc-flag 1 (240° > 180°), sweep-flag 0 (counter-clockwise).
+    string ArcPath =>
+        $"M {F(X(StartAngle, R))} {F(Y(StartAngle, R))} A {F(R)} {F(R)} 0 1 0 " +
+        $"{F(X(StartAngle - Sweep, R))} {F(Y(StartAngle - Sweep, R))}";
+
+    static double Length => Sweep / 360 * 2 * Math.PI * R;
+
+    static string ArcLength => F(Length);
+    string Offset => F(Length * (1 - Clamped));
+
+    /// <summary>
+    /// Path data is invariant or nothing draws: on a comma-decimal machine "78,5" turns one
+    /// SVG number into two and the browser drops the whole path without a word.
+    /// </summary>
+    static string F(double v) => v.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}

@@ -4,229 +4,413 @@
 @implements IAsyncDisposable
 @inject WordService WordSvc
 @inject ActivityStream Stream
+@inject Toast Toast
+@inject TaxonomyAdminService Taxonomy
 
-<PageTitle>وشەکان — فەرھەنگی کوردی</PageTitle>
+<PageTitle>وشەکان — ژینزار</PageTitle>
 
-<!-- Top bar -->
-<div class="flex items-center justify-between gap-4 mb-6" dir="rtl">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900">وشەکان</h1>
-        <p class="text-sm text-gray-400">@_totalCount وشە تۆمارکراوە</p>
+@* The word list, on a Telerik grid with a detail row.
+
+   It used to be a stack of tall cards, each carrying the headword, every meaning, every
+   relation and a description — beautiful for five words and unusable for three thousand,
+   because no two rows lined up and you could not scan a column to find the gaps.
+
+   So: one line per word, with the counts that matter as columns, and everything that used
+   to make the card tall moved into a detail row you open when you actually want it. The
+   grid is server-paged through OnRead — 3,026 words are never all in the circuit. *@
+
+<TelerikScope>
+
+<PageHeader Title="وشەکان" Subtitle="@($"{Ku.N(_totalCount)} وشە تۆمارکراوە")">
+    <Actions>
+        <TelerikButton OnClick="@OpenAdd" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary"
+                       Icon="@SvgIcon.Plus">
+            وشەی نوێ
+        </TelerikButton>
+    </Actions>
+</PageHeader>
+
+@* ── Filters ──────────────────────────────────────────────────────────────
+   Deliberately OUTSIDE the grid. Telerik's own filter row filters the page it was handed,
+   and that page is twenty rows out of three thousand — on this data it would lie. Every
+   control here goes to the server and rebinds.
+
+   One row on desktop, stacked on a phone, and a summary line underneath that says what is
+   currently applied with one click to clear it. A filter you cannot see is a filter you
+   forget you set, and then the list is "broken".
+
+   ONE flex row rather than two grids, because the cascade's length is data: a part of speech
+   with one axis and one with six both have to look deliberate. Every field grows over a basis,
+   so they divide the row evenly while it fits and wrap a field at a time when it does not — a
+   fixed four-column grid would leave a two-axis row with two holes in it, and strand a seventh
+   field alone on a second line. `basis-full` below sm stacks them on a phone.
+
+   `grow`, not `flex-1`: the flex shorthand writes flex-basis too, which would quietly beat the
+   `basis-*` beside it and collapse every field to the same zero basis. *@
+<div class="mb-3 flex flex-wrap items-end gap-2">
+
+    @* Widest field on the row: it holds a whole word, the others hold a label. *@
+    <div class="relative min-w-0 grow-[2] basis-full sm:basis-64">
+        @* Magnifier at the END — left, under RTL. Logical, so an LTR build mirrors it. *@
+        <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-ink-3">
+            <Icon Name="search" Class="h-4 w-4" />
+        </span>
+        <input value="@_search" @oninput="OnSearchInput"
+               placeholder="وشەکە بە پیتی سەرەتا بگەڕێ…"
+               class="field pe-10" />
     </div>
-    <button @onclick="OpenAdd"
-            class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-2.5 rounded-xl shadow-sm transition-colors text-sm">
-        + وشەی نوێ
-    </button>
-</div>
 
-<!-- Search + Filter row -->
-<div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-3 mb-5 flex flex-col sm:flex-row gap-2" dir="rtl">
-    <input value="@_search" @oninput="OnSearchInput"
-           placeholder="🔍  گەڕان بە ناوی کوردی..."
-           dir="rtl"
-           class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-    <select @bind="_selectedCategory" @bind:after="LoadWords"
-            class="border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 min-w-[160px]">
-        <option value="">هەموو بەشەکان</option>
-        @foreach (var cat in _categories)
+    <div class="min-w-0 grow basis-full sm:basis-44">
+        <TelerikDropDownList Data="@GapOptions" @bind-Value="_missing"
+                             TextField="Label" ValueField="Key"
+                             DefaultText="هەموو وشەکان" Width="100%"
+                             OnChange="@(_ => Rebind())" />
+    </div>
+
+    @* ── The cascade: بەشی ئاخاوتن → تەوەر → نرخ → تەوەر → … ───────────────────
+       Driven by the options tree, so it has NO FIXED DEPTH. Pick a part of speech and its
+       top-level axes appear; answer one, and whatever sub-groups that answer opens appear
+       beside it — جێناو → سەربەخۆ → کەسی is already three levels and nothing stops a fourth.
+
+       The list is resolved on the SERVER by the same OptionsTree the entry form and the work
+       queue use. That is the point: this screen used to build its own two-level cascade out of
+       the assignment list, so it offered sub-groups as if they were top-level questions — تێپەڕی
+       sitting beside بەشی ئاخاوتن with nothing saying it only applies to a تەواو verb — and it
+       went stale the moment somebody added a level in ڕێکخستن. A second copy of the rule is a
+       copy that will disagree.
+
+       Steps that do not apply are ABSENT, never disabled: the station screen's rule too. *@
+    @if (_partsOfSpeech.Any())
+    {
+        <div class="min-w-0 grow basis-full sm:basis-44">
+            <TelerikDropDownList Data="@_partsOfSpeech" @bind-Value="_partOfSpeech"
+                                 TextField="@nameof(TaxonomyPartOfSpeechDto.NameKu)"
+                                 ValueField="@nameof(TaxonomyPartOfSpeechDto.Id)"
+                                 DefaultText="بەشی ئاخاوتن" Width="100%"
+                                 OnChange="@(_ => OnPartOfSpeechChanged())" />
+        </div>
+
+        @* Depth-first: every axis is immediately followed by the groups its answer opened, so one
+           pass renders the whole tree. A nested group is captioned with the value it hangs off —
+           without that, two groups opened by two different answers look like siblings.
+
+           The caption sits ABOVE the control and the row is bottom-aligned, so a captioned field
+           grows upward and every dropdown on the row still shares one baseline. *@
+        @foreach (var ax in _filterAxes)
         {
-            <option value="@cat.Name">@cat.Name</option>
+            <div class="min-w-0 grow basis-full sm:basis-44">
+                @if (ax.Depth > 0 && !string.IsNullOrWhiteSpace(ax.ParentValueName))
+                {
+                    <p class="mb-0.5 truncate text-11 text-ink-3" title="@($"{ax.ParentValueName} ← {ax.Name}")">
+                        <span class="text-ink-2">@ax.ParentValueName</span> ←
+                    </p>
+                }
+                @* The technical label, not Ask. The entry form prints the teacher's question
+                   («کارەکە چ جۆرێکە؟») because it is asking; a filter bar is naming a column. *@
+                <TelerikDropDownList Data="@ax.Values" TItem="StationValueDto" TValue="int"
+                                     Value="@PickedOn(ax.AxisId)"
+                                     ValueChanged="@((int v) => OnValuePicked(ax.AxisId, v))"
+                                     TextField="@nameof(StationValueDto.Name)"
+                                     ValueField="@nameof(StationValueDto.ValueId)"
+                                     DefaultText="@ax.Name" Width="100%" />
+            </div>
         }
-    </select>
+    }
 </div>
 
-<!-- Category pills -->
 @if (_categories.Any())
 {
-    <div class="flex flex-wrap gap-2 mb-5" dir="rtl">
-        <button @onclick='() => SetCategory("")'
-                class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == "" ? "bg-indigo-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600")">
-            هەموو
+    <div class="mb-3 flex flex-wrap gap-1.5">
+        <button @onclick='() => SetCategory("")' class="@PillClass(_selectedCategory == "")">
+            هەموو پۆلەکان
         </button>
         @foreach (var cat in _categories)
         {
-            <button @onclick="() => SetCategory(cat.Name)"
-                    class="px-3 py-1 rounded-full text-xs font-medium transition-colors @(_selectedCategory == cat.Name ? "bg-indigo-600 text-white shadow-sm" : "bg-white border border-gray-200 text-gray-600 hover:border-indigo-300 hover:text-indigo-600")">
-                @cat.Name
+            <button @onclick="() => SetCategory(cat.Name)" class="@PillClass(_selectedCategory == cat.Name)">
+                @cat.Name <bdi class="text-11 opacity-70">@Ku.N(cat.WordCount)</bdi>
             </button>
         }
     </div>
 }
 
-<!-- Loading -->
-@if (_loading)
+@if (HasFilters)
 {
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        @for (int i = 0; i < 8; i++)
-        {
-            <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-50 last:border-0" dir="rtl">
-                <div class="flex-1 space-y-2">
-                    <div class="skeleton h-5 w-32"></div>
-                    <div class="skeleton h-3.5 w-56"></div>
-                </div>
-                <div class="skeleton h-5 w-14 rounded-full"></div>
-            </div>
-        }
-    </div>
-}
-else if (!_words.Any())
-{
-    <div class="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-200">
-        <p class="text-5xl mb-4">📖</p>
-        <p class="text-lg font-medium">هیچ وشەیەک نەدۆزرایەوە</p>
-        <p class="text-sm mt-1">وشەی نوێ زیاد بکە</p>
-    </div>
-}
-else
-{
-    <!-- Word list -->
-    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-        @foreach (var (word, idx) in _words.Select((w, i) => (w, i)))
-        {
-            <div class="group flex items-start gap-4 px-5 py-4 @(idx < _words.Count - 1 ? "border-b border-gray-50" : "") hover:bg-indigo-50/40 transition-colors" dir="rtl">
+    <div class="mb-3 flex flex-wrap items-center gap-2 rounded-chip border border-line-soft bg-page px-3 py-2">
+        <span class="text-11 text-ink-3">پاڵاوتن:</span>
 
-                <!-- Right: word + badges -->
-                <div class="flex-1 min-w-0 space-y-2">
-                    <!-- Row 1: word name + speech + category -->
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="text-xl font-bold text-gray-900 leading-tight">@word.Kurdish</span>
-                        @foreach (var sp in word.SpeechPanes)
+        @if (!string.IsNullOrWhiteSpace(_search))
+        {
+            <span class="pill pill-muted">دەستپێدەکات بە «@_search»</span>
+        }
+        @if (_partOfSpeech > 0)
+        {
+            <span class="pill pill-ok">@(_partsOfSpeech.FirstOrDefault(p => p.Id == _partOfSpeech)?.NameKu)</span>
+        }
+        @* One chip per level, in cascade order. A sub-answer read on its own is ambiguous — نێر
+           means nothing without the ڕەگەز it answers — so each chip carries its axis. *@
+        @foreach (var (axis, val) in PickedPairs())
+        {
+            <span class="pill pill-ok">@axis.Name: @val.Name</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(_missing))
+        {
+            <span class="pill pill-warn">@(GapOptions.First(g => g.Key == _missing).Label)</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(_selectedCategory))
+        {
+            <span class="pill pill-muted">@_selectedCategory</span>
+        }
+
+        <span class="ms-auto text-11 text-ink-2"><bdi>@Ku.N(_totalCount)</bdi> ئەنجام</span>
+
+        <TelerikButton OnClick="@ClearFilters" Icon="@SvgIcon.Cancel"
+                       FillMode="@ThemeConstants.Button.FillMode.Flat">
+            سڕینەوەی پاڵاوتن
+        </TelerikButton>
+    </div>
+}
+
+<TelerikGrid @ref="_grid" TItem="WordDto" OnRead="@OnGridRead"
+             Pageable="true" PageSize="20" Sortable="false">
+    <GridColumns>
+        <GridColumn Field="@nameof(WordDto.Kurdish)" Title="وشە" Width="260px">
+            <Template>
+                @{ var w = (WordDto)context; }
+                <div class="flex items-center gap-2.5">
+                    <span class="card-badge !h-7 !w-7 text-13">
+                        @(w.Kurdish.Length > 0 ? w.Kurdish[..1] : "؟")
+                    </span>
+                    <div class="min-w-0">
+                        <p class="truncate text-15 font-medium text-ink-1">@w.Kurdish</p>
+                        @if (!string.IsNullOrWhiteSpace(w.Description))
                         {
-                            <span class="text-[11px] font-semibold px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full">@sp.Kurdish</span>
-                        }
-                        @foreach (var cat in word.Categories)
-                        {
-                            <span class="text-[11px] font-medium px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-full border border-indigo-100">@cat.Name</span>
+                            <p class="truncate text-11 text-ink-3">@w.Description</p>
                         }
                     </div>
-
-                    <!-- Row 2: meanings list -->
-                    @if (word.Meanings.Any())
-                    {
-                        <div class="flex flex-wrap gap-1.5">
-                            @foreach (var m in word.Meanings.Take(4))
-                            {
-                                <span class="inline-flex items-baseline gap-1 text-xs text-gray-600 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-lg leading-snug">
-                                    @if (!string.IsNullOrEmpty(m.Locate))
-                                    {
-                                        <span class="text-[10px] font-semibold text-indigo-400 shrink-0">@m.Locate</span>
-                                        <span class="text-gray-300 text-[10px]">·</span>
-                                    }
-                                    <span dir="rtl">@m.Meaning</span>
-                                </span>
-                            }
-                            @if (word.Meanings.Count > 4)
-                            {
-                                <span class="text-xs px-2 py-1 bg-gray-100 text-gray-400 rounded-lg">+@(word.Meanings.Count - 4)</span>
-                            }
-                        </div>
-                    }
-
-                    <!-- Row 3: description (condensed) -->
-                    @if (!string.IsNullOrEmpty(word.Description))
-                    {
-                        <p class="text-xs text-gray-400 leading-relaxed line-clamp-1">@word.Description</p>
-                    }
-
-                    <!-- Row 4: relation chips (compact) -->
-                    @{
-                        var allRelated = word.OutgoingRelations.Concat(word.IncomingRelations).ToList();
-                    }
-                    @if (allRelated.Any())
-                    {
-                        <div class="flex flex-wrap gap-1">
-                            @foreach (var rw in allRelated.Take(6))
-                            {
-                                <span class="text-[11px] px-2 py-0.5 rounded-full font-medium @RelationColor(rw.RelationType)"
-                                      title="@((rw.IsIncoming ? "← " : "→ ") + rw.RelationType)">
-                                    @rw.RelatedKurdish
-                                </span>
-                            }
-                            @if (allRelated.Count > 6)
-                            {
-                                <span class="text-[11px] px-2 py-0.5 bg-gray-100 text-gray-400 rounded-full">+@(allRelated.Count - 6)</span>
-                            }
-                        </div>
-                    }
                 </div>
+            </Template>
+        </GridColumn>
 
-                <!-- Left: action buttons (reveal on hover) -->
-                <div class="shrink-0 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity pt-0.5">
-                    <button @onclick="() => OpenEdit(word)"
-                            class="p-2 text-indigo-500 hover:bg-indigo-100 rounded-lg transition-colors text-sm"
-                            title="دەستکاری">
-                        ✏
-                    </button>
-                    <button @onclick="() => ConfirmDelete(word)"
-                            class="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors text-sm"
-                            title="سڕینەوە">
-                        🗑
-                    </button>
+        <GridColumn Title="جۆری وشە" Width="180px">
+            <Template>
+                @{ var w = (WordDto)context; }
+                @if (w.SpeechPanes.Count == 0)
+                {
+                    @* Missing, not empty. The whole point of the queue is that this is fixable
+                       work, so it is marked rather than left as a blank cell. *@
+                    <span class="pill pill-warn">دیارینەکراو</span>
+                }
+                else
+                {
+                    <div class="flex flex-wrap gap-1">
+                        @foreach (var sp in w.SpeechPanes)
+                        {
+                            <span class="pill pill-ok">@sp.Kurdish</span>
+                        }
+                    </div>
+                }
+            </Template>
+        </GridColumn>
+
+        <GridColumn Title="پۆل" Width="200px">
+            <Template>
+                @{ var w = (WordDto)context; }
+                @if (w.Categories.Count == 0)
+                {
+                    <span class="text-ink-3">—</span>
+                }
+                else
+                {
+                    <div class="flex flex-wrap gap-1">
+                        @foreach (var cat in w.Categories)
+                        {
+                            <span class="pill pill-muted">@cat.Name</span>
+                        }
+                    </div>
+                }
+            </Template>
+        </GridColumn>
+
+        <GridColumn Title="واتا" Width="90px">
+            <Template>
+                @{ var w = (WordDto)context; }
+                <span class="pill @(w.Meanings.Count > 0 ? "pill-ok" : "pill-danger")">
+                    <bdi>@Ku.N(w.Meanings.Count)</bdi>
+                </span>
+            </Template>
+        </GridColumn>
+
+        <GridColumn Title="پەیوەندی" Width="110px">
+            <Template>
+                @{ var w = (WordDto)context; }
+                @{ var n = w.OutgoingRelations.Count + w.IncomingRelations.Count; }
+                <span class="pill @(n > 0 ? "pill-ok" : "pill-muted")">
+                    <bdi>@Ku.N(n)</bdi>
+                </span>
+            </Template>
+        </GridColumn>
+
+        <GridColumn Title="" Width="120px">
+            <Template>
+                @{ var w = (WordDto)context; }
+                <div class="flex items-center gap-1">
+                    <TelerikButton OnClick="@(() => OpenEdit(w))" Icon="@SvgIcon.Pencil"
+                                   FillMode="@ThemeConstants.Button.FillMode.Flat" Title="دەستکاری" />
+                    <TelerikButton OnClick="@(() => ConfirmDelete(w))" Icon="@SvgIcon.Trash"
+                                   FillMode="@ThemeConstants.Button.FillMode.Flat"
+                                   ThemeColor="@ThemeConstants.Button.ThemeColor.Error" Title="سڕینەوە" />
                 </div>
+            </Template>
+        </GridColumn>
+    </GridColumns>
 
+    @* Everything that used to make the card tall. Opened per row, so the scan stays a scan. *@
+    <DetailTemplate>
+        @{ var w = (WordDto)context; }
+        <div class="space-y-3 bg-page p-4">
+            <div>
+                <p class="mb-1.5 text-11 text-ink-3">واتاکان</p>
+                @if (w.Meanings.Count == 0)
+                {
+                    <p class="text-sm text-warn">هیچ واتایەکی نییە</p>
+                }
+                else
+                {
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach (var m in w.Meanings)
+                        {
+                            <span class="inline-flex items-baseline gap-1 rounded-chip border border-line-soft bg-card px-2.5 py-1 text-xs leading-snug text-ink-2">
+                                @if (!string.IsNullOrEmpty(m.Locate))
+                                {
+                                    <span class="shrink-0 text-11 text-ink-3">@m.Locate</span>
+                                    <span class="text-11 text-ink-3">·</span>
+                                }
+                                <span>@m.Meaning</span>
+                            </span>
+                        }
+                    </div>
+                }
             </div>
-        }
-    </div>
 
-    <!-- Pagination -->
-    @if (_totalPages > 1)
-    {
-        <div class="flex justify-center items-center gap-2" dir="ltr">
-            <button @onclick="PrevPage" disabled="@(_currentPage == 1)"
-                    class="px-4 py-2 text-sm rounded-xl border border-gray-200 bg-white disabled:opacity-40 hover:bg-gray-50 transition-colors">
-                ← پێشتر
-            </button>
-            <span class="text-sm text-gray-500 px-2">@_currentPage / @_totalPages</span>
-            <button @onclick="NextPage" disabled="@(_currentPage == _totalPages)"
-                    class="px-4 py-2 text-sm rounded-xl border border-gray-200 bg-white disabled:opacity-40 hover:bg-gray-50 transition-colors">
-                دواتر →
-            </button>
+            @{ var related = w.OutgoingRelations.Concat(w.IncomingRelations).ToList(); }
+            @if (related.Any())
+            {
+                <div>
+                    <p class="mb-1.5 text-11 text-ink-3">پەیوەندییەکان</p>
+                    @* One chip style for every relation type. Seven colours here would be a
+                       second palette; direction is carried by the arrow, type by the tooltip. *@
+                    <div class="flex flex-wrap gap-1">
+                        @foreach (var rw in related)
+                        {
+                            <span class="inline-flex items-center gap-1 rounded-full border border-line bg-card px-2 py-0.5 text-11 text-ink-2"
+                                  title="@RelLabel(rw.RelationType)">
+                                <span class="text-ink-3">@(rw.IsIncoming ? "←" : "→")</span>
+                                @rw.RelatedKurdish
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(w.Description))
+            {
+                <div>
+                    <p class="mb-1 text-11 text-ink-3">وەسف</p>
+                    <p class="text-sm leading-relaxed text-ink-2">@w.Description</p>
+                </div>
+            }
         </div>
-    }
-}
+    </DetailTemplate>
 
-<!-- Add/Edit Modal -->
+    <NoDataTemplate>
+        <div class="flex flex-col items-center gap-2 py-16 text-center">
+            <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+            <p class="text-sm text-ink-1">هیچ وشەیەک نەدۆزرایەوە</p>
+            <p class="text-xs text-ink-2">وشەی نوێ زیاد بکە</p>
+        </div>
+    </NoDataTemplate>
+</TelerikGrid>
+
 <WordFormModal IsVisible="_showModal"
                EditingWord="_editingWord"
                OnClose="CloseModal"
                OnSaved="OnSaved" />
 
-<!-- Delete confirmation -->
-@if (_deletingWord is not null)
-{
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/50" @onclick="CancelDelete"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm text-center" dir="rtl">
-            <p class="text-4xl mb-3">🗑</p>
-            <h3 class="text-lg font-bold text-gray-900 mb-1">دڵنیای؟</h3>
-            <p class="text-gray-500 text-sm mb-5">
-                وشەی <strong>"@_deletingWord.Kurdish"</strong> دەسڕێتەوە و ناتوانرێت بگەڕێندرێتەوە.
-            </p>
-            <div class="flex gap-3">
-                <button @onclick="CancelDelete"
-                        class="flex-1 px-4 py-2 text-sm font-medium bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200">
-                    پاشگەز
-                </button>
-                <button @onclick="ExecuteDelete" disabled="@_deleting"
-                        class="flex-1 px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50">
-                    @(_deleting ? "..." : "سڕینەوە")
-                </button>
-            </div>
-        </div>
-    </div>
-}
+<TelerikDialog Visible="@(_deletingWord is not null)" Title="سڕینەوەی وشە"
+               VisibleChanged="@(async v => { if (!v) await CancelDelete(); })"
+               ButtonsLayout="@DialogButtonsLayout.End" Width="420px">
+    <DialogContent>
+        <p class="text-sm leading-relaxed text-ink-2">
+            وشەی <span class="font-medium text-ink-1">«@_deletingWord?.Kurdish»</span>
+            دەسڕێتەوە و ناتوانرێت بگەڕێندرێتەوە.
+        </p>
+    </DialogContent>
+    <DialogButtons>
+        <TelerikButton OnClick="@CancelDelete">پاشگەز</TelerikButton>
+        <TelerikButton OnClick="@ExecuteDelete" Enabled="@(!_deleting)"
+                       ThemeColor="@ThemeConstants.Button.ThemeColor.Error">
+            @(_deleting ? "…" : "سڕینەوە")
+        </TelerikButton>
+    </DialogButtons>
+</TelerikDialog>
+
+</TelerikScope>
 
 @code {
-    List<WordDto> _words = new();
+    TelerikGrid<WordDto>? _grid;
+
     List<CategoryDto> _categories = new();
     int _totalCount;
-    int _totalPages;
-    int _currentPage = 1;
-    const int PageSize = 20;
 
     string _search = "";
     string _selectedCategory = "";
-    bool _loading = true;
+
+    string _missing = "";
+
+    // ── The v3 cascade ──────────────────────────────────────────────────────
+    TaxonomyOverviewDto? _taxonomy;
+    List<TaxonomyPartOfSpeechDto> _partsOfSpeech = new();
+
+    int _partOfSpeech;
+
+    /// <summary>
+    /// The questions that apply to the current answers, depth-first, resolved by the server's
+    /// OptionsTree. Rebuilt on every pick — that is what makes the sub-groups appear and vanish.
+    /// </summary>
+    List<StationAxisDto> _filterAxes = new();
+
+    /// <summary>
+    /// axis id → the value chosen on it. One value per axis, deliberately: on a filter, two values
+    /// on one axis would have to mean "holds both", and a word that is both تاک and کۆ is a
+    /// question nobody is asking. Multi-select belongs on the entry form, where it records a fact.
+    /// </summary>
+    readonly Dictionary<int, int> _picked = new();
+
+    int PickedOn(int axisId) => _picked.GetValueOrDefault(axisId);
+
+    /// <summary>The chosen answers with the axis each belongs to, in cascade order, for the chips.</summary>
+    IEnumerable<(StationAxisDto Axis, StationValueDto Value)> PickedPairs() =>
+        _filterAxes
+            .Select(a => (Axis: a, Value: a.Values.FirstOrDefault(v => v.ValueId == PickedOn(a.AxisId))))
+            .Where(x => x.Value is not null)
+            .Select(x => (x.Axis, x.Value!));
+
+    /// <summary>The four gaps, worded as the thing that is missing rather than as a filter name.</summary>
+    private record Gap(string Key, string Label);
+
+    private static readonly Gap[] GapOptions =
+    {
+        new("meaning",  "بەبێ واتا"),
+        new("pane",     "بەبێ جۆری وشە"),
+        new("category", "بەبێ پۆل"),
+        new("relation", "بەبێ پەیوەندی"),
+    };
+
+    bool HasFilters =>
+        !string.IsNullOrWhiteSpace(_search) ||
+        !string.IsNullOrWhiteSpace(_selectedCategory) ||
+        !string.IsNullOrWhiteSpace(_missing) ||
+        _partOfSpeech > 0 || _picked.Count > 0;
 
     bool _showModal;
     WordDto? _editingWord;
@@ -251,12 +435,44 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.WhenAll(LoadWords(), LoadCategories());
+        await LoadCategories();
 
         Stream.Received += OnActivityAsync;
         Stream.Reconnected += OnReconnectedAsync;
         await Stream.StartAsync();
     }
+
+    /// <summary>
+    /// The grid asks, we fetch. Page and size come from Telerik; search and category are page
+    /// state, so any change to them has to go through <see cref="Rebind"/> rather than a reload.
+    /// </summary>
+    async Task OnGridRead(GridReadEventArgs args)
+    {
+        var page = args.Request.Page <= 0 ? 1 : args.Request.Page;
+        var size = args.Request.PageSize <= 0 ? 20 : args.Request.PageSize;
+
+        try
+        {
+            var result = await WordSvc.GetWordsAsync(
+                page, size, _search, _selectedCategory,
+                string.IsNullOrWhiteSpace(_missing) ? null : _missing,
+                _partOfSpeech > 0 ? _partOfSpeech : null,
+                axis: null,
+                values: _picked.Values);
+            args.Data = result?.Items ?? new List<WordDto>();
+            args.Total = result?.TotalCount ?? 0;
+            _totalCount = result?.TotalCount ?? 0;
+        }
+        catch (Exception ex)
+        {
+            // An empty grid with no explanation is the failure mode people report as "it broke".
+            args.Data = new List<WordDto>();
+            args.Total = 0;
+            Toast.Error($"وشەکان نەهاتنەوە: {ex.Message}");
+        }
+    }
+
+    void Rebind() => _grid?.Rebind();
 
     Task OnActivityAsync(IReadOnlyList<AuditLogDto> entries)
     {
@@ -275,7 +491,7 @@ else
     void ScheduleLiveRefresh()
     {
         // Reloading under an open editor would swap the row out from beneath whoever is typing in it.
-        // Hold the refresh and let CloseModal/SaveComplete apply it.
+        // Hold the refresh and let CloseModal/CancelDelete apply it.
         if (_showModal || _deletingWord is not null)
         {
             _refreshPending = true;
@@ -295,9 +511,8 @@ else
                 await Task.Delay(Debounce, token);
                 await InvokeAsync(async () =>
                 {
-                    await LoadWordsSilently();
                     await LoadCategories();
-                    StateHasChanged();
+                    Rebind();
                 });
             }
             catch (OperationCanceledException)
@@ -305,27 +520,6 @@ else
                 // Superseded by a newer push, or the page went away.
             }
         }, token);
-    }
-
-    // Kept parameterless so it still binds directly to @bind:after — a method group with an optional
-    // argument will not convert to the delegate the directive expects.
-    Task LoadWords() => LoadWordsCore(silent: false);
-
-    /// <summary>
-    /// Reloads without raising the skeleton. Dropping the grid to placeholders every time somebody
-    /// else saves a word would make it unusable, so live refreshes swap the rows in underneath.
-    /// </summary>
-    Task LoadWordsSilently() => LoadWordsCore(silent: true);
-
-    async Task LoadWordsCore(bool silent)
-    {
-        if (!silent) _loading = true;
-
-        var result = await WordSvc.GetWordsAsync(_currentPage, PageSize, _search, _selectedCategory);
-        _words = result?.Items ?? new();
-        _totalCount = result?.TotalCount ?? 0;
-        _totalPages = result?.TotalPages ?? 1;
-        _loading = false;
     }
 
     public async ValueTask DisposeAsync()
@@ -339,8 +533,104 @@ else
         _searchCts?.Dispose();
     }
 
-    async Task LoadCategories() =>
-        _categories = await WordSvc.GetCategoriesAsync();
+    async Task LoadCategories()
+    {
+        try { _categories = await WordSvc.GetCategoriesAsync(); }
+        catch { /* The filter pills are a convenience; the grid works without them. */ }
+
+        try
+        {
+            _taxonomy = await Taxonomy.GetOverviewAsync();
+            _partsOfSpeech = _taxonomy?.PartsOfSpeech.Where(p => p.IsActive).ToList() ?? new();
+
+            // Settings are edited live, and this method also runs on a hub push. If the chosen part
+            // of speech was deactivated out from under the filter, drop it rather than leave a
+            // dropdown showing a part that is no longer offered.
+            if (_partOfSpeech > 0 && _partsOfSpeech.All(p => p.Id != _partOfSpeech))
+                _partOfSpeech = 0;
+
+            // Re-resolve against the current tree: a group added, removed or re-parented in
+            // ڕێکخستن changes which questions this filter should be asking.
+            await ResolveAxes();
+        }
+        catch
+        {
+            // The cascade simply does not appear. The rest of the page is unaffected.
+        }
+    }
+
+    /// <summary>
+    /// Choosing a different part of speech invalidates every answer beneath it — those questions
+    /// belong to the old part and may not even exist on the new one. Clearing them is not
+    /// tidiness: a stale value id left in the query filters on something no dropdown on screen
+    /// offers any more, and the empty result reads as the filter being broken.
+    /// </summary>
+    async Task OnPartOfSpeechChanged()
+    {
+        _picked.Clear();
+        await ResolveAxes();
+        Rebind();
+    }
+
+    /// <summary>
+    /// One pick. Re-resolving is what opens the sub-group the answer unlocks — and closes the one
+    /// the previous answer had opened.
+    /// </summary>
+    async Task OnValuePicked(int axisId, int valueId)
+    {
+        if (valueId > 0) _picked[axisId] = valueId;
+        else _picked.Remove(axisId);
+
+        await ResolveAxes();
+        Rebind();
+    }
+
+    /// <summary>
+    /// Asks the server which questions apply to the answers held right now, then drops answers to
+    /// questions that are no longer being asked.
+    ///
+    /// The pruning is the part that matters. Resolve() walks down from the roots, so a stale
+    /// answer can never bring a hidden group back on screen — but it would still be sent to the
+    /// API and would still narrow the list, invisibly. One pass is enough: an axis is only
+    /// reachable through its parent, so hiding a level hides everything under it at the same time.
+    /// </summary>
+    async Task ResolveAxes()
+    {
+        if (_partOfSpeech <= 0)
+        {
+            _filterAxes = new();
+            _picked.Clear();
+            return;
+        }
+
+        try
+        {
+            _filterAxes = await Taxonomy.PreviewFormAsync(_partOfSpeech, _picked.Values.ToList());
+        }
+        catch
+        {
+            // The cascade folds away and the rest of the page carries on. Keeping the picks while
+            // their dropdowns are gone would filter on answers nobody can see or clear.
+            _filterAxes = new();
+            _picked.Clear();
+            return;
+        }
+
+        var visible = _filterAxes.Select(a => a.AxisId).ToHashSet();
+        foreach (var stale in _picked.Keys.Where(id => !visible.Contains(id)).ToList())
+            _picked.Remove(stale);
+    }
+
+    void ClearFilters()
+    {
+        _search = "";
+        _selectedCategory = "";
+        _missing = "";
+        _partOfSpeech = 0;
+        _picked.Clear();
+        _filterAxes = new();
+        Rebind();
+    }
 
     async Task OnSearchInput(ChangeEventArgs e)
     {
@@ -350,24 +640,20 @@ else
         try
         {
             await Task.Delay(350, _searchCts.Token);
-            _currentPage = 1;
-            await LoadWords();
+            Rebind();
         }
         catch (TaskCanceledException) { }
     }
 
-    async Task SetCategory(string cat)
+    void SetCategory(string cat)
     {
         _selectedCategory = cat;
-        _currentPage = 1;
-        await LoadWords();
+        Rebind();
     }
-
-    async Task PrevPage() { if (_currentPage > 1) { _currentPage--; await LoadWords(); } }
-    async Task NextPage() { if (_currentPage < _totalPages) { _currentPage++; await LoadWords(); } }
 
     void OpenAdd() { _editingWord = null; _showModal = true; }
     void OpenEdit(WordDto w) { _editingWord = w; _showModal = true; }
+
     async Task CloseModal()
     {
         _showModal = false;
@@ -380,20 +666,22 @@ else
         if (!_refreshPending) return;
         _refreshPending = false;
 
-        await LoadWordsSilently();
         await LoadCategories();
+        Rebind();
     }
 
     async Task OnSaved()
     {
         _showModal = false;
-        _currentPage = 1;
         // This reload subsumes anything the hub pushed while the editor was open.
         _refreshPending = false;
-        await Task.WhenAll(LoadWords(), LoadCategories());
+        await LoadCategories();
+        Rebind();
+        Toast.Success("وشەکە پاشەکەوت کرا");
     }
 
     void ConfirmDelete(WordDto w) => _deletingWord = w;
+
     async Task CancelDelete()
     {
         _deletingWord = null;
@@ -403,22 +691,43 @@ else
     async Task ExecuteDelete()
     {
         if (_deletingWord is null) return;
+
+        var name = _deletingWord.Kurdish;
         _deleting = true;
-        await WordSvc.DeleteWordAsync(_deletingWord.Id);
-        _deletingWord = null;
-        _deleting = false;
-        _refreshPending = false;
-        await Task.WhenAll(LoadWords(), LoadCategories());
+
+        try
+        {
+            await WordSvc.DeleteWordAsync(_deletingWord.Id);
+            Toast.Success($"«{name}» سڕایەوە");
+        }
+        catch (Exception ex)
+        {
+            Toast.Error($"نەسڕایەوە: {ex.Message}");
+        }
+        finally
+        {
+            _deletingWord = null;
+            _deleting = false;
+            _refreshPending = false;
+        }
+
+        await LoadCategories();
+        Rebind();
     }
 
-    string RelationColor(string type) => type switch
+    static string PillClass(bool active) => active
+        ? "rounded-full bg-green-deep px-3 py-1 text-11 font-medium text-white"
+        : "rounded-full border border-line bg-card px-3 py-1 text-11 text-ink-2 transition-colors hover:bg-page";
+
+    static string RelLabel(string type) => type switch
     {
-        "synonym"    => "bg-green-100 text-green-700",
-        "antonym"    => "bg-red-100 text-red-700",
-        "example"    => "bg-blue-100 text-blue-700",
-        "usage"      => "bg-purple-100 text-purple-700",
-        "contextual" => "bg-cyan-100 text-cyan-700",
-        "partof"     => "bg-orange-100 text-orange-700",
-        _            => "bg-gray-100 text-gray-500"
+        "synonym"    => "هاومانا",
+        "antonym"    => "دژەوشە",
+        "related"    => "پەیوەندیدار",
+        "example"    => "نموونە",
+        "usage"      => "بەکارهێنان",
+        "contextual" => "چوارچێوەیی",
+        "partof"     => "بەشێکە لە",
+        _            => type,
     };
 }

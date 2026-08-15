@@ -1,0 +1,127 @@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@implements IDisposable
+@inject IPresenceStore Presence
+@inject AuthenticationStateProvider Auth
+
+@* Who is working right now, as a row of faces in the top bar.
+
+   Live without polling. Presence is already an in-memory fact this process holds — one circuit
+   per signed-in user, and the framework says when each opens, closes and goes quiet — so the
+   store raises an event and this re-renders on it. A timer here would be a slower version of
+   something free, and would keep ticking on every circuit in the building whether or not
+   anything had changed.
+
+   OTHERS only. Your own face is already at the foot of the sidebar and you do not need this
+   strip to tell you that you are here — including yourself just makes the count read one higher
+   than the number of colleagues you could actually ask something.
+
+   ACTIVE only, deliberately. «چالاک» means input within the last two minutes, not "has the tab
+   open": a teacher who left for a class is not someone you should expect an answer from, and
+   showing them here would make the row a lie people learn to ignore. Idle and offline are
+   absent rather than greyed — a face at 40% opacity still reads as presence at a glance. *@
+
+@if (_active.Count > 0)
+{
+    <div class="flex items-center" title="@Summary">
+        @* Overlapped, so several people still fit beside the search field. The stack runs from
+           the start edge, so the first face is the one nearest the page's reading origin.
+
+           On a phone the top bar also carries the menu button, the activity link and the bell,
+           so only MobileFaces fit; the rest appear from md up. Which faces are hidden is done in
+           CSS rather than by measuring the viewport — a resize listener would mean a JS round
+           trip per rotation, and the count is small enough to just render and hide. *@
+        <div class="flex items-center gap-[3px]">
+            @foreach (var (p, i) in _active.Take(MaxFaces).Select((p, i) => (p, i)))
+            {
+                @* inline-flex, not the default inline: an inline box sits on the text baseline
+                   and carries the line's descender gap underneath it, so the dot was being
+                   positioned against a box several pixels taller than the face and floated away
+                   from the circle. Shrink-wrapping the container makes bottom/end mean the
+                   avatar's own edge. *@
+                <span class="relative @(i >= MobileFaces ? "hidden md:inline-flex" : "inline-flex")"
+                      title="@p.UserName">
+                    <span class="flex rounded-full">
+                        <Avatar Url="@p.AvatarUrl" Name="@p.UserName" Size="30" />
+                    </span>
+
+                    @* Sits ON the circumference: at bottom-0 end-0 the dot's centre lands almost
+                       exactly on the circle's edge at 45°. Ringed in the card colour so it reads
+                       as separate from the face rather than as a smudge on someone's shoulder. *@
+                    <span class="absolute bottom-0 end-0 h-2.5 w-2.5 rounded-full bg-green ring-2 ring-card"
+                          aria-hidden="true"></span>
+                </span>
+            }
+
+            @* Two overflow chips, because the number hidden differs by breakpoint and a single
+               "+N" would be wrong on one of them. Each is visible only where its count is true. *@
+            @if (_active.Count > MobileFaces)
+            {
+                <span class="relative flex h-[30px] w-[30px] items-center justify-center rounded-full border border-line bg-page text-11 text-ink-2 md:hidden"
+                      title="@OverflowFrom(MobileFaces)">
+                    <bdi>+@Ku.N(_active.Count - MobileFaces)</bdi>
+                </span>
+            }
+
+            @if (_active.Count > MaxFaces)
+            {
+                <span class="relative hidden h-[30px] w-[30px] items-center justify-center rounded-full border border-line bg-page text-11 text-ink-2 md:flex"
+                      title="@OverflowFrom(MaxFaces)">
+                    <bdi>+@Ku.N(_active.Count - MaxFaces)</bdi>
+                </span>
+            }
+        </div>
+
+        <span class="ms-2.5 hidden text-11 text-ink-2 lg:inline">
+            <bdi>@Ku.N(_active.Count)</bdi> چالاک
+        </span>
+    </div>
+}
+
+@code {
+    /// <summary>Beyond this the row starts crowding the search field and becomes a "+N".</summary>
+    private const int MaxFaces = 6;
+
+    /// <summary>
+    /// What fits on a phone, where the top bar also carries the menu button, the activity link
+    /// and the bell. Two faces plus a "+N" is about 90px, which is what is left.
+    /// </summary>
+    private const int MobileFaces = 2;
+
+    private List<PresenceSnapshot> _active = new();
+
+    /// <summary>Whose face to leave out — the person reading the screen.</summary>
+    private Guid _self;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await Auth.GetAuthenticationStateAsync();
+
+        Guid.TryParse(
+            state.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+            out _self);
+
+        Presence.Changed += OnChanged;
+        Refresh();
+    }
+
+    private void OnChanged()
+    {
+        // Changed fires on whichever circuit caused it, which is usually not this one, so the
+        // re-render has to be marshalled onto this component's dispatcher.
+        Refresh();
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void Refresh() =>
+        _active = Presence.All()
+            .Where(p => p.Status == PresenceStatus.Active && p.UserId != _self)
+            .OrderBy(p => p.UserName, StringComparer.Ordinal)
+            .ToList();
+
+    private string Summary => string.Join("، ", _active.Select(p => p.UserName));
+
+    private string OverflowFrom(int shown) =>
+        string.Join("، ", _active.Skip(shown).Select(p => p.UserName));
+
+    public void Dispose() => Presence.Changed -= OnChanged;
+}

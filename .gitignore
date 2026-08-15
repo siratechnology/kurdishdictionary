@@ -7,6 +7,9 @@
 **/appsettings.Development.json
 **/appsettings.Local.json
 
+# Per-developer Claude Code permissions; the shared skills in .claude/skills are committed.
+.claude/settings.local.json
+
 # .NET
 **/bin/
 **/obj/

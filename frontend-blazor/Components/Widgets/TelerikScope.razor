@@ -1,0 +1,13 @@
+@* A TelerikRootComponent for one interactive island.
+
+   Every page that uses a Telerik component wraps its content in this. It exists as a component
+   rather than a bare <TelerikRootComponent> so the RTL flag — which is easy to forget and breaks
+   every grid header and dialog when missing — is set in exactly one place. *@
+
+<TelerikRootComponent EnableRtl="true">
+    @ChildContent
+</TelerikRootComponent>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

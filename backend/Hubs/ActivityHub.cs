@@ -20,6 +20,16 @@ public class ActivityHub : Hub
 {
     /// <summary>Name of the client-side handler. Shared with the Blazor client via <see cref="ActivityBroadcaster"/>.</summary>
     public const string ActivityEvent = "ActivityHappened";
+
+    /// <summary>
+    /// Fired when the taxonomy itself changes — a group added, renamed, re-parented, retired.
+    ///
+    /// Separate from <see cref="ActivityEvent"/> because the reactions are different: content
+    /// activity refreshes a list, a taxonomy change re-shapes the form somebody is typing into. That
+    /// second one has to be handled carefully enough that it never destroys unsaved input, and
+    /// hiding it inside the general feed would make it impossible to handle differently.
+    /// </summary>
+    public const string TaxonomyEvent = "TaxonomyChanged";
 }
 
 /// <summary>Sends audit rows down <see cref="ActivityHub"/>.</summary>

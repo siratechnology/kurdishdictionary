@@ -1,0 +1,799 @@
+@page "/settings/values"
+@* The flat table view. The TREE at /settings is where sub-groups are configured now — picking a
+   "required value" out of a list of every value in the system is the same data and impossible to
+   reason about, so that part of this screen has moved. What stays here is the work a table is
+   genuinely better at: renaming parts of speech, merging duplicate values, and sweeping the
+   never-used ones. *@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@attribute [Authorize(Roles = "Admin,Editor")]
+@inject TaxonomyAdminService Taxonomy
+@inject Toast Toast
+
+<PageTitle>ڕێکخستنی تاکسۆنۆمی — ژینزار</PageTitle>
+
+@* The taxonomy settings area (پڕۆمپت ١١), on Telerik grids.
+
+   The disease in this project is category sprawl — 26 categories became 79 in a month because
+   creating one was easy. So USAGE COUNT is a column on every grid, and the value grid sorts by it
+   ascending: the two-and-three-sense long tail is the first thing you see, and once it is visible
+   it starts correcting itself.
+
+   Editing is inline. The previous version made you open a panel, type, and press two buttons for
+   what is really a one-field change; a grid row that turns into inputs is the same work in one
+   gesture, and it is the pattern every other management screen now follows. *@
+
+<TelerikScope>
+    <PageHeader Title="ڕێکخستنی تاکسۆنۆمی"
+                Subtitle="بەشەکانی ئاخاوتن، تەوەرە ڕێزمانییەکان و نرخەکانیان" />
+
+    @if (_loading)
+    {
+        <div class="grid gap-4 xl:grid-cols-2">
+            <div class="skeleton h-96 rounded-card"></div>
+            <div class="skeleton h-96 rounded-card"></div>
+        </div>
+    }
+    else if (_data is null)
+    {
+        <div class="card flex flex-col items-center gap-3 py-16 text-center">
+            <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+            <p class="text-sm text-ink-1">ناتوانرێت تاکسۆنۆمی بهێنرێت</p>
+            <TelerikButton OnClick="Load" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                هەوڵدانەوە
+            </TelerikButton>
+        </div>
+    }
+    else
+    {
+        <div class="grid gap-4 page-enter xl:grid-cols-2">
+
+            @* ── Parts of speech ───────────────────────────────────────────────
+               The closed list of seven. Renameable — that is what fixes ئاوەڵناو → هاوەڵناو today —
+               but adding one is a linguistic claim and lives behind a role and a written reason. *@
+            <section>
+                <TelerikGrid Data="@_data.PartsOfSpeech"
+                             EditMode="@GridEditMode.Inline"
+                             OnUpdate="@UpdatePartOfSpeech"
+                             SelectionMode="@GridSelectionMode.Single"
+                             SelectedItems="@_selectedParts"
+                             SelectedItemsChanged="@(async (IEnumerable<TaxonomyPartOfSpeechDto> items) => await OnPartSelected(items))"
+                             Pageable="false"
+                             Sortable="true">
+                    <GridToolBarTemplate>
+                        <span class="card-title">بەشەکانی ئاخاوتن</span>
+                        <span class="ms-2 rounded-full bg-page px-2 py-0.5 text-11 text-ink-2">
+                            <bdi>@Ku.N(_data.PartsOfSpeech.Count)</bdi>
+                        </span>
+                        <span class="ms-auto text-11 text-ink-3">ڕیزێک هەڵبژێرە بۆ بەڕێوەبردنی تەوەرەکانی</span>
+                    </GridToolBarTemplate>
+
+                    <GridColumns>
+                        <GridColumn Field="@nameof(TaxonomyPartOfSpeechDto.NameKu)" Title="ناو" />
+
+                        @* How many axes this part currently asks for. It is the column that makes
+                           the selection worth making — a part with 0 axes is one nobody has
+                           configured, and that is exactly what the queue keeps reporting as
+                           "ڕێکنەخراوە". *@
+                        <GridColumn Title="تەوەر" Editable="false" Width="90px">
+                            <Template>
+                                @{ var p = (context as TaxonomyPartOfSpeechDto)!; }
+                                <span class="pill @(AxesFor(p.Id).Count > 0 ? "pill-ok" : "pill-muted")">
+                                    <bdi>@Ku.N(AxesFor(p.Id).Count)</bdi>
+                                </span>
+                            </Template>
+                        </GridColumn>
+
+                        @* The code is shown but never editable: rules match on it, and a rule keyed to
+                           a label stops firing the moment somebody corrects a typo. *@
+                        <GridColumn Field="@nameof(TaxonomyPartOfSpeechDto.Code)" Title="کۆد" Editable="false" Width="140px">
+                            <Template>
+                                <span class="text-11 text-ink-3"><bdi>@((context as TaxonomyPartOfSpeechDto)!.Code)</bdi></span>
+                            </Template>
+                        </GridColumn>
+
+                        <GridColumn Field="@nameof(TaxonomyPartOfSpeechDto.WordCount)" Title="وشە" Editable="false" Width="120px">
+                            <Template>
+                                @{ var p = (context as TaxonomyPartOfSpeechDto)!; }
+                                <span class="@CountPill(p.WordCount)"><bdi>@Ku.N(p.WordCount)</bdi></span>
+                            </Template>
+                        </GridColumn>
+
+                        <GridCommandColumn Width="170px">
+                            <GridCommandButton Command="Edit" Icon="@SvgIcon.Pencil">گۆڕین</GridCommandButton>
+                            <GridCommandButton Command="Save" Icon="@SvgIcon.Save" ShowInEdit="true">پاشەکەوت</GridCommandButton>
+                            <GridCommandButton Command="Cancel" Icon="@SvgIcon.Cancel" ShowInEdit="true">پاشگەز</GridCommandButton>
+                        </GridCommandColumn>
+                    </GridColumns>
+                </TelerikGrid>
+            </section>
+
+            @* ── Axes OF THE SELECTED PART OF SPEECH ───────────────────────────
+               This grid is scoped to the selection on the left, not the whole taxonomy. The
+               question a teacher actually arrives with is "what does a ناو need?", and the flat
+               global list could not answer it — you had to read the assignment matrix at the
+               bottom of the page and hold a row in your head.
+
+               So: select ناو, see its axes, add one, and fill in its values. The matrix is still
+               below for the whole-table view, and the two stay in sync because both render from
+               _data.Assignments. *@
+            <section>
+                @if (_selectedPart is null)
+                {
+                    <div class="card flex h-full flex-col items-center justify-center gap-2 py-16 text-center">
+                        <span class="hatch h-12 w-12 rounded-card border border-line"></span>
+                        <p class="text-sm font-medium text-ink-1">بەشێکی ئاخاوتن هەڵبژێرە</p>
+                        <p class="text-xs leading-relaxed text-ink-2">
+                            لە لیستەکەی تەنیشتەوە ڕیزێک هەڵبژێرە<br />
+                            بۆ زیادکردن و لابردنی تەوەرەکانی
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <TelerikGrid Data="@PartAxes"
+                                 SelectionMode="@GridSelectionMode.Single"
+                                 SelectedItems="@_selectedAxes"
+                                 SelectedItemsChanged="@(async (IEnumerable<TaxonomyAxisDto> items) => await OnAxisSelected(items))"
+                                 Pageable="false"
+                                 Sortable="true">
+                        <GridToolBarTemplate>
+                            <span class="card-title">تەوەرەکانی «@_selectedPart.NameKu»</span>
+                            <span class="ms-2 rounded-full bg-page px-2 py-0.5 text-11 text-ink-2">
+                                <bdi>@Ku.N(PartAxes.Count)</bdi>
+                            </span>
+                            <span class="ms-auto"></span>
+
+                            @* Attaching an axis that already exists is the common case and is one
+                               click. Inventing a new one is a linguistic claim, so it keeps its
+                               dialog and its written reason. *@
+                            @if (UnassignedAxes.Count > 0)
+                            {
+                                <TelerikDropDownList Data="@UnassignedAxes" @bind-Value="_attachAxisId"
+                                                     TextField="@nameof(TaxonomyAxisDto.NameKu)"
+                                                     ValueField="@nameof(TaxonomyAxisDto.Id)"
+                                                     DefaultText="تەوەرێکی ئامادە" Width="180px" />
+                                <TelerikButton OnClick="@AttachAxis" Icon="@SvgIcon.Plus"
+                                               Enabled="@(_attachAxisId > 0)">
+                                    بەستنەوە
+                                </TelerikButton>
+                            }
+
+                            <TelerikButton OnClick="@(() => _addAxisOpen = true)"
+                                           Icon="@SvgIcon.Plus"
+                                           ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                                تەوەری نوێ
+                            </TelerikButton>
+                        </GridToolBarTemplate>
+
+                        <GridColumns>
+                            <GridColumn Field="@nameof(TaxonomyAxisDto.NameKu)" Title="ناو" />
+                            <GridColumn Field="@nameof(TaxonomyAxisDto.ValueCount)" Title="نرخ" Width="80px" />
+
+                            @* Required means the work queue will report every sense of this part
+                               that has no value on this axis. That is a real backlog, so it is a
+                               toggle you press deliberately rather than a checkbox in an editor. *@
+                            <GridColumn Title="پێویست" Width="120px">
+                                <Template>
+                                    @{ var a = (context as TaxonomyAxisDto)!; }
+                                    <button type="button" @onclick="() => ToggleRequired(a)"
+                                            class="pill @(IsRequired(a.Id) ? "pill-warn" : "pill-muted")"
+                                            title="@(IsRequired(a.Id) ? "پێویستە — کلیک بۆ ئارەزوومەندانە" : "ئارەزوومەندانە — کلیک بۆ پێویست")">
+                                        @(IsRequired(a.Id) ? "پێویست" : "ئارەزوومەندانە")
+                                    </button>
+                                </Template>
+                            </GridColumn>
+
+                            <GridColumn Field="@nameof(TaxonomyAxisDto.UsageCount)" Title="بەکارهاتوو" Width="120px">
+                                <Template>
+                                    @{ var a = (context as TaxonomyAxisDto)!; }
+                                    <span class="@CountPill(a.UsageCount)"><bdi>@Ku.N(a.UsageCount)</bdi></span>
+                                </Template>
+                            </GridColumn>
+
+                            <GridCommandColumn Width="110px">
+                                <GridCommandButton Command="Detach" Icon="@SvgIcon.Cancel"
+                                                   ThemeColor="@ThemeConstants.Button.ThemeColor.Error"
+                                                   OnClick="@DetachAxis" Title="لابردن لەم بەشە">
+                                    لابردن
+                                </GridCommandButton>
+                            </GridCommandColumn>
+                        </GridColumns>
+
+                        <NoDataTemplate>
+                            <div class="flex flex-col items-center gap-2 py-10 text-center">
+                                <span class="hatch h-10 w-10 rounded-full border border-line"></span>
+                                <p class="text-sm text-ink-1">هیچ تەوەرێک بۆ ئەم بەشە دیارینەکراوە</p>
+                                <p class="text-xs text-ink-2">لە سەرەوە تەوەرێک ببەستەوە یان نوێ دروست بکە</p>
+                            </div>
+                        </NoDataTemplate>
+                    </TelerikGrid>
+                }
+            </section>
+
+            @* ── Values of the selected axis ─────────────────────────────────── *@
+            @if (_selectedAxis is { } axis)
+            {
+                <section class="xl:col-span-2">
+                    <TelerikGrid Data="@_values"
+                                 EditMode="@GridEditMode.Inline"
+                                 OnUpdate="@UpdateValue"
+                                 OnCreate="@CreateValue"
+                                 Pageable="@(_values.Count > 15)"
+                                 PageSize="15"
+                                 Sortable="true">
+                        <GridToolBarTemplate>
+                            <span class="card-title">نرخەکانی «@axis.NameKu»</span>
+                            <span class="ms-auto"></span>
+                            <GridCommandButton Command="Add" Icon="@SvgIcon.Plus"
+                                               ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                                نرخی نوێ
+                            </GridCommandButton>
+                        </GridToolBarTemplate>
+
+                        <GridColumns>
+                            <GridColumn Field="@nameof(TaxonomyValueDto.NameKu)" Title="ناو" />
+
+                            <GridColumn Field="@nameof(TaxonomyValueDto.Code)" Title="کۆد" Width="150px">
+                                <Template>
+                                    <span class="text-11 text-ink-3">
+                                        <bdi>@((context as TaxonomyValueDto)!.Code)</bdi>
+                                    </span>
+                                </Template>
+                            </GridColumn>
+
+                            <GridColumn Field="@nameof(TaxonomyValueDto.UsageCount)" Title="بەکارهاتوو" Editable="false" Width="130px">
+                                <Template>
+                                    @{ var v = (context as TaxonomyValueDto)!; }
+                                    <span class="@CountPill(v.UsageCount)"><bdi>@Ku.N(v.UsageCount)</bdi></span>
+                                </Template>
+                            </GridColumn>
+
+                            <GridColumn Field="@nameof(TaxonomyValueDto.IsActive)" Title="دۆخ" Editable="false" Width="120px">
+                                <Template>
+                                    @{ var v = (context as TaxonomyValueDto)!; }
+                                    @if (v.IsActive)
+                                    {
+                                        <span class="rounded-full bg-green-tint px-2 py-0.5 text-11 text-on-tint">چالاک</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rounded-full bg-page px-2 py-0.5 text-11 text-ink-2">ناچالاک</span>
+                                    }
+                                </Template>
+                            </GridColumn>
+
+                            <GridCommandColumn Width="300px">
+                                <GridCommandButton Command="Edit" Icon="@SvgIcon.Pencil">گۆڕین</GridCommandButton>
+                                <GridCommandButton Command="Save" Icon="@SvgIcon.Save" ShowInEdit="true">پاشەکەوت</GridCommandButton>
+                                <GridCommandButton Command="Cancel" Icon="@SvgIcon.Cancel" ShowInEdit="true">پاشگەز</GridCommandButton>
+
+                                <GridCommandButton Command="Merge" Icon="@SvgIcon.ArrowsNoRepeat"
+                                                   OnClick="@StartMerge">تێکەڵ</GridCommandButton>
+                                <GridCommandButton Command="Toggle" Icon="@SvgIcon.Eye"
+                                                   OnClick="@ToggleActive">دۆخ</GridCommandButton>
+
+                                @* Delete is for values created by mistake — which have no usage by
+                                   definition. The server refuses anything a sense actually uses and
+                                   says how many, so the toast turns a dead end into an instruction:
+                                   deactivate it, or merge it into the value that replaced it. *@
+                                <GridCommandButton Command="Remove" Icon="@SvgIcon.Trash"
+                                                   ThemeColor="@ThemeConstants.Button.ThemeColor.Error"
+                                                   OnClick="@DeleteValue">سڕینەوە</GridCommandButton>
+                            </GridCommandColumn>
+                        </GridColumns>
+                    </TelerikGrid>
+                </section>
+            }
+
+            @* ── Axis ↔ part of speech ─────────────────────────────────────────
+               Which axes each part of speech asks for. Configuration the team owns — no developer
+               should be needed to say "a noun also carries ڕەگەز". *@
+            @if (_data.Axes.Count > 0)
+            {
+                <section class="card overflow-x-auto xl:col-span-2">
+                    <div class="mb-4">
+                        <span class="card-title">کام تەوەر بۆ کام بەشی ئاخاوتن</span>
+                        <p class="mt-0.5 text-11 text-ink-3">
+                            کلیک بۆ زیادکردن · دووبارە کلیک بۆ «پێویست» · جاری سێیەم بۆ لابردن
+                        </p>
+                    </div>
+
+                    <table class="w-full text-start">
+                        <thead>
+                            <tr class="border-b border-line">
+                                <th class="px-4 py-3 text-start text-11 font-normal text-ink-3">بەشی ئاخاوتن</th>
+                                @foreach (var a in _data.Axes)
+                                {
+                                    <th class="px-3 py-3 text-start text-11 font-normal text-ink-3">@a.NameKu</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var part in _data.PartsOfSpeech)
+                            {
+                                <tr class="border-b border-line-soft last:border-0">
+                                    <td class="px-4 py-3 text-sm text-ink-1">@part.NameKu</td>
+                                    @foreach (var a in _data.Axes)
+                                    {
+                                        var assignment = _data.Assignments
+                                            .FirstOrDefault(x => x.PartOfSpeechId == part.Id && x.AxisId == a.Id);
+
+                                        <td class="px-3 py-3">
+                                            <button @onclick="() => CycleAssignment(part.Id, a.Id, assignment)"
+                                                    class="@AssignmentClass(assignment)"
+                                                    title="@AssignmentTitle(assignment)">
+                                                @AssignmentLabel(assignment)
+                                            </button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </section>
+            }
+        </div>
+    }
+
+    @* ── Add axis: tier 3, so it costs a written reason ──────────────────────── *@
+    <TelerikDialog @bind-Visible="_addAxisOpen" Title="تەوەری نوێ" Width="480px">
+        <DialogContent>
+            <p class="mb-4 text-xs text-ink-2">
+                زیادکردنی تەوەرێک بڕیارێکی زمانەوانییە. هۆکارەکەی لە تۆماری بەشدارییەکاندا دەمێنێتەوە.
+            </p>
+
+            <label class="mb-3 block">
+                <span class="field-label">ناوی تەوەر</span>
+                <TelerikTextBox @bind-Value="_newAxisName" Placeholder="بۆ نموونە: ڕۆنان" Width="100%" />
+            </label>
+
+            <label class="block">
+                <span class="field-label">هۆکار — پێویستە</span>
+                <TelerikTextBox @bind-Value="_newAxisReason" Placeholder="بۆچی ئەم تەوەرە پێویستە؟" Width="100%" />
+            </label>
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="AddAxis" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">زیادکردن</TelerikButton>
+            <TelerikButton OnClick="@(() => _addAxisOpen = false)">پاشگەز</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
+
+    @* ── Merge: pick the target, then confirm with the exact count ───────────── *@
+    <TelerikDialog @bind-Visible="_mergePickOpen" Title="تێکەڵکردن بۆ کام نرخ؟" Width="460px">
+        <DialogContent>
+            @if (_mergeSource is { } src)
+            {
+                <p class="mb-4 text-sm text-ink-1">
+                    «<span class="font-medium">@src.NameKu</span>» دەچێتە ناو…
+                </p>
+
+                <TelerikDropDownList Data="@MergeTargets" @bind-Value="_mergeTargetId"
+                                     TextField="@nameof(TaxonomyValueDto.NameKu)"
+                                     ValueField="@nameof(TaxonomyValueDto.Id)"
+                                     DefaultText="نرخێک هەڵبژێرە" Width="100%" />
+            }
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="PreviewMerge" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary"
+                           Enabled="@(_mergeTargetId > 0)">
+                بەردەوامبوون
+            </TelerikButton>
+            <TelerikButton OnClick="CancelMerge">پاشگەز</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
+
+    <TelerikDialog @bind-Visible="_mergeConfirmOpen" Title="دڵنیابوونەوە لە تێکەڵکردن" Width="540px">
+        <DialogContent>
+            @if (_mergePreview is { } preview)
+            {
+                <p class="text-base text-ink-1">@preview.Summary</p>
+
+                <dl class="mt-4 space-y-2 rounded-chip bg-page p-3 text-xs">
+                    <div class="flex justify-between gap-3">
+                        <dt class="text-ink-2">ڕیزی گواستراو</dt>
+                        <dd class="text-ink-1"><bdi>@Ku.N(preview.RowsToMove)</bdi></dd>
+                    </div>
+                    @if (preview.Conflicts.Count > 0)
+                    {
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-warn">پێشتر ئامانجیان هەیە</dt>
+                            <dd class="text-warn"><bdi>@Ku.N(preview.Conflicts.Count)</bdi></dd>
+                        </div>
+                    }
+                    @if (preview.DependentRuleCount > 0)
+                    {
+                        <div class="flex justify-between gap-3">
+                            <dt class="text-warn">ڕێسای پشتبەستوو</dt>
+                            <dd class="text-warn"><bdi>@Ku.N(preview.DependentRuleCount)</bdi></dd>
+                        </div>
+                    }
+                </dl>
+
+                <label class="mt-4 block">
+                    <span class="field-label">هۆکار</span>
+                    <TelerikTextBox @bind-Value="_mergeReason" Placeholder="بۆچی ئەم دوو نرخە یەکن؟" Width="100%" />
+                </label>
+
+                <p class="mt-3 text-11 text-ink-3">
+                    هەر ڕیزێکی گواستراو تۆمارێکی تایبەتی خۆی دەنووسێت، و بۆ ماوەی ٣٠ ڕۆژ دەگەڕێتەوە.
+                </p>
+            }
+        </DialogContent>
+        <DialogButtons>
+            <TelerikButton OnClick="ConfirmMerge" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                تێکەڵیان بکە
+            </TelerikButton>
+            <TelerikButton OnClick="CancelMerge">پاشگەز</TelerikButton>
+        </DialogButtons>
+    </TelerikDialog>
+</TelerikScope>
+
+@code {
+    TaxonomyOverviewDto? _data;
+    List<TaxonomyValueDto> _values = new();
+
+    IEnumerable<TaxonomyAxisDto> _selectedAxes = Enumerable.Empty<TaxonomyAxisDto>();
+    TaxonomyAxisDto? _selectedAxis;
+
+    IEnumerable<TaxonomyPartOfSpeechDto> _selectedParts = Enumerable.Empty<TaxonomyPartOfSpeechDto>();
+    TaxonomyPartOfSpeechDto? _selectedPart;
+
+    /// <summary>The dropdown next to "بەستنەوە" — an existing axis to attach to the selected part.</summary>
+    int _attachAxisId;
+
+    bool _loading = true;
+
+    bool _addAxisOpen;
+    string _newAxisName = "", _newAxisReason = "";
+
+    // ── Part → axes ─────────────────────────────────────────────────────────
+
+    /// <summary>Axis ids assigned to a part. Used by the count column on every row.</summary>
+    List<int> AxesFor(int partId) =>
+        _data is null
+            ? new()
+            : _data.Assignments.Where(x => x.PartOfSpeechId == partId).Select(x => x.AxisId).ToList();
+
+    /// <summary>The selected part's axes, in the order the axis list defines.</summary>
+    List<TaxonomyAxisDto> PartAxes
+    {
+        get
+        {
+            if (_data is null || _selectedPart is null) return new();
+
+            var ids = AxesFor(_selectedPart.Id);
+            return _data.Axes.Where(a => ids.Contains(a.Id)).ToList();
+        }
+    }
+
+    /// <summary>Axes that exist but are not on this part yet — the "بەستنەوە" dropdown.</summary>
+    List<TaxonomyAxisDto> UnassignedAxes
+    {
+        get
+        {
+            if (_data is null || _selectedPart is null) return new();
+
+            var ids = AxesFor(_selectedPart.Id);
+            return _data.Axes.Where(a => !ids.Contains(a.Id)).ToList();
+        }
+    }
+
+    bool IsRequired(int axisId) =>
+        _data is not null && _selectedPart is not null &&
+        _data.Assignments.Any(x => x.PartOfSpeechId == _selectedPart.Id && x.AxisId == axisId && x.IsRequired);
+
+    bool _mergePickOpen, _mergeConfirmOpen;
+    TaxonomyValueDto? _mergeSource;
+    int _mergeTargetId;
+    MergePreviewDto? _mergePreview;
+    string _mergeReason = "";
+
+    /// <summary>A value cannot merge into itself, and merging into a retired value hides the result.</summary>
+    List<TaxonomyValueDto> MergeTargets =>
+        _values.Where(v => v.Id != _mergeSource?.Id && v.IsActive).ToList();
+
+    protected override async Task OnInitializedAsync() => await Load();
+
+    async Task Load()
+    {
+        _loading = true;
+        try { _data = await Taxonomy.GetOverviewAsync(); }
+        catch { _data = null; }
+        _loading = false;
+
+        // Re-point both selections at the freshly loaded objects. Holding the old instances would
+        // leave the panels showing counts from before the save that triggered this reload.
+        if (_selectedPart is not null && _data is not null)
+        {
+            _selectedPart = _data.PartsOfSpeech.FirstOrDefault(p => p.Id == _selectedPart.Id);
+            _selectedParts = _selectedPart is null
+                ? Enumerable.Empty<TaxonomyPartOfSpeechDto>()
+                : new[] { _selectedPart };
+        }
+
+        if (_selectedAxis is not null && _data is not null)
+        {
+            _selectedAxis = _data.Axes.FirstOrDefault(a => a.Id == _selectedAxis.Id);
+            _selectedAxes = _selectedAxis is null
+                ? Enumerable.Empty<TaxonomyAxisDto>()
+                : new[] { _selectedAxis };
+
+            if (_selectedAxis is not null) await LoadValues();
+        }
+    }
+
+    async Task OnPartSelected(IEnumerable<TaxonomyPartOfSpeechDto> items)
+    {
+        _selectedParts = items;
+        _selectedPart = items.FirstOrDefault();
+        _attachAxisId = 0;
+
+        // The axis panel is now scoped to this part, so a selection carried over from the previous
+        // part would leave the values grid showing an axis that is no longer on screen.
+        _selectedAxes = Enumerable.Empty<TaxonomyAxisDto>();
+        _selectedAxis = null;
+        _values = new();
+
+        await Task.CompletedTask;
+    }
+
+    async Task OnAxisSelected(IEnumerable<TaxonomyAxisDto> items)
+    {
+        _selectedAxes = items;
+        _selectedAxis = items.FirstOrDefault();
+
+        if (_selectedAxis is not null) await LoadValues();
+        else _values = new();
+    }
+
+    // ── attach / detach / require ──────────────────────────────────────────
+
+    async Task AttachAxis()
+    {
+        if (_selectedPart is null || _attachAxisId <= 0) return;
+
+        var axis = _data?.Axes.FirstOrDefault(a => a.Id == _attachAxisId);
+        var error = await Taxonomy.SetAssignmentAsync(_selectedPart.Id, _attachAxisId, assigned: true, isRequired: false);
+
+        Toast.Result(error, $"«{axis?.NameKu}» بۆ «{_selectedPart.NameKu}» زیادکرا");
+        _attachAxisId = 0;
+
+        await Load();
+    }
+
+    async Task DetachAxis(GridCommandEventArgs args)
+    {
+        if (_selectedPart is null) return;
+
+        var axis = (TaxonomyAxisDto)args.Item;
+        var error = await Taxonomy.SetAssignmentAsync(_selectedPart.Id, axis.Id, assigned: false, isRequired: false);
+
+        Toast.Result(error, $"«{axis.NameKu}» لە «{_selectedPart.NameKu}» لابرا");
+
+        // Detaching the axis whose values are on screen leaves an orphaned panel below.
+        if (_selectedAxis?.Id == axis.Id)
+        {
+            _selectedAxes = Enumerable.Empty<TaxonomyAxisDto>();
+            _selectedAxis = null;
+            _values = new();
+        }
+
+        await Load();
+    }
+
+    async Task ToggleRequired(TaxonomyAxisDto axis)
+    {
+        if (_selectedPart is null) return;
+
+        var required = !IsRequired(axis.Id);
+        var error = await Taxonomy.SetAssignmentAsync(_selectedPart.Id, axis.Id, assigned: true, isRequired: required);
+
+        Toast.Result(error, required
+            ? $"«{axis.NameKu}» بۆ «{_selectedPart.NameKu}» پێویست کرا"
+            : $"«{axis.NameKu}» ئارەزوومەندانە کرا");
+
+        await Load();
+    }
+
+    async Task LoadValues()
+    {
+        if (_selectedAxis is null) return;
+        _values = await Taxonomy.GetValuesAsync(_selectedAxis.Id);
+    }
+
+    // ── grid handlers ──────────────────────────────────────────────────────
+    // Every one reports through Toast. A refused save used to look identical to a save that
+    // worked — the row simply did not change — and the reason stayed in an HTTP response.
+
+    async Task UpdatePartOfSpeech(GridCommandEventArgs args)
+    {
+        var item = (TaxonomyPartOfSpeechDto)args.Item;
+        var error = await Taxonomy.RenamePartOfSpeechAsync(item.Id, item.NameKu);
+
+        Toast.Result(error, $"«{item.NameKu}» پاشەکەوتکرا");
+        await Load();
+    }
+
+    async Task UpdateAxis(GridCommandEventArgs args)
+    {
+        var item = (TaxonomyAxisDto)args.Item;
+        var error = await Taxonomy.RenameAxisAsync(item.Id, item.NameKu, item.Description);
+
+        Toast.Result(error, $"«{item.NameKu}» پاشەکەوتکرا");
+        await Load();
+    }
+
+    async Task UpdateValue(GridCommandEventArgs args)
+    {
+        var item = (TaxonomyValueDto)args.Item;
+        var error = await Taxonomy.RenameValueAsync(item.Id, item.NameKu);
+
+        Toast.Result(error, $"«{item.NameKu}» پاشەکەوتکرا");
+        await LoadValues();
+    }
+
+    async Task CreateValue(GridCommandEventArgs args)
+    {
+        if (_selectedAxis is null) return;
+
+        var item = (TaxonomyValueDto)args.Item;
+        var error = await Taxonomy.AddValueAsync(_selectedAxis.Id, item.NameKu, item.Code);
+
+        Toast.Result(error, $"«{item.NameKu}» زیادکرا");
+        await Load();
+    }
+
+    async Task ToggleActive(GridCommandEventArgs args)
+    {
+        var item = (TaxonomyValueDto)args.Item;
+        var error = await Taxonomy.SetValueActiveAsync(item.Id, !item.IsActive);
+
+        Toast.Result(error, item.IsActive ? $"«{item.NameKu}» ناچالاک کرا" : $"«{item.NameKu}» چالاک کرایەوە");
+        await LoadValues();
+    }
+
+    // ── add axis ───────────────────────────────────────────────────────────
+
+    async Task AddAxis()
+    {
+        var name = _newAxisName.Trim();
+        if (string.IsNullOrWhiteSpace(name)) { Toast.Error("ناوی تەوەر پێویستە"); return; }
+        if (string.IsNullOrWhiteSpace(_newAxisReason)) { Toast.Error("هۆکار پێویستە"); return; }
+
+        var error = await Taxonomy.AddAxisAsync(name, _newAxisReason);
+        if (error is not null) { Toast.Error(error); return; }
+
+        _addAxisOpen = false;
+        _newAxisName = _newAxisReason = "";
+
+        await Load();
+
+        // Created from a part's panel, so attach it to that part — otherwise the axis appears
+        // in the global list and the panel you created it from stays empty, which reads as a
+        // failed save. Matched by name because the API returns no id.
+        var part = _selectedPart;
+        var created = _data?.Axes.FirstOrDefault(a => a.NameKu == name);
+
+        if (part is not null && created is not null)
+        {
+            var attachError = await Taxonomy.SetAssignmentAsync(part.Id, created.Id, assigned: true, isRequired: false);
+
+            if (attachError is null)
+            {
+                Toast.Success($"تەوەری «{name}» دروستکرا و بۆ «{part.NameKu}» زیادکرا");
+                await Load();
+                return;
+            }
+
+            // The axis exists either way; only the link failed, and saying so is the difference
+            // between "try again" and "go attach it yourself".
+            Toast.Error($"تەوەرەکە دروستکرا بەڵام بەستنەوەی بۆ «{part.NameKu}» سەرنەکەوت: {attachError}");
+            return;
+        }
+
+        Toast.Success($"تەوەری «{name}» زیادکرا");
+    }
+
+    async Task DeleteValue(GridCommandEventArgs args)
+    {
+        var item = (TaxonomyValueDto)args.Item;
+        var error = await Taxonomy.DeleteValueAsync(item.Id);
+
+        Toast.Result(error, $"«{item.NameKu}» سڕایەوە");
+
+        await LoadValues();
+        await Load();
+    }
+
+    // ── merge ──────────────────────────────────────────────────────────────
+
+    void StartMerge(GridCommandEventArgs args)
+    {
+        _mergeSource = (TaxonomyValueDto)args.Item;
+        _mergeTargetId = 0;
+        _mergePickOpen = true;
+    }
+
+    async Task PreviewMerge()
+    {
+        if (_mergeSource is null || _mergeTargetId <= 0) return;
+
+        _mergePreview = await Taxonomy.PreviewMergeAsync(_mergeSource.Id, _mergeTargetId);
+
+        if (_mergePreview is null)
+        {
+            Toast.Error("ناتوانرێت پێشبینینی تێکەڵکردن بهێنرێت.");
+            return;
+        }
+
+        _mergePickOpen = false;
+        _mergeConfirmOpen = true;
+    }
+
+    async Task ConfirmMerge()
+    {
+        if (_mergePreview is null) return;
+
+        var error = await Taxonomy.MergeAsync(
+            _mergePreview.SourceValueId, _mergePreview.TargetValueId, _mergeReason);
+
+        Toast.Result(error, _mergePreview.Summary);
+
+        CancelMerge();
+        await Load();
+    }
+
+    void CancelMerge()
+    {
+        _mergePickOpen = _mergeConfirmOpen = false;
+        _mergeSource = null;
+        _mergePreview = null;
+        _mergeTargetId = 0;
+        _mergeReason = "";
+    }
+
+    // ── assignment matrix ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Unassigned → assigned → required → unassigned. One control, three states: the matrix is
+    /// seven rows by however many axes, and a dropdown in every cell would be unusable.
+    /// </summary>
+    async Task CycleAssignment(int partId, int axisId, TaxonomyAssignmentDto? current)
+    {
+        var error = current switch
+        {
+            null => await Taxonomy.SetAssignmentAsync(partId, axisId, assigned: true, isRequired: false),
+            { IsRequired: false } => await Taxonomy.SetAssignmentAsync(partId, axisId, assigned: true, isRequired: true),
+            _ => await Taxonomy.SetAssignmentAsync(partId, axisId, assigned: false, isRequired: false),
+        };
+
+        if (error is not null) Toast.Error(error);
+        await Load();
+    }
+
+    static string AssignmentClass(TaxonomyAssignmentDto? a) => a switch
+    {
+        null => "flex h-8 w-8 items-center justify-center rounded-full border border-dashed border-line text-ink-3 transition-colors hover:bg-page",
+        { IsRequired: true } => "flex h-8 w-8 items-center justify-center rounded-full bg-green-deep text-11 text-white",
+        _ => "flex h-8 w-8 items-center justify-center rounded-full bg-green-tint text-11 text-on-tint",
+    };
+
+    static string AssignmentLabel(TaxonomyAssignmentDto? a) => a switch
+    {
+        null => "−",
+        { IsRequired: true } => "!",
+        _ => "✓",
+    };
+
+    static string AssignmentTitle(TaxonomyAssignmentDto? a) => a switch
+    {
+        null => "زیادنەکراوە",
+        { IsRequired: true } => $"پێویستە — {a.WordCount} وشە",
+        _ => $"زیادکراوە — {a!.WordCount} وشە",
+    };
+
+    /// <summary>Zero usage is the thing worth spotting, so it is the one that gets a colour.</summary>
+    static string CountPill(int count) => count > 0
+        ? "shrink-0 rounded-full bg-green-tint px-2 py-0.5 text-11 text-on-tint"
+        : "shrink-0 rounded-full bg-warn-tint px-2 py-0.5 text-11 text-warn";
+}

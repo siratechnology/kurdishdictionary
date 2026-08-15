@@ -1,4 +1,5 @@
 using backend.Data.Models;
+using Shared.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,59 @@ public static class DbSeeder
         await SeedAdminAsync(users, config, logger);
         await SeedEditorsAsync(users, config, logger);
         await BackfillWordOwnersAsync(db, users, logger);
+        await SeedDictionarySectionsAsync(db, logger);
+    }
+
+    /// <summary>
+    /// بەشەکانی فەرهەنگ — the ten sections from the client's own slide.
+    ///
+    /// Additive and idempotent: it inserts what is missing by folded name and never renames,
+    /// reorders or deletes anything. The list is OPEN — lexicographers add sections from the word
+    /// editor as they meet them — so a seeder that reconciled to exactly these ten would delete a
+    /// section somebody added last week, on the next restart, silently.
+    /// </summary>
+    private static async Task SeedDictionarySectionsAsync(AppDbContext db, ILogger logger)
+    {
+        // Order is the slide's order, not alphabetical: it is the order the team reads them in.
+        string[] sections =
+        {
+            "فەرهەنگی کولتووری",
+            "فەرهەنگی زانستی پزیشکی",
+            "فەرهەنگی زیندەوەرزانی",
+            "فەرهەنگی کیمیا",
+            "فەرهەنگی فیزیا",
+            "فەرهەنگی ڕووەکناسی",
+            "فەرهەنگی ڕامیاری",
+            "فەرهەنگی ناو",
+            "فەرهەنگی کشتوکاڵ",
+            "فەرهەنگی ئاژەڵداری",
+        };
+
+        var existing = await db.DictionarySections
+            .Select(d => d.Normalized)
+            .ToListAsync();
+
+        var known = existing.ToHashSet();
+        var added = 0;
+
+        for (var i = 0; i < sections.Length; i++)
+        {
+            var normalized = KurdishText.Normalize(sections[i]);
+            if (!known.Add(normalized)) continue;
+
+            db.DictionarySections.Add(new DictionarySection
+            {
+                NameKu = sections[i],
+                Normalized = normalized,
+                SortOrder = i,
+            });
+            added++;
+        }
+
+        if (added == 0) return;
+
+        await db.SaveChangesAsync();
+        logger.LogInformation("Seeded {Count} dictionary sections", added);
     }
 
     private static async Task SeedRolesAsync(RoleManager<AppRole> roles)
@@ -83,6 +137,12 @@ public static class DbSeeder
         }
 
         await users.AddToRoleAsync(admin, Roles.Admin);
+        // Tier 2 of the taxonomy settings (adding and merging values) sits with LinguisticOwner
+        // rather than Admin, deliberately. On a fresh install the admin is the only account there
+        // is, so without this the settings page would render read-only for the only person able
+        // to open it.
+        await users.AddToRoleAsync(admin, Roles.LinguisticOwner);
+
         logger.LogWarning("Seeded admin '{UserName}' with the default password — change it after first login", userName);
     }
 

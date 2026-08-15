@@ -6,72 +6,64 @@
 @inject AnalyticsService AnalyticsSvc
 @inject NavigationManager Nav
 
-<PageTitle>ترافیکی ماڵپەڕ — فەرھەنگی کوردی</PageTitle>
+<PageTitle>ترافیکی ماڵپەڕ — ژینزار</PageTitle>
 
-<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900">ترافیکی ماڵپەڕی گشتی</h1>
-        <p class="mt-0.5 text-sm text-gray-400">
-            کێ ماڵپەڕەکە دەکاتەوە، بۆ چی دەگەڕێت، لە کوێوە — بە شار، وڵات و ئامێرەوە
-        </p>
-    </div>
-
-    <div class="flex gap-2">
+<PageHeader Title="ترافیکی ماڵپەڕی گشتی"
+            Subtitle="کێ ماڵپەڕەکە دەکاتەوە، بۆ چی دەگەڕێت، لە کوێوە — بە شار، وڵات و ئامێرەوە">
+    <Actions>
         @foreach (var range in Ranges)
         {
-            <button @onclick="() => SetRangeAsync(range.Days)"
-                    class="rounded-lg px-3 py-1.5 text-xs font-semibold transition
-                           @(_days == range.Days
-                             ? "bg-indigo-600 text-white"
-                             : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50")">
+            <button @onclick="() => SetRangeAsync(range.Days)" class="@RangeClass(range.Days)">
                 @range.Label
             </button>
         }
-    </div>
-</div>
+    </Actions>
+</PageHeader>
 
 @if (_loading)
 {
-    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @for (var i = 0; i < 4; i++)
         {
-            <div class="skeleton h-24"></div>
+            <div class="skeleton h-28 rounded-card"></div>
         }
     </div>
-    <div class="skeleton mt-4 h-64"></div>
+    <div class="skeleton mt-4 h-64 rounded-card"></div>
 }
 else if (_data is null)
 {
-    <div class="rounded-2xl border border-gray-100 bg-white py-16 text-center text-sm text-gray-400">
-        ناتوانرێت داتاکان بهێنرێت
+    <div class="card flex flex-col items-center gap-3 py-16 text-center">
+        <span class="hatch h-12 w-12 rounded-full border border-line"></span>
+        <p class="text-sm text-ink-1">ناتوانرێت داتاکان بهێنرێت</p>
     </div>
 }
 else
 {
     @* ── Stat tiles ──────────────────────────────────────────────────── *@
-    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatTile Label="ئێستا لە ماڵپەڕ" Value="@_data.ActiveNow.ToString()" Icon="🟢" Accent="emerald"
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatTile Label="ئێستا لە ماڵپەڕ" Value="@Ku.N(_data.ActiveNow)" IconName="globe"
                   Hint="لە ٥ خولەکی ڕابردوودا" />
-        <StatTile Label="سەردانی ئەمڕۆ" Value="@_data.VisitsToday.ToString()" Icon="👁" Accent="indigo"
-                  Hint="@($"{_data.UniqueVisitorsToday} سەردانکەری جیاواز")" />
-        <StatTile Label="گەڕانی ئەمڕۆ" Value="@_data.SearchesToday.ToString()" Icon="🔍" Accent="violet"
-                  Hint="@($"کۆی گشتی {_data.TotalSearches}")" />
-        <StatTile Label="گەڕانی بێ ئەنجام" Value="@_data.EmptySearches.ToString()" Icon="⚠️" Accent="amber"
+        <StatTile Label="سەردانی ئەمڕۆ" Value="@Ku.N(_data.VisitsToday)" IconName="chart"
+                  Hint="@($"{Ku.N(_data.UniqueVisitorsToday)} سەردانکەری جیاواز")" />
+        <StatTile Label="گەڕانی ئەمڕۆ" Value="@Ku.N(_data.SearchesToday)" IconName="search"
+                  Hint="@($"کۆی گشتی {Ku.N(_data.TotalSearches)}")" />
+        <StatTile Label="گەڕانی بێ ئەنجام" Value="@Ku.N(_data.EmptySearches)" IconName="alert"
                   Hint="وشەی نەدۆزراوە — بۆ زیادکردن" />
     </div>
 
     @* ── Traffic chart ───────────────────────────────────────────────── *@
-    <div class="mt-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <section class="card mt-4">
         <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-sm font-bold text-gray-900">سەردان و گەڕان بە ڕۆژ</h2>
-            <div class="flex gap-3 text-[11px]">
+            <h2 class="card-title">سەردان و گەڕان بە ڕۆژ</h2>
+            @* Two series, two rungs of the ramp — never a second hue. *@
+            <div class="flex gap-3 text-11">
                 <span class="flex items-center gap-1.5">
-                    <span class="h-2 w-2 rounded-full bg-indigo-500"></span>
-                    <span class="text-gray-500">سەردان</span>
+                    <span class="h-2 w-2 rounded-full bg-green"></span>
+                    <span class="text-ink-2">سەردان</span>
                 </span>
                 <span class="flex items-center gap-1.5">
-                    <span class="h-2 w-2 rounded-full bg-violet-400"></span>
-                    <span class="text-gray-500">گەڕان</span>
+                    <span class="h-2 w-2 rounded-full bg-green-mid"></span>
+                    <span class="text-ink-2">گەڕان</span>
                 </span>
             </div>
         </div>
@@ -87,28 +79,26 @@ else
                 var searches = i < _data.DailySearches.Count ? _data.DailySearches[i].Count : 0;
 
                 <div class="group relative flex flex-1 items-end gap-0.5" title="@visits.Date.ToString("yyyy-MM-dd")">
-                    <div class="flex-1 rounded-t bg-indigo-500 transition-all group-hover:bg-indigo-600"
-                         style="height: @(Percent(visits.Count, peak))%"></div>
-                    <div class="flex-1 rounded-t bg-violet-400 transition-all group-hover:bg-violet-500"
-                         style="height: @(Percent(searches, peak))%"></div>
+                    <div class="flex-1 rounded-t-full bg-green" style="height: @(Percent(visits.Count, peak))%"></div>
+                    <div class="flex-1 rounded-t-full bg-green-mid" style="height: @(Percent(searches, peak))%"></div>
 
-                    <div class="pointer-events-none absolute -top-14 right-1/2 z-10 hidden translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2 py-1 text-[10px] text-white group-hover:block">
-                        <p>@visits.Date.ToString("MM-dd")</p>
-                        <p>@visits.Count سەردان · @searches گەڕان</p>
+                    <div class="pointer-events-none absolute -top-14 start-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-chip bg-green-deep px-2 py-1 text-11 text-white group-hover:block">
+                        <p><bdi>@Ku.Sub(visits.Date.ToString("MM-dd"))</bdi></p>
+                        <p><bdi>@Ku.N(visits.Count)</bdi> سەردان · <bdi>@Ku.N(searches)</bdi> گەڕان</p>
                     </div>
                 </div>
             }
         </div>
-    </div>
+    </section>
 
     <div class="mt-4 grid gap-4 lg:grid-cols-2">
 
         @* ── Top searches ────────────────────────────────────────────── *@
-        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-            <h2 class="mb-4 text-sm font-bold text-gray-900">🔍 زۆرترین گەڕان</h2>
+        <section class="card">
+            <h2 class="card-title mb-4">زۆرترین گەڕان</h2>
             @if (_data.TopSearches.Count == 0)
             {
-                <p class="py-8 text-center text-sm text-gray-400">هێشتا هیچ گەڕانێک نییە</p>
+                <p class="py-8 text-center text-sm text-ink-3">هێشتا هیچ گەڕانێک نییە</p>
             }
             else
             {
@@ -116,114 +106,120 @@ else
                     @foreach (var term in _data.TopSearches.Take(10))
                     {
                         <div class="flex items-center gap-3">
-                            <span class="min-w-0 flex-1 truncate text-sm text-gray-800">@term.Term</span>
+                            <span class="min-w-0 flex-1 truncate text-sm text-ink-1">@term.Term</span>
                             @if (term.LastResultCount == 0)
                             {
-                                <span class="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                                <span class="shrink-0 rounded-full bg-warn-tint px-2 py-0.5 text-11 text-warn">
                                     بێ ئەنجام
                                 </span>
                             }
-                            <div class="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-gray-100">
-                                <div class="h-full rounded-full bg-indigo-500"
+                            <div class="hatch h-1.5 w-24 shrink-0 overflow-hidden rounded-full border border-line">
+                                <div class="h-full rounded-full bg-green"
                                      style="width: @(Percent(term.Count, _data.TopSearches.Max(s => s.Count)))%"></div>
                             </div>
-                            <span class="w-8 shrink-0 text-left text-xs font-semibold text-gray-500">@term.Count</span>
+                            <span class="w-8 shrink-0 text-end text-xs text-ink-2"><bdi>@Ku.N(term.Count)</bdi></span>
                         </div>
                     }
                 </div>
             }
-        </div>
+        </section>
 
         @* ── Failed searches: the words worth adding ─────────────────── *@
-        <div class="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 shadow-sm">
-            <h2 class="mb-1 text-sm font-bold text-gray-900">⚠️ گەڕانی بێ ئەنجام</h2>
-            <p class="mb-4 text-xs text-gray-500">ئەم وشانە خەڵک بەدوایاندا دەگەڕێن بەڵام لە فەرھەنگدا نین</p>
+        <section class="rounded-card border border-line bg-warn-tint p-5">
+            <h2 class="card-title mb-1">گەڕانی بێ ئەنجام</h2>
+            <p class="mb-4 text-xs text-ink-2">ئەم وشانە خەڵک بەدوایاندا دەگەڕێن بەڵام لە فەرهەنگدا نین</p>
 
             @if (_data.FailedSearches.Count == 0)
             {
-                <p class="py-8 text-center text-sm text-gray-400">هەموو گەڕانەکان ئەنجامیان هەبووە 🎉</p>
+                <p class="py-8 text-center text-sm text-ink-2">هەموو گەڕانەکان ئەنجامیان هەبووە</p>
             }
             else
             {
                 <div class="flex flex-wrap gap-2">
                     @foreach (var term in _data.FailedSearches.Take(20))
                     {
-                        <span class="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-2.5 py-1.5 text-xs">
-                            <span class="font-medium text-gray-800">@term.Term</span>
-                            <span class="rounded bg-amber-100 px-1 text-[10px] font-bold text-amber-700">@term.Count</span>
+                        <span class="inline-flex items-center gap-1.5 rounded-chip border border-line bg-card px-2.5 py-1.5 text-xs">
+                            <span class="font-medium text-ink-1">@term.Term</span>
+                            <span class="text-11 text-warn"><bdi>@Ku.N(term.Count)</bdi></span>
                         </span>
                     }
                 </div>
             }
-        </div>
+        </section>
     </div>
 
     @* ── Breakdown grids ─────────────────────────────────────────────── *@
     <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <BreakdownCard Title="🌍 وڵاتەکان" Items="_data.TopCountries" />
-        <BreakdownCard Title="🏙 شارەکان" Items="_data.TopCities" />
-        <BreakdownCard Title="📱 ئامێرەکان" Items="_data.Devices" />
-        <BreakdownCard Title="🌐 وێبگەڕەکان" Items="_data.Browsers" />
+        <BreakdownCard Title="وڵاتەکان" Items="_data.TopCountries" />
+        <BreakdownCard Title="شارەکان" Items="_data.TopCities" />
+        <BreakdownCard Title="ئامێرەکان" Items="_data.Devices" />
+        <BreakdownCard Title="وێبگەڕەکان" Items="_data.Browsers" />
     </div>
 
     <div class="mt-4 grid gap-4 lg:grid-cols-2">
-        <BreakdownCard Title="📄 زۆرترین پەڕە" Items="_data.TopPages" />
-        <BreakdownCard Title="🔗 سەرچاوەکان" Items="_data.TopReferrers" />
+        <BreakdownCard Title="زۆرترین پەڕە" Items="_data.TopPages" />
+        <BreakdownCard Title="سەرچاوەکان" Items="_data.TopReferrers" />
     </div>
 
     @* ── Live visitor feed ───────────────────────────────────────────── *@
-    <div class="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-        <div class="flex items-center gap-2 border-b border-gray-100 px-5 py-3">
-            <span class="relative flex h-2 w-2">
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
-            </span>
-            <h2 class="text-sm font-bold text-gray-900">چالاکی زیندوو</h2>
-            <span class="text-xs text-gray-400">— هەر ١٠ چرکە نوێدەبێتەوە</span>
+    <section class="card mt-4 overflow-hidden p-0">
+        <div class="flex items-center gap-2 border-b border-line px-5 py-3">
+            <span class="h-2 w-2 rounded-full bg-green"></span>
+            <h2 class="card-title">چالاکی زیندوو</h2>
+            <span class="text-xs text-ink-3">— هەر ١٠ چرکە نوێدەبێتەوە</span>
         </div>
 
         <div class="max-h-[28rem] overflow-y-auto">
             @if (_events.Count == 0)
             {
-                <p class="py-12 text-center text-sm text-gray-400">هێشتا هیچ سەردانێک نییە</p>
+                <p class="py-12 text-center text-sm text-ink-3">هێشتا هیچ سەردانێک نییە</p>
             }
             else
             {
                 @foreach (var e in _events)
                 {
-                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-gray-50 px-5 py-3 text-xs last:border-0 hover:bg-gray-50">
-                        <span class="rounded px-1.5 py-0.5 text-[10px] font-semibold @EventStyle(e.EventType)">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-3 text-xs last:border-0 hover:bg-page">
+                        <span class="rounded-full px-2 py-0.5 text-11 @EventStyle(e.EventType)">
                             @EventLabel(e.EventType)
                         </span>
 
                         @if (e.EventType == "search" && !string.IsNullOrEmpty(e.SearchTerm))
                         {
-                            <span class="font-semibold text-gray-900">"@e.SearchTerm"</span>
-                            <span class="@(e.ResultCount == 0 ? "text-amber-600 font-semibold" : "text-gray-400")">
-                                @(e.ResultCount == 0 ? "هیچ ئەنجامێک" : $"{e.ResultCount} ئەنجام")
+                            <span class="font-medium text-ink-1">«@e.SearchTerm»</span>
+                            <span class="@(e.ResultCount == 0 ? "text-warn" : "text-ink-3")">
+                                @(e.ResultCount == 0 ? "هیچ ئەنجامێک" : $"{Ku.N(e.ResultCount.GetValueOrDefault())} ئەنجام")
                             </span>
                         }
                         else if (!string.IsNullOrEmpty(e.Path))
                         {
-                            <span class="font-mono text-gray-700">@e.Path</span>
+                            <span class="font-mono text-ink-2"><bdi>@e.Path</bdi></span>
                         }
 
-                        <span class="mr-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-gray-400">
+                        <span class="ms-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-ink-3">
                             @if (!string.IsNullOrEmpty(e.City) || !string.IsNullOrEmpty(e.Country))
                             {
-                                <span>📍 @string.Join(", ", new[] { e.City, e.Country }.Where(x => !string.IsNullOrEmpty(x)))</span>
+                                <span class="inline-flex items-center gap-1">
+                                    <Icon Name="pin" Class="h-3.5 w-3.5" />
+                                    @string.Join("، ", new[] { e.City, e.Country }.Where(x => !string.IsNullOrEmpty(x)))
+                                </span>
                             }
                             @if (!string.IsNullOrEmpty(e.IpAddress))
                             {
-                                <span class="font-mono">@e.IpAddress</span>
+                                <span class="font-mono"><bdi>@e.IpAddress</bdi></span>
                             }
                             @if (!string.IsNullOrEmpty(e.DeviceType))
                             {
-                                <span>@DeviceIcon(e.DeviceType) @e.Browser</span>
+                                <span class="inline-flex items-center gap-1">
+                                    <Icon Name="@DeviceIcon(e.DeviceType)" Class="h-3.5 w-3.5" />
+                                    @e.Browser
+                                </span>
                             }
                             @if (e.ScreenWidth is > 0)
                             {
-                                <span>🖥 @(e.ScreenWidth)×@(e.ScreenHeight)</span>
+                                <span class="inline-flex items-center gap-1">
+                                    <Icon Name="monitor" Class="h-3.5 w-3.5" />
+                                    <bdi>@Ku.Raw(e.ScreenWidth.GetValueOrDefault())×@Ku.Raw(e.ScreenHeight.GetValueOrDefault())</bdi>
+                                </span>
                             }
                             <span title="@e.CreatedAt.ToString("u")">@Ago(e.CreatedAt)</span>
                         </span>
@@ -231,7 +227,7 @@ else
                 }
             }
         </div>
-    </div>
+    </section>
 }
 
 @code {
@@ -329,31 +325,34 @@ else
         _ => type,
     };
 
+    /// <summary>Colour marks the KIND of event. Only two tints exist, so the feed stays scannable
+    /// without turning into a second palette.</summary>
     private static string EventStyle(string type) => type switch
     {
-        "search" => "bg-violet-100 text-violet-700",
-        "page_view" => "bg-indigo-100 text-indigo-700",
-        "word_view" => "bg-emerald-100 text-emerald-700",
-        "share" => "bg-amber-100 text-amber-700",
-        _ => "bg-gray-100 text-gray-600",
+        "search" or "word_view" => "bg-green-tint text-on-tint",
+        _ => "bg-page text-ink-2",
     };
 
     private static string DeviceIcon(string device) => device switch
     {
-        "Mobile" => "📱",
-        "Tablet" => "📲",
-        "Desktop" => "🖥",
-        _ => "💻",
+        "Mobile" => "phone",
+        "Tablet" => "tablet",
+        _ => "monitor",
     };
+
+    /// <summary>Range buttons live in the page header, so they use the standard pill pair.</summary>
+    private string RangeClass(int days) => _days == days
+        ? "rounded-full bg-green-deep px-3 py-1.5 text-xs font-medium text-white"
+        : "rounded-full border border-line bg-card px-3 py-1.5 text-xs text-ink-2 transition-colors hover:bg-page";
 
     private static string Ago(DateTime utc)
     {
         var span = DateTime.UtcNow - utc;
 
         if (span.TotalSeconds < 60) return "ئێستا";
-        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes}خ";
-        if (span.TotalHours < 24) return $"{(int)span.TotalHours}ک";
-        return $"{(int)span.TotalDays}ڕ";
+        if (span.TotalMinutes < 60) return $"{Ku.Raw((int)span.TotalMinutes)}خ";
+        if (span.TotalHours < 24) return $"{Ku.Raw((int)span.TotalHours)}ک";
+        return $"{Ku.Raw((int)span.TotalDays)}ڕ";
     }
 
     public void Dispose() => _timer?.Dispose();

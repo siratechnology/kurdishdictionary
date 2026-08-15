@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using frontend_blazor.Components;
 using frontend_blazor.Services;
+using frontend_blazor.Services.Presence;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -69,11 +71,29 @@ builder.Services.AddHttpClient(ApiClient.ClientName, client =>
     client.BaseAddress = new Uri(apiUrl);
 });
 
+// Telerik UI for Blazor — grids, dialogs, buttons and the notification host.
+builder.Services.AddTelerikBlazor();
+
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<ApiClient>();
 builder.Services.AddScoped<WordService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AnalyticsService>();
 builder.Services.AddScoped<ActivityService>();
+builder.Services.AddScoped<WorkQueueService>();
+builder.Services.AddScoped<StationService>();
+builder.Services.AddScoped<RelationService>();
+builder.Services.AddScoped<TaxonomyAdminService>();
+builder.Services.AddScoped<Toast>();
+
+// ── Presence (پڕۆمپت ٩) ────────────────────────────────────────────────────
+// Singleton store: every circuit on this instance shares one view. Behind an interface because the
+// in-memory implementation is wrong the moment this runs on two instances — swap in Redis there.
+builder.Services.AddSingleton<IPresenceStore, InMemoryPresenceStore>();
+builder.Services.AddScoped<CircuitHandler, PresenceCircuitHandler>();
+builder.Services.AddScoped<PresenceService>();
+builder.Services.AddScoped<PresenceApi>();
+builder.Services.AddHostedService<PresenceFlushService>();
 // Scoped: one hub connection per circuit, shared by every component on it.
 builder.Services.AddScoped<ActivityStream>();
 
@@ -117,6 +137,30 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found");
 app.UseStaticFiles();
 
+// ── Avatar proxy ───────────────────────────────────────────────────────────
+// The API is NOT reachable from a browser. nginx publishes only this app and the public site;
+// the backend sits on the internal docker network. So a profile picture stored by the API
+// cannot be linked to directly, and this relays it under our own origin.
+//
+// The file name is checked against the exact shape AvatarService produces — 32 hex characters
+// and ".jpg". That is not decoration: without it this becomes an open proxy into the API's
+// file system, and "/avatars/../appsettings.json" is the first thing anyone would try.
+app.MapGet("/avatars/{file}", async (string file, IHttpClientFactory factory, CancellationToken ct) =>
+{
+    if (!System.Text.RegularExpressions.Regex.IsMatch(file, @"^[a-f0-9]{32}\.jpg$"))
+        return Results.NotFound();
+
+    var http = factory.CreateClient(ApiClient.ClientName);
+
+    var response = await http.GetAsync($"avatars/{file}", HttpCompletionOption.ResponseHeadersRead, ct);
+    if (!response.IsSuccessStatusCode) return Results.NotFound();
+
+    var stream = await response.Content.ReadAsStreamAsync(ct);
+
+    // Names are content-addressed — a new upload gets a new name — so this can cache hard.
+    return Results.Stream(stream, "image/jpeg", enableRangeProcessing: false);
+}).AllowAnonymous();
+
 // ── Order is load-bearing: authentication, then authorization, then antiforgery ──────────
 // An antiforgery token embeds the identity of the user it was rendered for, and validation compares
 // that against HttpContext.User. Validating before authentication runs means comparing a token minted
@@ -145,16 +189,24 @@ app.Use(async (context, next) =>
 
 // Sign-out has to happen outside the interactive circuit: by the time a Blazor component is
 // running, the response headers are long gone and the cookie can no longer be cleared.
-app.MapPost("/logout", async (HttpContext http) =>
+// Presence has to end HERE, not when the circuit eventually closes.
+//
+// Blazor retains a disconnected circuit for three minutes so a flaky network can reconnect to
+// it, which means OnCircuitClosedAsync can arrive minutes after someone pressed «دەرچوون» —
+// and until then they were still being shown to their colleagues as working. Signing out is an
+// explicit statement that they have finished, so it is recorded the moment it is made.
+app.MapPost("/logout", async (HttpContext http, IPresenceStore presence) =>
 {
+    EndPresence(http, presence);
     await http.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/login");
 }).RequireAuthorization();
 
 // After a password change the cookie still carries the old token and a stale "must change password"
 // claim, so the user has to sign in again to pick up a fresh one.
-app.MapGet("/logout-and-return", async (HttpContext http) =>
+app.MapGet("/logout-and-return", async (HttpContext http, IPresenceStore presence) =>
 {
+    EndPresence(http, presence);
     await http.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/login");
 }).RequireAuthorization();
@@ -163,3 +215,10 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+// Top-level statements only allow local functions at the very end of the file.
+static void EndPresence(HttpContext http, IPresenceStore presence)
+{
+    if (Guid.TryParse(http.User.FindFirstValue(ClaimTypes.NameIdentifier), out var id))
+        presence.SignOut(id);
+}

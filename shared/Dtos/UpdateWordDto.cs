@@ -3,6 +3,9 @@ namespace Shared.Dtos;
 public class UpdateWordDto
 {
     public string Kurdish { get; set; } = string.Empty;
+
+    /// <summary>بەشی فەرهەنگ — one per word.</summary>
+    public int? DictionarySectionId { get; set; }
     public List<int> SpeechPanes { get; set; } = new();
     public List<int> CategoryIds { get; set; } = new();
     public int Gender { get; set; }

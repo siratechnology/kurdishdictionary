@@ -1,0 +1,36 @@
+@* Semicircular gauge. The completed arc is --green; the remainder uses the SAME diagonal hatch
+   as the bar chart, so "not yet" reads identically wherever it appears.
+
+   At 0% the ring is entirely hatched with no green at all. That is the honest rendering of an
+   empty relations table and the whole point of the card — never floor it at a visible minimum. *@
+
+<div class="flex flex-col items-center">
+    <svg viewBox="0 0 200 112" class="w-full max-w-[220px]" role="img" aria-label="@Caption">
+        @* Drawn right→left so the fill grows from the start edge in RTL. *@
+        <path d="M 180 100 A 80 80 0 0 0 20 100" fill="none" stroke="url(#hatch)"
+              stroke-width="18" stroke-linecap="round" />
+        @if (Ratio > 0)
+        {
+            <path d="M 180 100 A 80 80 0 0 0 20 100" fill="none" stroke="var(--green)"
+                  stroke-width="18" stroke-linecap="round"
+                  stroke-dasharray="@Circumference"
+                  stroke-dashoffset="@Offset" />
+        }
+    </svg>
+
+    <p class="-mt-8 text-30 font-medium text-ink-1"><bdi>@Ku.P(Ratio)</bdi></p>
+    <p class="mt-1 text-xs text-ink-2">@Caption</p>
+</div>
+
+@code {
+    /// <summary>0..1. Pass 0.96, not 96.</summary>
+    [Parameter, EditorRequired] public double Ratio { get; set; }
+    [Parameter, EditorRequired] public string Caption { get; set; } = "";
+
+    // π × r, r = 80 — the drawn length of the semicircle.
+    const string Circumference = "251.33";
+
+    string Offset =>
+        (251.33 * (1 - Math.Clamp(Ratio, 0, 1)))
+            .ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}

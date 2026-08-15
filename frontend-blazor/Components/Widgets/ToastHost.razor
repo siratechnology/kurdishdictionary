@@ -1,0 +1,20 @@
+@inject Toast Toast
+
+@* The one notification surface for the whole app. Lives in MainLayout so every page has it
+   without wiring, and hands itself to the Toast service so callers never touch Telerik. *@
+
+<TelerikScope>
+    <TelerikNotification @ref="_notification"
+                     AnimationType="@AnimationType.SlideDown"
+                     HorizontalPosition="@NotificationHorizontalPosition.Center"
+                         VerticalPosition="@NotificationVerticalPosition.Top" />
+</TelerikScope>
+
+@code {
+    private TelerikNotification? _notification;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && _notification is not null) Toast.Register(_notification);
+    }
+}

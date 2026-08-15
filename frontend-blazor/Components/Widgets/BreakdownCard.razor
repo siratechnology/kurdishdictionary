@@ -1,11 +1,14 @@
 @* A ranked list with proportional bars — countries, cities, browsers, devices all share this shape. *@
 
-<div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-    <h2 class="mb-4 text-sm font-bold text-gray-900">@Title</h2>
+<section class="card">
+    <h2 class="card-title mb-4">@Title</h2>
 
     @if (Items.Count == 0)
     {
-        <p class="py-6 text-center text-xs text-gray-400">هێشتا داتا نییە</p>
+        <div class="flex flex-col items-center py-8 text-center">
+            <span class="hatch mb-2 h-10 w-10 rounded-full border border-line"></span>
+            <p class="text-xs text-ink-2">هێشتا داتا نییە</p>
+        </div>
     }
     else
     {
@@ -16,18 +19,20 @@
             {
                 <div>
                     <div class="mb-1 flex items-baseline justify-between gap-2">
-                        <span class="min-w-0 truncate text-xs text-gray-700" title="@item.Name">@item.Name</span>
-                        <span class="shrink-0 text-xs font-semibold text-gray-500">@item.Count</span>
+                        <span class="min-w-0 truncate text-xs text-ink-2" title="@item.Name">@item.Name</span>
+                        <span class="shrink-0 text-xs text-ink-1"><bdi>@Ku.N(item.Count)</bdi></span>
                     </div>
-                    <div class="h-1.5 overflow-hidden rounded-full bg-gray-100">
-                        <div class="h-full rounded-full bg-indigo-500"
+                    @* The track is hatched, not grey: the unfilled part is "not yet", the same
+                       idea as the dashboard's bar chart and gauge. *@
+                    <div class="hatch h-1.5 overflow-hidden rounded-full border border-line">
+                        <div class="h-full rounded-full bg-green"
                              style="width: @(max <= 0 ? 0 : (int)(item.Count / (double)max * 100))%"></div>
                     </div>
                 </div>
             }
         </div>
     }
-</div>
+</section>
 
 @code {
     [Parameter, EditorRequired] public string Title { get; set; } = "";

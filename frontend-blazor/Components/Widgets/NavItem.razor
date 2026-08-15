@@ -1,10 +1,26 @@
-@* One sidebar link. NavLink applies "active" for the current route; the styling below reads that class.
-   Wrapped in a label for #nav-toggle so that tapping a link on mobile also closes the drawer. *@
+@* One sidebar link. NavLink applies "active" for the current route; .nav-item in Styles/app.css
+   reads that class, so the markup stays a single class name.
+   Wrapped in a label for #nav-toggle so tapping a link on mobile also closes the drawer.
+
+   The label is hidden at the collapsed width and returns at xl. It stays in the DOM rather than
+   being swapped out, so the accessible name and the browser's find-in-page still work while the
+   rail is icons-only — and `title` gives it a tooltip there. *@
 
 <label for="nav-toggle" class="block">
-    <NavLink href="@Href" Match="Match" class="nav-item">
-        <span class="w-5 text-center text-base">@Icon</span>
-        <span>@Label</span>
+    <NavLink href="@Href" Match="Match" class="nav-item" title="@Label">
+        <Icon Name="@Icon" Class="h-5 w-5 shrink-0" />
+        <span class="nav-label truncate">@Label</span>
+
+        @if (Badge is > 0)
+        {
+            @* Outstanding work, not a notification count. At the collapsed width there is no room
+               for the number, so it degrades to a dot in the corner rather than disappearing —
+               "there is work here" survives, the count does not. *@
+            <span class="nav-badge">
+                <bdi>@Ku.N(Badge.Value)</bdi>
+            </span>
+            <span class="nav-badge-dot" aria-hidden="true"></span>
+        }
     </NavLink>
 </label>
 
@@ -13,4 +29,7 @@
     [Parameter, EditorRequired] public string Icon { get; set; } = "";
     [Parameter, EditorRequired] public string Label { get; set; } = "";
     [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+
+    /// <summary>Outstanding-item count, e.g. on کەمووکوڕی وشەکان. Null or 0 renders nothing.</summary>
+    [Parameter] public int? Badge { get; set; }
 }

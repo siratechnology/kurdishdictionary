@@ -112,6 +112,106 @@ public class AuthController : ControllerBase
         });
     }
 
+    // PUT api/auth/me
+    // Everything a signed-in user may change about themselves — which is everything EXCEPT
+    // their roles and their active flag. Those two are the whole of the permission system, so
+    // they stay on the admin-only endpoint and are not merely ignored here: UpdateProfileDto
+    // does not carry them, so no future edit to this method can accidentally start honouring
+    // a Roles field arriving from the browser.
+    [HttpPut("me")]
+    [Authorize]
+    public async Task<ActionResult<AuthResultDto>> UpdateMe([FromBody] UpdateProfileDto dto)
+    {
+        var user = await _users.FindByIdAsync(_current.UserId.ToString()!);
+        if (user is null || !user.IsActive) return Unauthorized();
+
+        if (!string.IsNullOrWhiteSpace(dto.Email) &&
+            !string.Equals(dto.Email, user.Email, StringComparison.OrdinalIgnoreCase))
+        {
+            var taken = await _users.FindByEmailAsync(dto.Email);
+            if (taken is not null && taken.Id != user.Id)
+                return Ok(Fail("ئەم ئیمەیلە پێشتر بەکارهاتووە."));
+
+            user.Email = dto.Email.Trim();
+            user.NormalizedEmail = _users.NormalizeEmail(user.Email);
+        }
+
+        user.FullName = string.IsNullOrWhiteSpace(dto.FullName) ? null : dto.FullName.Trim();
+
+        var result = await _users.UpdateAsync(user);
+        if (!result.Succeeded)
+            return Ok(Fail(string.Join(" ", result.Errors.Select(e => e.Description))));
+
+        var roles = await _users.GetRolesAsync(user);
+        return Ok(new AuthResultDto { Succeeded = true, User = ToDto(user, roles) });
+    }
+
+    // POST api/auth/me/avatar
+    [HttpPost("me/avatar")]
+    [Authorize]
+    [RequestSizeLimit(AvatarService.MaxBytes + 4096)]   // + a little for the multipart envelope
+    public async Task<ActionResult<AuthResultDto>> UploadAvatar(
+        IFormFile file, [FromServices] AvatarService avatars, CancellationToken ct)
+    {
+        var user = await _users.FindByIdAsync(_current.UserId.ToString()!);
+        if (user is null || !user.IsActive) return Unauthorized();
+
+        if (file is null || file.Length == 0)
+            return Ok(Fail("هیچ فایلێک نەنێردرا."));
+
+        string saved;
+        try
+        {
+            await using var stream = file.OpenReadStream();
+            saved = await avatars.SaveAsync(stream, file.Length, ct);
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Thrown by AvatarService for everything the user can fix — too big, not an image.
+            return Ok(Fail(ex.Message));
+        }
+
+        var previous = user.AvatarFile;
+        user.AvatarFile = saved;
+
+        var result = await _users.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            // The row did not change, so the file just written is an orphan. Remove it rather
+            // than leaving the folder to grow one dead image per failed save.
+            avatars.TryDelete(saved);
+            return Ok(Fail(string.Join(" ", result.Errors.Select(e => e.Description))));
+        }
+
+        // Only once the new name is committed — losing the old file before that would leave the
+        // user with no picture at all if the update failed.
+        avatars.TryDelete(previous);
+
+        var roles = await _users.GetRolesAsync(user);
+        return Ok(new AuthResultDto { Succeeded = true, User = ToDto(user, roles) });
+    }
+
+    // DELETE api/auth/me/avatar
+    [HttpDelete("me/avatar")]
+    [Authorize]
+    public async Task<ActionResult<AuthResultDto>> RemoveAvatar([FromServices] AvatarService avatars)
+    {
+        var user = await _users.FindByIdAsync(_current.UserId.ToString()!);
+        if (user is null || !user.IsActive) return Unauthorized();
+
+        var previous = user.AvatarFile;
+        user.AvatarFile = null;
+
+        var result = await _users.UpdateAsync(user);
+        if (!result.Succeeded)
+            return Ok(Fail(string.Join(" ", result.Errors.Select(e => e.Description))));
+
+        avatars.TryDelete(previous);
+
+        var roles = await _users.GetRolesAsync(user);
+        return Ok(new AuthResultDto { Succeeded = true, User = ToDto(user, roles) });
+    }
+
     // GET api/auth/leaderboard
     // Every signed-in user may read this — it is the dashboard's motivation board.
     // Editors only (admins are excluded), and it exposes no personal details.
@@ -119,12 +219,36 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<ActionResult<List<ContributorDto>>> GetLeaderboard()
     {
-        var editors = await _users.GetUsersInRoleAsync(Roles.Editor);
-        var admins = (await _users.GetUsersInRoleAsync(Roles.Admin)).Select(u => u.Id).ToHashSet();
+        // EVERY active account except بەڕێوەبەر.
+        //
+        // Three narrower rules were tried and each hid somebody. Editors-minus-admins dropped an
+        // administrator who writes. "Anyone who has ever authored a word" dropped the whole team's
+        // station work, because the imported words have no author. Adding "admins with ledger
+        // entries" patched that but still left a new وشەچن invisible until their first save.
+        //
+        // The honest rule is the simple one: this is the team, so list the team. Somebody with
+        // nothing yet shows a zero, which is a true statement about a new colleague and not a
+        // reason to leave them off the board.
+        //
+        // بەڕێوەبەر stays out. The card is the team's view of who is doing the lexicography, and
+        // the seeded admin owns forty headwords from setting the system up — enough to sit above
+        // real وشەچن on a list that is not about system administration.
+        var adminIds = (await _users.GetUsersInRoleAsync(Roles.Admin))
+            .Select(u => u.Id)
+            .ToHashSet();
 
-        var candidates = editors
-            .Where(u => u.IsActive && !admins.Contains(u.Id))
-            .ToList();
+        // Words FIXED, from the contribution ledger. Distinct per word: a teacher who corrects one
+        // word fifteen times has fixed one word, and a board that says fifteen rewards fiddling.
+        var updatedCounts = await _db.ContributionEvents
+            .Where(e => e.WordId != null && e.SourceKind == ContributionSourceKind.Human)
+            .GroupBy(e => e.UserId)
+            .Select(g => new { UserId = g.Key, Count = g.Select(e => e.WordId).Distinct().Count() })
+            .ToDictionaryAsync(x => x.UserId, x => x.Count);
+
+        var candidates = await _db.Users
+            .AsNoTracking()
+            .Where(u => u.IsActive && !adminIds.Contains(u.Id))
+            .ToListAsync();
 
         // One grouped query instead of a count per user.
         var wordCounts = await _db.Words
@@ -140,8 +264,13 @@ public class AuthController : ControllerBase
                 UserName = u.UserName ?? string.Empty,
                 FullName = u.FullName,
                 WordCount = wordCounts.GetValueOrDefault(u.Id),
+                WordsUpdated = updatedCounts.GetValueOrDefault(u.Id),
+                AvatarUrl = AvatarUrl(u.AvatarFile),
             })
-            .OrderByDescending(c => c.WordCount)
+            // Ranked on everything they have done — written plus fixed. Ordering on either half
+            // alone puts whoever specialises in the other half at the bottom of the board.
+            .OrderByDescending(c => c.WordCount + c.WordsUpdated)
+            .ThenByDescending(c => c.WordsUpdated)
             .ThenBy(c => c.UserName)
             .ToList();
 
@@ -240,6 +369,70 @@ public class AuthController : ControllerBase
     }
 
     // DELETE api/auth/users/{id}
+    // POST api/auth/users/{id}/avatar
+    // An admin setting someone else's picture — the same validation and the same storage as the
+    // self-service route, differing only in whose row is written. Kept as a separate endpoint
+    // rather than a userId parameter on the self route, so that "change my own picture" can never
+    // be turned into "change anyone's" by supplying an extra field.
+    [HttpPost("users/{id:guid}/avatar")]
+    [Authorize(Roles = Roles.Admin)]
+    [RequestSizeLimit(AvatarService.MaxBytes + 4096)]
+    public async Task<ActionResult<AuthResultDto>> UploadUserAvatar(
+        Guid id, IFormFile file, [FromServices] AvatarService avatars, CancellationToken ct)
+    {
+        var user = await _users.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+
+        if (file is null || file.Length == 0)
+            return Ok(Fail("هیچ فایلێک نەنێردرا."));
+
+        string saved;
+        try
+        {
+            await using var stream = file.OpenReadStream();
+            saved = await avatars.SaveAsync(stream, file.Length, ct);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Ok(Fail(ex.Message));
+        }
+
+        var previous = user.AvatarFile;
+        user.AvatarFile = saved;
+
+        var result = await _users.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            avatars.TryDelete(saved);
+            return Ok(Fail(string.Join(" ", result.Errors.Select(e => e.Description))));
+        }
+
+        avatars.TryDelete(previous);
+
+        return Ok(new AuthResultDto { Succeeded = true, User = ToDto(user, await _users.GetRolesAsync(user)) });
+    }
+
+    // DELETE api/auth/users/{id}/avatar
+    [HttpDelete("users/{id:guid}/avatar")]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<ActionResult<AuthResultDto>> RemoveUserAvatar(
+        Guid id, [FromServices] AvatarService avatars)
+    {
+        var user = await _users.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+
+        var previous = user.AvatarFile;
+        user.AvatarFile = null;
+
+        var result = await _users.UpdateAsync(user);
+        if (!result.Succeeded)
+            return Ok(Fail(string.Join(" ", result.Errors.Select(e => e.Description))));
+
+        avatars.TryDelete(previous);
+
+        return Ok(new AuthResultDto { Succeeded = true, User = ToDto(user, await _users.GetRolesAsync(user)) });
+    }
+
     [HttpDelete("users/{id:guid}")]
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<AuthResultDto>> DeleteUser(Guid id)
@@ -342,5 +535,14 @@ public class AuthController : ControllerBase
         CreatedAt = user.CreatedAt,
         LastLoginAt = user.LastLoginAt,
         LastLoginIp = user.LastLoginIp,
+        AvatarUrl = AvatarUrl(user.AvatarFile),
     };
+
+    /// <summary>
+    /// The public URL for a stored avatar. Composed here and nowhere else: the client is never
+    /// given a file name to build a path from, so a bad name in the column cannot become a
+    /// request for something outside the avatar folder.
+    /// </summary>
+    private static string? AvatarUrl(string? file) =>
+        string.IsNullOrWhiteSpace(file) ? null : $"/avatars/{file}";
 }

@@ -1,0 +1,86 @@
+@* A small metric tile: label, number, unit, and one piece of evidence underneath.
+
+   The evidence is the point. A bare total tells you nothing you can act on, so every tile
+   carries either a trend (`Series`) or a share (`Ratio`) in the same footprint. Which one it
+   is depends on what the number means — a running count gets bars, a coverage figure gets a
+   bar of progress — so the caller picks and the tile just draws it. *@
+
+<a href="@Href" class="card flex flex-col gap-3 transition-colors hover:border-green-soft">
+    <div class="flex items-start gap-2">
+        <div class="min-w-0">
+            <p class="truncate text-13 text-ink-2">@Label</p>
+            <p class="mt-1 flex items-baseline gap-1.5">
+                <span class="text-28 font-medium @ValueTone"><bdi>@Ku.N(Value)</bdi></span>
+                @if (!string.IsNullOrWhiteSpace(Unit))
+                {
+                    <span class="text-11 text-ink-3">@Unit</span>
+                }
+            </p>
+        </div>
+        @if (State != Tone.Normal)
+        {
+            <span class="ms-auto @StatePill"><Icon Name="alert" Class="h-3 w-3" /></span>
+        }
+    </div>
+
+    @if (Series is { Count: > 0 })
+    {
+        @* Deliberately axis-free. At 44px tall the shape is the whole message; a scale would
+           be unreadable and a tooltip unreachable on the tablets this runs on. *@
+        <div class="flex h-11 items-end gap-[3px]" aria-hidden="true">
+            @foreach (var v in Series)
+            {
+                <span class="min-w-0 flex-1 rounded-sm @(v > 0 ? "chart-bar !rounded-sm" : "hatch border border-line-soft")"
+                      style="height:@(BarHeight(v))%"></span>
+            }
+        </div>
+    }
+    else if (Ratio is { } r)
+    {
+        <div>
+            <div class="progress-track">
+                <div class="progress-fill" style="width:@(Pct(r))%"></div>
+            </div>
+            <p class="mt-2 text-11 text-ink-2">@Footnote</p>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Footnote))
+    {
+        <p class="text-11 text-ink-2">@Footnote</p>
+    }
+</a>
+
+@code {
+    public enum Tone { Normal, Warn, Danger }
+
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter, EditorRequired] public int Value { get; set; }
+    [Parameter] public string? Unit { get; set; }
+    [Parameter] public string Href { get; set; } = "";
+    [Parameter] public string? Footnote { get; set; }
+
+    /// <summary>Trend bars. Mutually exclusive with <see cref="Ratio"/>; bars win if both are set.</summary>
+    [Parameter] public IReadOnlyList<int>? Series { get; set; }
+
+    /// <summary>0..1 share, drawn as a progress bar with a hatched remainder.</summary>
+    [Parameter] public double? Ratio { get; set; }
+
+    /// <summary>Computed from a threshold by the caller — never assigned per position on screen.</summary>
+    [Parameter] public Tone State { get; set; } = Tone.Normal;
+
+    string ValueTone => State switch
+    {
+        Tone.Danger => "text-danger",
+        Tone.Warn => "text-warn",
+        _ => "text-ink-1",
+    };
+
+    string StatePill => State == Tone.Danger ? "pill pill-danger" : "pill pill-warn";
+
+    int Peak => Series is null || Series.Count == 0 ? 0 : Series.Max();
+
+    /// <summary>A zero day still shows a stub, so a quiet week reads as seven days and not as four.</summary>
+    int BarHeight(int v) => Peak <= 0 ? 20 : Math.Max(10, (int)Math.Round(v * 100.0 / Peak));
+
+    static int Pct(double r) => (int)Math.Round(Math.Clamp(r, 0, 1) * 100);
+}

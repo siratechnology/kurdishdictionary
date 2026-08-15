@@ -1,194 +1,137 @@
-@page "/taxonomy"
+@* Moved off /taxonomy, which is now the schema tree. Nothing here changed — this is the
+   membership manager (which words are in which پۆل, which carry which جۆری وشە) and it is
+   still the only screen that does that job. *@
+@page "/taxonomy/manage"
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @attribute [Authorize(Roles = "Admin,Editor")]
 @inject WordService WordSvc
+@inject Toast Toast
 
 <PageTitle>پۆل و جۆرەکانی وشە</PageTitle>
 
-<!-- Page header -->
-<div class="flex items-center justify-between mb-6" dir="rtl">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-900">پۆل و جۆرەکانی وشە</h1>
-        <p class="text-sm text-gray-400 mt-0.5">
-            بەڕێوەبردنی پۆلەکان و جۆرەکانی وشە و وشە پەیوەستەکانیان
-        </p>
-    </div>
+@* Membership management: pick a class on the start side, manage its words on the other.
 
-    <!-- Tab switcher -->
-    <div class="flex items-center gap-1 bg-gray-100 rounded-xl p-1">
-        <button @onclick="() => SwitchTab(Tab.Categories)"
-                class="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all @(_tab == Tab.Categories ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700")">
-            <span>🏷</span><span>پۆلەکان</span>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full @(_tab == Tab.Categories ? "bg-indigo-100 text-indigo-600" : "bg-gray-200 text-gray-500")">@_categories.Count</span>
-        </button>
-        <button @onclick="() => SwitchTab(Tab.SpeechPanes)"
-                class="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-all @(_tab == Tab.SpeechPanes ? "bg-white text-violet-700 shadow-sm" : "text-gray-500 hover:text-gray-700")">
-            <span>🗂</span><span>جۆرەکانی وشە</span>
-            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full @(_tab == Tab.SpeechPanes ? "bg-violet-100 text-violet-600" : "bg-gray-200 text-gray-500")">@_speechStats.Count</span>
-        </button>
-    </div>
+   The left list used to hand-roll everything a grid already does — an inline rename state, an
+   inline "are you sure" state, a create row, a hover-reveal button pair — about 120 lines of
+   markup that could each be in the wrong state at the same time. It is a TelerikGrid with
+   inline editing now, and all four of those states belong to the grid.
+
+   The right side is not a grid and should not be one: adding fifteen words to a category is a
+   search-and-pick gesture, and the only thing that made it awkward was the hand-built
+   typeahead. That is a TelerikMultiSelect reading from the server. *@
+
+<TelerikScope>
+
+<PageHeader Title="پۆل و جۆرەکانی وشە"
+            Subtitle="بەڕێوەبردنی پۆلەکان و جۆرەکانی وشە و وشە پەیوەستەکانیان" />
+
+<div class="tab-rail mb-4">
+    <button type="button" @onclick="() => SwitchTab(Tab.Categories)"
+            class="tab-pill @(_tab == Tab.Categories ? "is-active" : "")">
+        پۆلەکان <bdi class="text-11">(@Ku.N(_categories.Count))</bdi>
+    </button>
+    <button type="button" @onclick="() => SwitchTab(Tab.SpeechPanes)"
+            class="tab-pill @(_tab == Tab.SpeechPanes ? "is-active" : "")">
+        جۆرەکانی وشە <bdi class="text-11">(@Ku.N(_speechStats.Count))</bdi>
+    </button>
 </div>
 
-<!-- Two-column layout -->
-<div class="flex gap-5" style="height: calc(100vh - 180px); min-height: 500px;">
+<div class="flex flex-col gap-4 lg:flex-row" style="min-height: 560px;">
 
-    <!-- ══════════════════════════════════════════════════════════════
-         LEFT PANEL — category / speech-pane list
-    ══════════════════════════════════════════════════════════════ -->
-    <div class="w-80 shrink-0 flex flex-col gap-3 overflow-hidden">
+    @* ── START SIDE: the class list ─────────────────────────────────────── *@
+    <div class="flex w-full shrink-0 flex-col gap-3 lg:w-96">
 
         @if (_tab == Tab.Categories)
         {
-            <!-- Create category -->
-            <div class="flex gap-2" dir="rtl">
+            @* Add sits above the grid rather than inside its toolbar: creating a category is one
+               field, and a grid's own "add" row makes you fill a table to type one word. *@
+            <div class="flex gap-2">
                 <input @bind="_newCatName" @bind:event="oninput"
                        @onkeydown="@(async e => { if (e.Key == "Enter") await CreateCategory(); })"
-                       placeholder="＋ ناوی پۆلی نوێ..."
-                       dir="rtl"
-                       class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all" />
-                <button @onclick="CreateCategory"
-                        disabled="@(string.IsNullOrWhiteSpace(_newCatName) || _catSaving)"
-                        class="shrink-0 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl shadow-sm transition-colors">
-                    @(_catSaving ? "..." : "زیادکردن")
-                </button>
+                       placeholder="ناوی پۆلی نوێ…"
+                       class="field flex-1" />
+                <TelerikButton OnClick="@CreateCategory"
+                               Enabled="@(!string.IsNullOrWhiteSpace(_newCatName) && !_catSaving)"
+                               ThemeColor="@ThemeConstants.Button.ThemeColor.Primary"
+                               Icon="@SvgIcon.Plus">
+                    @(_catSaving ? "…" : "زیادکردن")
+                </TelerikButton>
             </div>
 
-            @if (!string.IsNullOrEmpty(_catError))
-            {
-                <div class="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl text-xs font-medium text-red-600" dir="rtl">
-                    <span>⚠</span> @_catError
-                </div>
-            }
+            <TelerikGrid Data="@_categories" EditMode="@GridEditMode.Inline" Height="520px"
+                         Sortable="true" SelectionMode="@GridSelectionMode.Single"
+                         SelectedItems="@_selectedCats"
+                         SelectedItemsChanged="@(async (IEnumerable<CategoryDto> items) => await OnCategorySelected(items))"
+                         OnUpdate="@RenameCategory" OnDelete="@DeleteCategory">
+                <GridColumns>
+                    <GridColumn Field="@nameof(CategoryDto.Name)" Title="پۆل" />
 
-            <!-- Category list -->
-            <div class="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-200 shadow-sm">
-                @if (_listLoading)
-                {
-                    @for (int i = 0; i < 8; i++)
-                    {
-                        <div class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50" dir="rtl">
-                            <div class="skeleton flex-1 h-4"></div>
-                            <div class="skeleton w-8 h-5 rounded-full"></div>
-                        </div>
-                    }
-                }
-                else if (!_categories.Any())
-                {
-                    <div class="flex flex-col items-center justify-center py-12 text-gray-400 gap-2">
-                        <span class="text-3xl">🏷</span>
-                        <p class="text-sm">هێشتا هیچ پۆلێک نییە</p>
-                        <p class="text-xs text-gray-300">لە سەرەوە پۆلی نوێ زیاد بکە</p>
+                    @* Usage count on every row. پڕۆمپت ١١ wants this visible everywhere: once you
+                       can see that most categories hold two or three words, the sprawl becomes
+                       self-correcting. Sorted ascending, the long tail is the first thing you see. *@
+                    <GridColumn Field="@nameof(CategoryDto.WordCount)" Title="وشە" Width="110px" Editable="false">
+                        <Template>
+                            @{ var c = (CategoryDto)context; }
+                            <span class="pill @(c.WordCount > 0 ? "pill-ok" : "pill-muted")">
+                                <bdi>@Ku.N(c.WordCount)</bdi>
+                            </span>
+                        </Template>
+                    </GridColumn>
+
+                    <GridCommandColumn Width="120px">
+                        <GridCommandButton Command="Edit" Icon="@SvgIcon.Pencil" Title="گۆڕینی ناو" />
+                        <GridCommandButton Command="Save" Icon="@SvgIcon.Check" ShowInEdit="true" Title="پاشەکەوت" />
+                        <GridCommandButton Command="Cancel" Icon="@SvgIcon.Cancel" ShowInEdit="true" Title="پاشگەز" />
+                        <GridCommandButton Command="Delete" Icon="@SvgIcon.Trash"
+                                           ThemeColor="@ThemeConstants.Button.ThemeColor.Error" Title="سڕینەوە" />
+                    </GridCommandColumn>
+                </GridColumns>
+
+                <NoDataTemplate>
+                    <div class="flex flex-col items-center gap-2 py-12 text-center">
+                        <span class="hatch h-10 w-10 rounded-full border border-line"></span>
+                        <p class="text-sm text-ink-1">هێشتا هیچ پۆلێک نییە</p>
+                        <p class="text-xs text-ink-3">لە سەرەوە پۆلی نوێ زیاد بکە</p>
                     </div>
-                }
-                else
-                {
-                    @foreach (var cat in _categories)
-                    {
-                        bool isSelected = _tab == Tab.Categories && _selectedCatId == cat.Id;
-                        bool isEditing = _editingCatId == cat.Id;
-                        bool isConfirming = _confirmDeleteCatId == cat.Id;
-
-                        <div class="group border-b border-gray-50 last:border-0 @(isSelected ? "bg-indigo-50 border-r-2 border-r-indigo-500" : "hover:bg-gray-50") transition-colors" dir="rtl">
-                            @if (isEditing)
-                            {
-                                <div class="flex items-center gap-2 px-3 py-2.5">
-                                    <input @bind="_editCatName" @bind:event="oninput"
-                                           @onkeydown="@(async e => { if (e.Key == "Enter") await SaveCategoryRename(); if (e.Key == "Escape") CancelRename(); })"
-                                           dir="rtl"
-                                           class="flex-1 min-w-0 border-2 border-indigo-400 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100" />
-                                    <button @onclick="SaveCategoryRename"
-                                            disabled="@(string.IsNullOrWhiteSpace(_editCatName) || _catSaving)"
-                                            class="shrink-0 w-7 h-7 flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 text-white rounded-lg text-xs transition-colors">✓</button>
-                                    <button @onclick="CancelRename"
-                                            class="shrink-0 w-7 h-7 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-lg text-xs transition-colors">✕</button>
-                                </div>
-                            }
-                            else if (isConfirming)
-                            {
-                                <div class="flex items-center gap-2 px-3 py-2.5 bg-red-50">
-                                    <span class="flex-1 text-xs font-semibold text-red-700 truncate">سڕینەوەی «@cat.Name»؟</span>
-                                    <button @onclick="() => DeleteCategory(cat)"
-                                            disabled="@_catSaving"
-                                            class="shrink-0 px-2.5 py-1 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-lg text-xs font-bold transition-colors">بەڵێ</button>
-                                    <button @onclick="() => _confirmDeleteCatId = null"
-                                            class="shrink-0 px-2.5 py-1 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-lg text-xs font-bold transition-colors">نەخێر</button>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="flex items-center gap-1 pl-2">
-                                    <button @onclick="() => SelectCategory(cat)"
-                                            class="flex-1 min-w-0 flex items-center gap-3 px-4 py-3 text-right">
-                                        <span class="flex-1 text-sm font-bold text-gray-900 truncate">@cat.Name</span>
-                                        <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full @(cat.WordCount > 0 ? "bg-indigo-100 text-indigo-600 border border-indigo-200" : "bg-gray-100 text-gray-400 border border-gray-200")">
-                                            @cat.WordCount وشە
-                                        </span>
-                                    </button>
-                                    <button @onclick="() => StartRename(cat)" @onclick:stopPropagation="true"
-                                            title="گۆڕینی ناو"
-                                            class="shrink-0 w-7 h-7 hidden group-hover:flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-100 rounded-lg text-xs transition-colors">✎</button>
-                                    <button @onclick="() => _confirmDeleteCatId = cat.Id" @onclick:stopPropagation="true"
-                                            title="سڕینەوە"
-                                            class="shrink-0 w-7 h-7 hidden group-hover:flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-100 rounded-lg text-xs transition-colors">🗑</button>
-                                </div>
-                            }
-                        </div>
-                    }
-                }
-            </div>
+                </NoDataTemplate>
+            </TelerikGrid>
         }
         else
         {
-            <!-- Speech panes are a fixed set -->
-            <div class="flex items-center gap-2 px-3 py-2.5 bg-violet-50 border border-violet-200 rounded-xl text-xs font-medium text-violet-700" dir="rtl">
-                <span>ℹ</span> جۆرەکانی وشە نەگۆڕن — تەنها وشەکانیان بەڕێوە ببە
+            <div class="flex items-center gap-2 rounded-chip border border-line bg-page px-3 py-2.5 text-xs text-ink-2">
+                <Icon Name="alert" Class="h-3.5 w-3.5 shrink-0" />
+                جۆرەکانی وشە نەگۆڕن — تەنها وشەکانیان بەڕێوە ببە
             </div>
 
-            <!-- Speech pane list -->
-            <div class="flex-1 overflow-y-auto bg-white rounded-2xl border border-gray-200 shadow-sm">
-                @if (_listLoading)
-                {
-                    @for (int i = 0; i < 10; i++)
-                    {
-                        <div class="flex items-center gap-3 px-4 py-3.5 border-b border-gray-50" dir="rtl">
-                            <div class="skeleton flex-1 h-4"></div>
-                            <div class="skeleton w-8 h-5 rounded-full"></div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    @foreach (var sp in _speechStats)
-                    {
-                        bool isSelected = _tab == Tab.SpeechPanes && _selectedSpeechId == sp.Id;
-                        <button @onclick="() => SelectSpeechPane(sp)"
-                                class="w-full flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 text-right transition-colors @(isSelected ? "bg-violet-50 border-r-2 border-r-violet-500" : "hover:bg-gray-50")"
-                                dir="rtl">
-                            <span class="flex-1 text-sm font-bold text-gray-900 truncate">@sp.Kurdish</span>
-                            <span class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full @(sp.WordCount > 0 ? "bg-violet-100 text-violet-600 border border-violet-200" : "bg-gray-100 text-gray-400 border border-gray-200")">
-                                @sp.WordCount وشە
+            <TelerikGrid Data="@_speechStats" Height="520px" Sortable="true"
+                         SelectionMode="@GridSelectionMode.Single"
+                         SelectedItems="@_selectedPanes"
+                         SelectedItemsChanged="@(async (IEnumerable<SpeechPaneStatDto> items) => await OnSpeechPaneSelected(items))">
+                <GridColumns>
+                    <GridColumn Field="@nameof(SpeechPaneStatDto.Kurdish)" Title="جۆری وشە" />
+                    <GridColumn Field="@nameof(SpeechPaneStatDto.WordCount)" Title="وشە" Width="110px">
+                        <Template>
+                            @{ var s = (SpeechPaneStatDto)context; }
+                            <span class="pill @(s.WordCount > 0 ? "pill-ok" : "pill-muted")">
+                                <bdi>@Ku.N(s.WordCount)</bdi>
                             </span>
-                        </button>
-                    }
-                }
-            </div>
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </TelerikGrid>
         }
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════════
-         RIGHT PANEL — word membership manager
-    ══════════════════════════════════════════════════════════════ -->
-    <div class="flex-1 flex flex-col gap-4 overflow-hidden min-w-0">
+    @* ── END SIDE: the words in the selected class ──────────────────────── *@
+    <div class="flex min-w-0 flex-1 flex-col gap-4">
 
         @if (!HasSelection)
         {
-            <div class="flex-1 flex flex-col items-center justify-center text-center text-gray-400 bg-white rounded-2xl border border-gray-200 border-dashed gap-4 p-8">
-                <div class="w-16 h-16 rounded-2xl @(_tab == Tab.Categories ? "bg-indigo-50 border-indigo-100" : "bg-violet-50 border-violet-100") border flex items-center justify-center text-3xl">
-                    @(_tab == Tab.Categories ? "🏷" : "🗂")
-                </div>
+            <div class="flex flex-1 flex-col items-center justify-center gap-4 rounded-card border border-dashed border-line bg-card p-8 text-center">
+                <span class="hatch h-14 w-14 rounded-card border border-line"></span>
                 <div>
-                    <p class="font-semibold text-gray-600 text-base">@(_tab == Tab.Categories ? "پۆلێک هەڵبژێرە" : "جۆرێک هەڵبژێرە")</p>
-                    <p class="text-sm text-gray-400 mt-1.5 leading-relaxed">
+                    <p class="text-base font-medium text-ink-1">@(_tab == Tab.Categories ? "پۆلێک هەڵبژێرە" : "جۆرێک هەڵبژێرە")</p>
+                    <p class="mt-1.5 text-sm leading-relaxed text-ink-2">
                         لە لیستەکەوە دانەیەک هەڵبژێرە<br />بۆ بینین و بەڕێوەبردنی وشەکانی
                     </p>
                 </div>
@@ -196,207 +139,129 @@
         }
         else
         {
-            <!-- Selected item header -->
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm px-5 py-4" dir="rtl">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl @(_tab == Tab.Categories ? "bg-indigo-100" : "bg-violet-100") flex items-center justify-center text-xl">
-                            @(_tab == Tab.Categories ? "🏷" : "🗂")
-                        </span>
-                        <div>
-                            <span class="text-xl font-black text-gray-900 block leading-tight">@SelectionName</span>
-                            <span class="text-xs text-gray-400">@(_tab == Tab.Categories ? "پۆل" : "جۆری وشە")</span>
-                        </div>
-                    </div>
-                    <span class="text-xs font-semibold px-3 py-1.5 bg-gray-100 text-gray-600 rounded-xl">
-                        @_membersTotal وشە
-                    </span>
+            <div class="card flex items-center gap-3 px-5 py-4">
+                <span class="card-badge !h-10 !w-10">
+                    <Icon Name="@(_tab == Tab.Categories ? "tag" : "book")" Class="h-5 w-5" />
+                </span>
+                <div class="min-w-0">
+                    <span class="block truncate text-20 font-medium leading-tight text-ink-1">@SelectionName</span>
+                    <span class="text-xs text-ink-2">@(_tab == Tab.Categories ? "پۆل" : "جۆری وشە")</span>
+                </div>
+                <span class="pill pill-muted ms-auto shrink-0">
+                    <bdi>@Ku.N(_membersTotal)</bdi> وشە
+                </span>
+            </div>
+
+            @* ── Add words ── *@
+            <div class="card">
+                <div class="mb-3 flex items-center gap-2.5">
+                    <span class="card-badge"><Icon Name="plus" Class="h-4 w-4" /></span>
+                    <h2 class="card-title">زیادکردنی وشە</h2>
+                </div>
+
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    @* Reads from the server as you type. The list is filtered to words that are
+                       not already in this class — offering a word you cannot add is the fastest
+                       way to make people distrust the box. *@
+                    <TelerikMultiSelect Data="@_wordOptions" @bind-Value="@_pickedIds"
+                                        TextField="@nameof(WordDto.Kurdish)" ValueField="@nameof(WordDto.Id)"
+                                        Filterable="true" OnRead="@OnWordSearch"
+                                        MinLength="1" Placeholder="وشە بگەڕێ و هەڵبژێرە…"
+                                        Class="flex-1" Width="100%" />
+
+                    <TelerikButton OnClick="@AddPickedWords"
+                                   Enabled="@(_pickedIds.Count > 0 && !_saving)"
+                                   ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">
+                        @(_saving ? "پاشەکەوت دەکرێت…" : $"زیادکردنی {Ku.N(_pickedIds.Count)} وشە")
+                    </TelerikButton>
                 </div>
             </div>
 
-            <div class="flex-1 flex flex-col gap-4 overflow-y-auto pb-1 pr-0.5">
-
-                <!-- ── Add words ── -->
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" dir="rtl">
-                    <div class="px-5 py-3.5 bg-gray-50 border-b border-gray-100">
-                        <span class="text-sm font-bold text-gray-800">+ زیادکردنی وشە</span>
-                    </div>
-
-                    <div class="p-5 space-y-4">
-                        <!-- Multi-select combobox -->
-                        <div>
-                            <div class="min-h-[44px] border-2 @(_comboFocused ? AccentBorder : "border-gray-200") rounded-xl px-3 py-2 flex flex-wrap gap-1.5 items-center cursor-text transition-all bg-white"
-                                 @onclick="FocusComboInput">
-
-                                @foreach (var pick in _picks)
-                                {
-                                    <span class="inline-flex items-center gap-1 pl-1.5 pr-2.5 py-1 @AccentChip rounded-full text-sm font-semibold">
-                                        <button @onclick:stopPropagation="true"
-                                                @onclick="() => RemovePick(pick)"
-                                                class="w-4 h-4 flex items-center justify-center rounded-full hover:bg-black/10 text-xs leading-none">
-                                            ×
-                                        </button>
-                                        @pick.Kurdish
-                                    </span>
-                                }
-
-                                <input @ref="_comboInputRef"
-                                       value="@_comboSearch"
-                                       @oninput="OnComboInput"
-                                       @onfocus="() => _comboFocused = true"
-                                       @onblur="OnComboBlur"
-                                       placeholder="@(_picks.Any() ? "" : "وشە بگەڕێ و هەڵبژێرە...")"
-                                       dir="rtl"
-                                       class="flex-1 min-w-[140px] outline-none text-sm bg-transparent placeholder-gray-400 py-0.5" />
-                            </div>
-
-                            @if (_comboSuggestions.Any())
-                            {
-                                <div class="relative">
-                                    <ul class="absolute top-1 left-0 right-0 bg-white border border-gray-200 rounded-xl shadow-xl max-h-48 overflow-y-auto z-40">
-                                        @foreach (var s in _comboSuggestions)
-                                        {
-                                            bool isPicked = _picks.Any(p => p.Id == s.Id);
-                                            bool isMember = IsAlreadyMember(s);
-                                            <li @onclick="() => { if (!isMember) TogglePick(s); }"
-                                                class="flex items-center justify-between px-4 py-2.5 text-sm border-b border-gray-50 last:border-0 transition-colors @(isMember ? "opacity-50 cursor-default" : isPicked ? "bg-indigo-50 cursor-pointer" : "hover:bg-gray-50 cursor-pointer")">
-                                                <span class="font-bold text-gray-800" dir="rtl">@s.Kurdish</span>
-                                                <div class="flex items-center gap-2 shrink-0">
-                                                    @if (isMember)
-                                                    {
-                                                        <span class="text-[10px] text-gray-400">پێشتر زیادکراوە</span>
-                                                    }
-                                                    else if (s.SpeechPanes.Any())
-                                                    {
-                                                        <span class="text-[10px] text-gray-400">@s.SpeechPanes.First().Kurdish</span>
-                                                    }
-                                                    @if (isPicked)
-                                                    {
-                                                        <span class="w-4 h-4 flex items-center justify-center bg-indigo-500 text-white rounded-full text-[9px] font-bold">✓</span>
-                                                    }
-                                                </div>
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                            }
-                        </div>
-
-                        @if (!string.IsNullOrEmpty(_saveError))
-                        {
-                            <div class="flex items-center gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-xl text-xs font-medium text-red-600">
-                                <span>⚠</span> @_saveError
-                            </div>
-                        }
-                        @if (_saveSuccess)
-                        {
-                            <div class="flex items-center gap-2 px-3 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-medium text-emerald-700">
-                                <span>✓</span> وشەکان بەسەرکەوتوویی زیاد کران
-                            </div>
-                        }
-
-                        <button @onclick="AddPickedWords"
-                                disabled="@(!_picks.Any() || _saving)"
-                                class="w-full flex items-center justify-center gap-2 @AccentButton disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-colors text-sm">
-                            @if (_saving)
-                            {
-                                <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                <span>پاشەکەوتکردن...</span>
-                            }
-                            else
-                            {
-                                <span>+ زیادکردنی @_picks.Count وشە</span>
-                            }
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ── Member words ── -->
-                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden" dir="rtl">
-                    <div class="flex items-center justify-between gap-3 px-5 py-3.5 bg-gray-50 border-b border-gray-100">
-                        <span class="text-sm font-bold text-gray-800 shrink-0">وشەکان</span>
+            @* ── Member words ── *@
+            <div class="card flex min-h-0 flex-1 flex-col">
+                <div class="mb-3 flex items-center gap-3">
+                    <span class="card-badge"><Icon Name="book" Class="h-4 w-4" /></span>
+                    <h2 class="card-title">وشەکان</h2>
+                    <div class="relative ms-auto w-56">
+                        <span class="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-ink-3">
+                            <Icon Name="search" Class="h-3.5 w-3.5" />
+                        </span>
                         <input value="@_memberSearch" @oninput="OnMemberSearch"
-                               placeholder="🔍 گەڕان لەناو وشەکان..."
-                               dir="rtl"
-                               class="w-56 border border-gray-200 rounded-lg px-3 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all" />
+                               placeholder="گەڕان لەناو وشەکان…"
+                               class="field py-1.5 pe-9 text-xs" />
                     </div>
-
-                    @if (_membersLoading)
-                    {
-                        <div class="p-5 flex flex-wrap gap-2">
-                            @for (int i = 0; i < 12; i++)
-                            {
-                                <div class="skeleton h-8 w-24 rounded-full"></div>
-                            }
-                        </div>
-                    }
-                    else if (!_members.Any())
-                    {
-                        <div class="px-5 py-10 text-center">
-                            <p class="text-sm text-gray-400">
-                                @(string.IsNullOrWhiteSpace(_memberSearch) ? "هێشتا هیچ وشەیەک زیادنەکراوە" : "هیچ وشەیەک نەدۆزرایەوە")
-                            </p>
-                            @if (string.IsNullOrWhiteSpace(_memberSearch))
-                            {
-                                <p class="text-xs text-gray-300 mt-1">لە سەرەوە وشە زیاد بکە</p>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="p-5">
-                            <div class="flex flex-wrap gap-2">
-                                @foreach (var w in _members)
-                                {
-                                    <span class="inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1.5 rounded-full text-sm font-semibold @MemberChip">
-                                        <button @onclick="() => RemoveMember(w)"
-                                                disabled="@_saving"
-                                                title="لابردن"
-                                                class="w-4 h-4 flex items-center justify-center rounded-full hover:bg-black/10 text-xs leading-none disabled:opacity-40 transition-colors shrink-0">
-                                            ×
-                                        </button>
-                                        @w.Kurdish
-                                    </span>
-                                }
-                            </div>
-
-                            @if (_membersHasMore)
-                            {
-                                <button @onclick="LoadMoreMembers"
-                                        disabled="@_membersLoadingMore"
-                                        class="mt-4 w-full py-2.5 text-xs font-semibold @AccentText rounded-xl border border-dashed @(_tab == Tab.Categories ? "border-indigo-200 hover:bg-indigo-50" : "border-violet-200 hover:bg-violet-50") transition-colors disabled:opacity-40">
-                                    @(_membersLoadingMore ? "بارکردن..." : "+ وشەی زیاتر")
-                                </button>
-                            }
-                        </div>
-                    }
                 </div>
 
+                @if (_membersLoading)
+                {
+                    <div class="flex flex-wrap gap-2">
+                        @for (int i = 0; i < 12; i++)
+                        {
+                            <div class="skeleton h-8 w-24 rounded-full"></div>
+                        }
+                    </div>
+                }
+                else if (!_members.Any())
+                {
+                    <div class="py-10 text-center">
+                        <p class="text-sm text-ink-2">
+                            @(string.IsNullOrWhiteSpace(_memberSearch) ? "هێشتا هیچ وشەیەک زیادنەکراوە" : "هیچ وشەیەک نەدۆزرایەوە")
+                        </p>
+                        @if (string.IsNullOrWhiteSpace(_memberSearch))
+                        {
+                            <p class="mt-1 text-xs text-ink-3">لە سەرەوە وشە زیاد بکە</p>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="flex flex-wrap gap-2">
+                        @foreach (var w in _members)
+                        {
+                            <span class="inline-flex items-center gap-1.5 rounded-full border border-line bg-card py-1.5 pe-3 ps-1.5 text-sm text-ink-1">
+                                <button @onclick="() => RemoveMember(w)" disabled="@_saving" title="لابردن"
+                                        class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-danger-tint hover:text-danger disabled:opacity-40">
+                                    <Icon Name="close" Class="h-2.5 w-2.5" />
+                                </button>
+                                @w.Kurdish
+                            </span>
+                        }
+                    </div>
+
+                    @if (_membersHasMore)
+                    {
+                        <button @onclick="LoadMoreMembers" disabled="@_membersLoadingMore"
+                                class="mt-4 w-full rounded-chip border border-dashed border-line py-2.5 text-xs text-ink-2 transition-colors hover:bg-page disabled:opacity-40">
+                            @(_membersLoadingMore ? "بارکردن…" : "+ وشەی زیاتر")
+                        </button>
+                    }
+                }
             </div>
         }
     </div>
 </div>
 
+</TelerikScope>
+
 @code {
     enum Tab { Categories, SpeechPanes }
     Tab _tab = Tab.Categories;
 
-    // ── Left panel data ─────────────────────────────────────────────────────
+    // ── Class lists ─────────────────────────────────────────────────────────
     List<CategoryDto> _categories = new();
     List<SpeechPaneStatDto> _speechStats = new();
-    bool _listLoading = true;
 
-    // ── Category CRUD ───────────────────────────────────────────────────────
-    string _newCatName = "";
-    int? _editingCatId;
-    string _editCatName = "";
-    int? _confirmDeleteCatId;
     bool _catSaving;
-    string _catError = "";
+    string _newCatName = "";
 
     // ── Selection ───────────────────────────────────────────────────────────
+    // Telerik drives selection through a collection even in Single mode, so these hold at most one.
+    IEnumerable<CategoryDto> _selectedCats = Enumerable.Empty<CategoryDto>();
+    IEnumerable<SpeechPaneStatDto> _selectedPanes = Enumerable.Empty<SpeechPaneStatDto>();
+
     int? _selectedCatId;
     int? _selectedSpeechId;
+
     bool HasSelection => _tab == Tab.Categories ? _selectedCatId is not null : _selectedSpeechId is not null;
 
     string SelectionName => _tab == Tab.Categories
@@ -414,40 +279,42 @@
     const int MembersPageSize = 40;
     CancellationTokenSource? _memberCts;
 
-    // ── Add-words combobox ──────────────────────────────────────────────────
-    string _comboSearch = "";
-    List<WordDto> _comboSuggestions = new();
-    List<WordDto> _picks = new();
-    bool _comboFocused;
-    ElementReference _comboInputRef;
-    CancellationTokenSource? _comboCts;
+    // ── Add-words picker ────────────────────────────────────────────────────
+    List<WordDto> _wordOptions = new();
+    List<int> _pickedIds = new();
 
     bool _saving;
-    bool _saveSuccess;
-    string _saveError = "";
-
-    // ── Accent classes per tab ──────────────────────────────────────────────
-    string AccentBorder => _tab == Tab.Categories ? "border-indigo-400 ring-2 ring-indigo-100" : "border-violet-400 ring-2 ring-violet-100";
-    string AccentChip   => _tab == Tab.Categories ? "bg-indigo-100 text-indigo-700" : "bg-violet-100 text-violet-700";
-    string AccentButton => _tab == Tab.Categories ? "bg-indigo-600 hover:bg-indigo-700" : "bg-violet-600 hover:bg-violet-700";
-    string AccentText   => _tab == Tab.Categories ? "text-indigo-600" : "text-violet-600";
-    string MemberChip   => _tab == Tab.Categories ? "bg-indigo-50 text-indigo-700 border border-indigo-100" : "bg-violet-50 text-violet-700 border border-violet-100";
 
     // ═══════════════════════════════════════════════════════════════════════
     protected override async Task OnInitializedAsync()
     {
-        _listLoading = true;
         var catsTask = WordSvc.GetCategoriesAsync();
         var statsTask = WordSvc.GetSpeechTypeStatsAsync();
-        _categories = await catsTask;
-        _speechStats = await statsTask;
-        _listLoading = false;
+
+        try
+        {
+            _categories = await catsTask;
+            _speechStats = await statsTask;
+        }
+        catch (Exception ex)
+        {
+            Toast.Error($"لیستەکان نەهاتنەوە: {ex.Message}");
+        }
     }
 
     void SwitchTab(Tab tab)
     {
         if (_tab == tab) return;
         _tab = tab;
+        ClearSelection();
+    }
+
+    void ClearSelection()
+    {
+        _selectedCats = Enumerable.Empty<CategoryDto>();
+        _selectedPanes = Enumerable.Empty<SpeechPaneStatDto>();
+        _selectedCatId = null;
+        _selectedSpeechId = null;
         ResetRightPanel();
     }
 
@@ -457,11 +324,8 @@
         _membersTotal = 0;
         _memberSearch = "";
         _membersHasMore = false;
-        _picks = new();
-        _comboSearch = "";
-        _comboSuggestions = new();
-        _saveError = "";
-        _saveSuccess = false;
+        _pickedIds = new();
+        _wordOptions = new();
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -470,80 +334,101 @@
     async Task CreateCategory()
     {
         if (string.IsNullOrWhiteSpace(_newCatName) || _catSaving) return;
-        _catSaving = true; _catError = "";
+
+        var name = _newCatName.Trim();
+        _catSaving = true;
         try
         {
-            var created = await WordSvc.CreateCategoryAsync(_newCatName.Trim());
+            var created = await WordSvc.CreateCategoryAsync(name);
             if (created is not null && !_categories.Any(c => c.Id == created.Id))
             {
                 _categories.Add(created);
                 _categories = _categories.OrderBy(c => c.Name).ToList();
             }
             _newCatName = "";
+            Toast.Success($"پۆلی «{name}» زیادکرا");
         }
-        catch { _catError = "زیادکردنی پۆل سەرکەوتوو نەبوو."; }
+        catch (Exception ex)
+        {
+            Toast.Error($"زیادکردنی پۆل سەرکەوتوو نەبوو: {ex.Message}");
+        }
         finally { _catSaving = false; }
     }
 
-    void StartRename(CategoryDto cat)
+    /// <summary>
+    /// Inline rename. The grid hands us a COPY of the row, so the list has to be patched by id —
+    /// mutating the argument would update nothing anyone can see.
+    /// </summary>
+    async Task RenameCategory(GridCommandEventArgs args)
     {
-        _editingCatId = cat.Id;
-        _editCatName = cat.Name;
-        _confirmDeleteCatId = null;
-        _catError = "";
-    }
+        var edited = (CategoryDto)args.Item;
+        if (string.IsNullOrWhiteSpace(edited.Name))
+        {
+            args.IsCancelled = true;
+            Toast.Error("ناوی پۆل ناتوانێت بەتاڵ بێت");
+            return;
+        }
 
-    void CancelRename() { _editingCatId = null; _editCatName = ""; }
-
-    async Task SaveCategoryRename()
-    {
-        if (_editingCatId is null || string.IsNullOrWhiteSpace(_editCatName) || _catSaving) return;
-        _catSaving = true; _catError = "";
         try
         {
-            var updated = await WordSvc.UpdateCategoryAsync(_editingCatId.Value, _editCatName.Trim());
+            var updated = await WordSvc.UpdateCategoryAsync(edited.Id, edited.Name.Trim());
             if (updated is not null)
             {
                 var idx = _categories.FindIndex(c => c.Id == updated.Id);
                 if (idx >= 0) _categories[idx] = updated;
                 _categories = _categories.OrderBy(c => c.Name).ToList();
             }
-            CancelRename();
+            Toast.Success("ناوەکە گۆڕدرا");
         }
-        catch { _catError = "گۆڕینی ناو سەرکەوتوو نەبوو — لەوانەیە ناوەکە دووبارە بێت."; }
-        finally { _catSaving = false; }
+        catch (Exception ex)
+        {
+            args.IsCancelled = true;
+            Toast.Error($"گۆڕینی ناو سەرکەوتوو نەبوو — لەوانەیە ناوەکە دووبارە بێت. ({ex.Message})");
+        }
     }
 
-    async Task DeleteCategory(CategoryDto cat)
+    async Task DeleteCategory(GridCommandEventArgs args)
     {
-        if (_catSaving) return;
-        _catSaving = true; _catError = "";
+        var cat = (CategoryDto)args.Item;
+
         try
         {
             await WordSvc.DeleteCategoryAsync(cat.Id);
             _categories.RemoveAll(c => c.Id == cat.Id);
-            if (_selectedCatId == cat.Id) { _selectedCatId = null; ResetRightPanel(); }
+
+            if (_selectedCatId == cat.Id) ClearSelection();
+            Toast.Success($"«{cat.Name}» سڕایەوە");
         }
-        catch { _catError = "سڕینەوە سەرکەوتوو نەبوو."; }
-        finally { _catSaving = false; _confirmDeleteCatId = null; }
+        catch (Exception ex)
+        {
+            args.IsCancelled = true;
+            Toast.Error($"سڕینەوە سەرکەوتوو نەبوو: {ex.Message}");
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
     // Selection + member list
     // ═══════════════════════════════════════════════════════════════════════
-    async Task SelectCategory(CategoryDto cat)
+    async Task OnCategorySelected(IEnumerable<CategoryDto> items)
     {
-        _selectedCatId = cat.Id;
-        _confirmDeleteCatId = null;
+        _selectedCats = items;
+        var cat = items.FirstOrDefault();
+
+        _selectedCatId = cat?.Id;
         ResetRightPanel();
-        await LoadMembers(reset: true);
+
+        if (cat is not null) await LoadMembers(reset: true);
     }
 
-    async Task SelectSpeechPane(SpeechPaneStatDto sp)
+    async Task OnSpeechPaneSelected(IEnumerable<SpeechPaneStatDto> items)
     {
-        _selectedSpeechId = sp.Id;
+        _selectedPanes = items;
+        var pane = items.FirstOrDefault();
+
+        _selectedSpeechId = pane?.Id;
         ResetRightPanel();
-        await LoadMembers(reset: true);
+
+        if (pane is not null) await LoadMembers(reset: true);
     }
 
     async Task LoadMembers(bool reset)
@@ -565,7 +450,10 @@
             _membersTotal = result?.TotalCount ?? _members.Count;
             _membersHasMore = _members.Count < _membersTotal;
         }
-        catch { _saveError = "بارکردنی وشەکان سەرکەوتوو نەبوو."; }
+        catch (Exception ex)
+        {
+            Toast.Error($"بارکردنی وشەکان سەرکەوتوو نەبوو: {ex.Message}");
+        }
         finally { _membersLoading = false; _membersLoadingMore = false; }
     }
 
@@ -591,77 +479,89 @@
         ? w.Categories.Any(c => c.Id == _selectedCatId)
         : w.SpeechPanes.Any(sp => sp.Id == _selectedSpeechId);
 
-    async Task OnComboInput(ChangeEventArgs e)
+    /// <summary>
+    /// The picker reads from the server on every keystroke rather than filtering a preloaded list:
+    /// there are three thousand words and the box only ever needs ten of them.
+    ///
+    /// Words already in this class are dropped, but words the user has ALREADY PICKED are kept —
+    /// Telerik renders the chips from Data, so filtering a picked item out of the list makes its
+    /// chip lose its label and show a bare id.
+    /// </summary>
+    async Task OnWordSearch(MultiSelectReadEventArgs args)
     {
-        _comboSearch = e.Value?.ToString() ?? "";
-        _comboCts?.Cancel();
-        _comboCts = new CancellationTokenSource();
+        var term = args.Request.Filters
+            .OfType<Telerik.DataSource.FilterDescriptor>()
+            .Select(f => f.Value?.ToString())
+            .FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+
+        if (string.IsNullOrWhiteSpace(term))
+        {
+            args.Data = _wordOptions.Where(w => _pickedIds.Contains(w.Id)).ToList();
+            return;
+        }
+
         try
         {
-            await Task.Delay(250, _comboCts.Token);
-            if (string.IsNullOrWhiteSpace(_comboSearch)) { _comboSuggestions = new(); return; }
-            var result = await WordSvc.GetWordsAsync(search: _comboSearch, pageSize: 10);
-            _comboSuggestions = (result?.Items ?? new())
-                .Where(w => !_picks.Any(p => p.Id == w.Id))
-                .ToList();
+            var result = await WordSvc.GetWordsAsync(search: term, pageSize: 10);
+            var found = (result?.Items ?? new()).Where(w => !IsAlreadyMember(w)).ToList();
+
+            var keep = _wordOptions.Where(w => _pickedIds.Contains(w.Id) && found.All(f => f.Id != w.Id));
+
+            _wordOptions = found.Concat(keep).ToList();
+            args.Data = _wordOptions;
         }
-        catch (TaskCanceledException) { }
-    }
-
-    void TogglePick(WordDto w)
-    {
-        var existing = _picks.FirstOrDefault(p => p.Id == w.Id);
-        if (existing is not null) _picks.Remove(existing);
-        else _picks.Add(w);
-        _comboSuggestions = _comboSuggestions.ToList();
-        _saveSuccess = false;
-        _saveError = "";
-    }
-
-    void RemovePick(WordDto w) => _picks.Remove(w);
-
-    async Task FocusComboInput() => await _comboInputRef.FocusAsync();
-
-    async Task OnComboBlur()
-    {
-        await Task.Delay(200);
-        _comboFocused = false;
-        if (string.IsNullOrWhiteSpace(_comboSearch)) _comboSuggestions = new();
+        catch (Exception ex)
+        {
+            args.Data = new List<WordDto>();
+            Toast.Error($"گەڕان سەرکەوتوو نەبوو: {ex.Message}");
+        }
     }
 
     async Task AddPickedWords()
     {
-        if (!_picks.Any() || !HasSelection || _saving) return;
-        _saving = true; _saveError = ""; _saveSuccess = false;
+        if (_pickedIds.Count == 0 || !HasSelection || _saving) return;
+
+        _saving = true;
+        var ids = _pickedIds.ToList();
+        var failed = 0;
+
         try
         {
-            foreach (var pick in _picks)
+            foreach (var id in ids)
             {
-                if (_tab == Tab.Categories)
-                    await WordSvc.AddWordToCategoryAsync(_selectedCatId!.Value, pick.Id);
-                else
-                    await WordSvc.AddWordToSpeechTypeAsync(_selectedSpeechId!.Value, pick.Id);
+                try
+                {
+                    if (_tab == Tab.Categories)
+                        await WordSvc.AddWordToCategoryAsync(_selectedCatId!.Value, id);
+                    else
+                        await WordSvc.AddWordToSpeechTypeAsync(_selectedSpeechId!.Value, id);
+                }
+                catch
+                {
+                    // One rejected word must not abandon the other fourteen half-added.
+                    failed++;
+                }
             }
 
-            var added = _picks.Count;
-            _picks = new();
-            _comboSearch = "";
-            _comboSuggestions = new();
-            _saveSuccess = true;
+            _pickedIds = new();
+            _wordOptions = new();
             await LoadMembers(reset: true);
 
-            // With no active filter the paged total is authoritative; otherwise apply the delta
+            // With no active filter the paged total is authoritative; otherwise apply the delta.
             if (string.IsNullOrWhiteSpace(_memberSearch)) SetSelectedCount(_membersTotal);
-            else UpdateSelectedCount(added);
+            else UpdateSelectedCount(ids.Count - failed);
+
+            if (failed == 0) Toast.Success($"{Ku.N(ids.Count)} وشە زیادکران");
+            else Toast.Error($"{Ku.N(ids.Count - failed)} وشە زیادکران، {Ku.N(failed)} سەرکەوتوو نەبوون");
         }
-        catch { _saveError = "زیادکردن سەرکەوتوو نەبوو. دووبارە هەوڵ بدەرەوە."; }
         finally { _saving = false; }
     }
 
     async Task RemoveMember(WordDto w)
     {
         if (!HasSelection || _saving) return;
-        _saving = true; _saveError = ""; _saveSuccess = false;
+        _saving = true;
+
         try
         {
             if (_tab == Tab.Categories)
@@ -673,7 +573,10 @@
             _membersTotal = Math.Max(0, _membersTotal - 1);
             UpdateSelectedCount(-1);
         }
-        catch { _saveError = "لابردن سەرکەوتوو نەبوو."; }
+        catch (Exception ex)
+        {
+            Toast.Error($"لابردن سەرکەوتوو نەبوو: {ex.Message}");
+        }
         finally { _saving = false; }
     }
 

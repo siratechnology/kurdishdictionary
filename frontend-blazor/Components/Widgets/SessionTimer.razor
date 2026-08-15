@@ -1,0 +1,104 @@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@implements IDisposable
+@inject PresenceService Presence
+
+@* Time actually worked today.
+
+   The previous version of this file measured how long its own component had existed: it
+   restarted on every visit to the dashboard and counted nothing at all while somebody was on the
+   words list or the station — which is where the work happens.
+
+   This reads minutes accumulated server-side from the presence heartbeat. Every 60 seconds the
+   web tier reports who is چالاک, and چالاک means input within the last two minutes rather than a
+   tab left open, so a laptop abandoned in an empty room stops counting on its own.
+
+   It refreshes on a slow timer, not per second. The underlying figure only moves once a minute,
+   so a per-second tick would push a render batch down every signed-in circuit sixty times a
+   minute to redraw a digit that had not changed. *@
+
+<div class="card @Class">
+    <div class="flex items-center gap-2.5">
+        <span class="card-badge card-badge-users"><Icon Name="monitor" Class="h-4 w-4" /></span>
+        <h2 class="card-title">کاتی کارکردنی ئەمڕۆ</h2>
+    </div>
+
+    @if (_work is null)
+    {
+        <div class="skeleton mt-3 h-10 rounded-chip"></div>
+    }
+    else
+    {
+        <p class="mt-3 font-mono text-30 text-ink-1">
+            <bdi>@Ku.Sub(Format(_work.TodayMinutes))</bdi>
+        </p>
+
+        <div class="mt-3 flex items-center gap-2 border-t border-line-soft pt-3 text-11 text-ink-2">
+            <span>
+                ناوەندی ڕۆژانە <bdi class="num-users">@Ku.Sub(Format(_work.AverageMinutesPerActiveDay))</bdi>
+            </span>
+            <span class="ms-auto">
+                <bdi>@Ku.N(_work.ActiveDays)</bdi> ڕۆژی کار
+            </span>
+        </div>
+
+        @if (_work.Days.Any(d => d.Minutes > 0))
+        {
+            <div class="mt-2 flex h-8 items-end gap-[2px]" aria-hidden="true">
+                @foreach (var day in _work.Days)
+                {
+                    <span class="min-w-0 flex-1 rounded-sm @(day.Minutes > 0 ? "chart-bar !rounded-sm" : "hatch border border-line-soft")"
+                          style="height:@(BarHeight(day.Minutes))%"
+                          title="@($"{day.Date:yyyy-MM-dd} — {Format(day.Minutes)}")"></span>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public string Class { get; set; } = "";
+
+    private WorkTimeDto? _work;
+    private System.Threading.Timer? _timer;
+
+    /// <summary>
+    /// Slower than the 60s heartbeat on purpose. Landing exactly on it would race the flush and
+    /// show a minute-old figure half the time; at 90s every poll sees a settled number.
+    /// </summary>
+    private static readonly TimeSpan Poll = TimeSpan.FromSeconds(90);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+
+        _timer = new System.Threading.Timer(async _ =>
+        {
+            await LoadAsync();
+            await InvokeAsync(StateHasChanged);
+        }, null, Poll, Poll);
+    }
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            _work = await Presence.GetWorkTimeAsync();
+        }
+        catch
+        {
+            // Keep the last good figure on screen. A failed poll must not blank a number
+            // somebody is looking at, and it certainly must not read as zero minutes worked.
+        }
+    }
+
+    private int Peak => _work is null || _work.Days.Count == 0 ? 0 : _work.Days.Max(d => d.Minutes);
+
+    private int BarHeight(int minutes) =>
+        Peak <= 0 ? 8 : Math.Max(6, (int)Math.Round(minutes * 100.0 / Peak));
+
+    /// <summary>h:mm — one format at every size, so the number never changes shape as it grows.</summary>
+    private static string Format(int minutes) =>
+        $"{minutes / 60}:{minutes % 60:00}";
+
+    public void Dispose() => _timer?.Dispose();
+}
