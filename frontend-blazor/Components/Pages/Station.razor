@@ -435,8 +435,10 @@
                 if (now.Name != axis.Name)
                     notices[axis.AxisId] = $"ناوی ئەم بژاردە گۆڕدرا بۆ «{now.Name}»";
 
-                else if (now.MaxSelections != axis.MaxSelections)
-                    notices[axis.AxisId] = "ژمارەی بژاردەکانی ئەم تەوەرە لەلایەن ئەدمین گۆڕدرا";
+                // A changed MaxSelections is deliberately NOT announced any more. It used to swap the
+                // control under the teacher's hands; now every axis is one dropdown holding one
+                // answer, so the cap changes nothing they can see, and a warning about an invisible
+                // change is noise on a screen that has to stay quiet to be fast.
 
                 else if (now.Values.Count != axis.Values.Count)
                     notices[axis.AxisId] = "ئەم بژاردە لەلایەن ئەدمین گۆڕدرا";
@@ -606,9 +608,26 @@
     {
         if (_sense is null) return;
 
-        // The server decides what a click means: single-select replaces, multi-select toggles up to
-        // the cap, and either way it re-resolves the tree and clears exactly the descendants that
-        // stopped applying. The client never reimplements the rules.
+        // Every axis is ONE dropdown holding ONE answer now, so a pick has to replace.
+        //
+        // The server's rule is unchanged and stays where it is: single-select replaces, an axis
+        // that allows several toggles up to the cap. On one of those, a second pick would ADD —
+        // the sense would hold two answers and the dropdown could only show the first. So whatever
+        // else the axis holds is toggled off first, using the same repeat-pick the server already
+        // treats as "remove this one", rather than teaching the client a second set of rules.
+        //
+        // Each call re-resolves the tree and clears exactly the descendants that stopped applying,
+        // which is why the new answer goes last.
+        var stale = _sense.Axes.FirstOrDefault(a => a.AxisId == axisId) is { MaxSelections: not 1 } axis
+            ? axis.SelectedValueIds.Where(v => v != valueId).ToList()
+            : new List<int>();
+
+        foreach (var held in stale)
+        {
+            var cleared = await StationSvc.SetFeatureAsync(_sense.SenseId, axisId, held);
+            if (cleared is not null) _sense = cleared;
+        }
+
         var updated = await StationSvc.SetFeatureAsync(_sense.SenseId, axisId, valueId);
         if (updated is not null) _sense = updated;
     }

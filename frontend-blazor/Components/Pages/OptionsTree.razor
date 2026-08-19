@@ -922,33 +922,23 @@
     }
 
     /// <summary>
-    /// A click in the preview behaves exactly as it would in the real form, including the cap:
-    /// single-select replaces, multi-select toggles up to the limit.
+    /// A click in the preview behaves exactly as it would in the real form: one answer per axis,
+    /// replaced by the next pick, whatever the axis's configured cap. The entry form stopped
+    /// offering a second answer, and a preview that still took one would be showing an admin a
+    /// screen no teacher meets — which is worse than no preview.
     /// </summary>
     async Task PreviewPick((int AxisId, int ValueId) pick)
     {
         var axis = _preview.FirstOrDefault(a => a.AxisId == pick.AxisId);
         if (axis is null) return;
 
-        if (axis.MaxSelections == 1)
-        {
-            foreach (var value in axis.Values)
-                _previewSelection.Remove(value.ValueId);
+        var already = _previewSelection.Contains(pick.ValueId);
 
-            _previewSelection.Add(pick.ValueId);
-        }
-        else if (!_previewSelection.Remove(pick.ValueId))
-        {
-            var held = axis.Values.Count(v => _previewSelection.Contains(v.ValueId));
+        foreach (var value in axis.Values)
+            _previewSelection.Remove(value.ValueId);
 
-            if (axis.MaxSelections is { } cap && held >= cap)
-            {
-                Toast.Error($"لەم بژاردەیەدا تەنها {Ku.N(cap)} دەکرێت هەڵبژێردرێت.");
-                return;
-            }
-
-            _previewSelection.Add(pick.ValueId);
-        }
+        // Re-picking what is already showing is how the dropdown clears — see AxisField.
+        if (!already) _previewSelection.Add(pick.ValueId);
 
         await RefreshPreview();
     }

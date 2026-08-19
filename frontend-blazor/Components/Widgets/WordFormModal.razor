@@ -22,7 +22,8 @@
    set this", and the honest answer — that question is not asked of this word — is better said by
    the control not being there.
 
-   Everything is Telerik: dialog, dropdowns, multiselect, textboxes, buttons. *@
+   Everything is Telerik: dialog, dropdowns, textboxes, buttons. The one multiselect that was here
+   — پۆل — is a dropdown now, and so is every تەوەر. *@
 
 @* VisibleChanged is not optional here. Visible is passed one-way from the parent, so when
    Telerik's own X sets its internal flag the parent never hears about it — the dialog closes
@@ -111,14 +112,19 @@
                    so words waited on a پۆل nobody needed to choose. *@
                 <label class="block">
                     <span class="field-label">
-                        پۆلەکان
+                        پۆل
                         <span class="text-ink-3">— ئارەزوومەندانە</span>
                     </span>
-                    <TelerikMultiSelect Data="@_allCategories" @bind-Value="SelectedCategoryIds"
-                                        TextField="@nameof(CategoryDto.Name)" ValueField="@nameof(CategoryDto.Id)"
-                                        Filterable="true" Placeholder="پۆل هەڵبژێرە…" Width="100%" />
 
-                    @if (Classification.PartOfSpeechId is not null && SelectedCategoryIds.Count == 0)
+                    @* One پۆل, picked from a list, at the team's instruction. The database still
+                       joins a word to many — the API takes a list and this sends a list of one —
+                       but this form no longer offers the second, and saving a word that already
+                       had two keeps only the one showing here. *@
+                    <TelerikDropDownList Data="@_allCategories" @bind-Value="SelectedCategoryId"
+                                         TextField="@nameof(CategoryDto.Name)" ValueField="@nameof(CategoryDto.Id)"
+                                         Filterable="true" DefaultText="پۆل هەڵبژێرە…" Width="100%" />
+
+                    @if (Classification.PartOfSpeechId is not null && SelectedCategoryId is null)
                     {
                         @* Said out loud rather than left implicit, because the consequence is real
                            and belongs with the decision: the word saves, and the dashboard counts
@@ -285,8 +291,15 @@
     string Kurdish = "";
     string Description = "";
 
-    List<int> SelectedCategoryIds = new();
+    int? SelectedCategoryId;
     List<CategoryDto> _allCategories = new();
+
+    /// <summary>
+    /// What goes on the wire. The word→پۆل link is many-to-many in the database and the API takes a
+    /// list, so this stays a list — of one, or of none. Kept as a conversion at the edge rather than
+    /// changing the contract, because nothing but this form has stopped filing a word under two.
+    /// </summary>
+    List<int> CategoryIdsForSave => SelectedCategoryId is { } id ? new List<int> { id } : new();
 
     // ── بەشی فەرهەنگ ────────────────────────────────────────────────────────
     List<DictionarySectionDto> _sections = new();
@@ -384,7 +397,9 @@
         _submitted = false;
         Kurdish = EditingWord?.Kurdish ?? "";
         Description = EditingWord?.Description ?? "";
-        SelectedCategoryIds = EditingWord?.Categories.Select(c => c.Id).ToList() ?? new();
+        // The first of however many the word holds. A word filed under two before this form went to
+        // one shows the first and, once saved, keeps only that one — the field says what it will do.
+        SelectedCategoryId = EditingWord?.Categories.FirstOrDefault()?.Id;
 
         // An existing word shows its own section. A NEW word inherits the last one chosen —
         // never blank, which is the whole point: the section is the same for a run of words and
@@ -486,39 +501,27 @@
     }
 
     /// <summary>
-    /// A pick in one of the questions. Single-choice replaces; a multi-choice question toggles up to
-    /// its cap. Which one it is comes from the axis's own MaxSelections, never from a branch on a name.
+    /// A pick in one of the questions. Every question is one dropdown holding one answer, so this
+    /// always replaces — the axis's MaxSelections no longer changes what a pick means here, and
+    /// nothing branches on a part of speech or an axis name either.
+    ///
+    /// The whole classification is PUT at save time, so the one answer per axis this leaves behind
+    /// is exactly what the sense ends up with; there is nothing to clear on the server.
     /// </summary>
     async Task OnAxisPick((int AxisId, int ValueId) pick)
     {
         var axis = _axes.FirstOrDefault(a => a.AxisId == pick.AxisId);
         if (axis is null) return;
 
-        var held = Classification.Features.Where(f => f.AxisId == pick.AxisId).ToList();
-        var already = held.FirstOrDefault(f => f.ValueId == pick.ValueId);
+        var already = Classification.Features.Any(f => f.AxisId == pick.AxisId && f.ValueId == pick.ValueId);
 
-        if (axis.MaxSelections == 1)
-        {
-            // Re-picking the value already held is how AxisField clears a single-choice dropdown.
-            Classification.Features.RemoveAll(f => f.AxisId == pick.AxisId);
+        // Cleared first, and that also covers a word saved while this axis still took several:
+        // both of its old answers go, the new one comes back alone. Re-picking the value already
+        // held is how AxisField clears a dropdown, so in that case nothing comes back.
+        Classification.Features.RemoveAll(f => f.AxisId == pick.AxisId);
 
-            if (already is null)
-                Classification.Features.Add(new SenseFeatureDto { AxisId = pick.AxisId, ValueId = pick.ValueId });
-        }
-        else if (already is not null)
-        {
-            Classification.Features.Remove(already);
-        }
-        else
-        {
-            if (axis.MaxSelections is { } cap && held.Count >= cap)
-            {
-                Toast.Error($"لەم پرسیارەدا تەنها {Ku.N(cap)} بژاردە دەکرێت هەڵبژێردرێت.");
-                return;
-            }
-
+        if (!already)
             Classification.Features.Add(new SenseFeatureDto { AxisId = pick.AxisId, ValueId = pick.ValueId });
-        }
 
         await ResolveAxesAsync();
     }
@@ -686,7 +689,7 @@
                 {
                     Kurdish = Kurdish.Trim(),
                     DictionarySectionId = SectionId,
-                    CategoryIds = SelectedCategoryIds,
+                    CategoryIds = CategoryIdsForSave,
                     Description = NullIfEmpty(Description),
                     Meanings = meanings,
                     RelatedWords = new(),
@@ -716,7 +719,7 @@
                     Kurdish = Kurdish.Trim(),
                     DictionarySectionId = SectionId,
                     SpeechPanes = EditingWord.SpeechPanes.Select(sp => sp.Id).ToList(),
-                    CategoryIds = SelectedCategoryIds,
+                    CategoryIds = CategoryIdsForSave,
                     Gender = EditingWord.Gender,
                     Description = NullIfEmpty(Description),
                     Meanings = meanings,
