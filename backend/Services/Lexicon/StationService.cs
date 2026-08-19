@@ -169,6 +169,7 @@ public class StationService
             SenseId = sense.Id,
             WordId = sense.WordId,
             Word = sense.Word.Kurdish,
+            WordNote = sense.Word.Description,
             Definition = sense.Definition,
             ExampleUsage = sense.ExampleUsage,
             PartOfSpeechId = sense.PartOfSpeechId,
@@ -290,6 +291,25 @@ public class StationService
         if (sense.ExampleUsage != dto.ExampleUsage) sense.ExampleUsage = dto.ExampleUsage ?? "";
         if (sense.PartOfSpeechId != dto.PartOfSpeechId) sense.PartOfSpeechId = dto.PartOfSpeechId;
         if (sense.DomainId != dto.DomainId) sense.DomainId = dto.DomainId;
+
+        // تێبینی lives on the WORD, so it is written here rather than on the sense — the same row
+        // the word editor on وشەکان writes, which is what makes the note one note instead of two
+        // that disagree.
+        //
+        // null means the caller did not send it, and the stored note is left alone. Empty string is
+        // a real edit and does clear it. The station sends the field on every save because it has
+        // the box on screen; the distinction is for any caller that posts this DTO to change only a
+        // part of speech or a domain, so it cannot wipe a note it never showed.
+        if (dto.WordNote is not null)
+        {
+            var note = dto.WordNote.Trim();
+            if (note.Length > 1000) note = note[..1000];   // matches Word.Description's column
+
+            var word = await _db.Words.FirstAsync(w => w.Id == sense.WordId, ct);
+            var stored = note.Length == 0 ? null : note;
+
+            if (word.Description != stored) word.Description = stored;
+        }
 
         await _db.SaveChangesAsync(ct);
     }

@@ -336,7 +336,7 @@
     }
 
     @* ── Add axis: tier 3, so it costs a written reason ──────────────────────── *@
-    <TelerikDialog @bind-Visible="_addAxisOpen" Title="تەوەری نوێ" Width="480px">
+    <TelerikDialog @bind-Visible="_addAxisOpen" Title="تەوەری نوێ" Width="min(480px, 92vw)">
         <DialogContent>
             <p class="mb-4 text-xs text-ink-2">
                 زیادکردنی تەوەرێک بڕیارێکی زمانەوانییە. هۆکارەکەی لە تۆماری بەشدارییەکاندا دەمێنێتەوە.
@@ -359,7 +359,7 @@
     </TelerikDialog>
 
     @* ── Merge: pick the target, then confirm with the exact count ───────────── *@
-    <TelerikDialog @bind-Visible="_mergePickOpen" Title="تێکەڵکردن بۆ کام نرخ؟" Width="460px">
+    <TelerikDialog @bind-Visible="_mergePickOpen" Title="تێکەڵکردن بۆ کام نرخ؟" Width="min(460px, 92vw)">
         <DialogContent>
             @if (_mergeSource is { } src)
             {
@@ -382,7 +382,7 @@
         </DialogButtons>
     </TelerikDialog>
 
-    <TelerikDialog @bind-Visible="_mergeConfirmOpen" Title="دڵنیابوونەوە لە تێکەڵکردن" Width="540px">
+    <TelerikDialog @bind-Visible="_mergeConfirmOpen" Title="دڵنیابوونەوە لە تێکەڵکردن" Width="min(540px, 92vw)">
         <DialogContent>
             @if (_mergePreview is { } preview)
             {

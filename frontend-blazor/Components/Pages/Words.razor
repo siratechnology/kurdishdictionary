@@ -338,7 +338,7 @@
 
 <TelerikDialog Visible="@(_deletingWord is not null)" Title="سڕینەوەی وشە"
                VisibleChanged="@(async v => { if (!v) await CancelDelete(); })"
-               ButtonsLayout="@DialogButtonsLayout.End" Width="420px">
+               ButtonsLayout="@DialogButtonsLayout.End" Width="min(420px, 92vw)">
     <DialogContent>
         <p class="text-sm leading-relaxed text-ink-2">
             وشەی <span class="font-medium text-ink-1">«@_deletingWord?.Kurdish»</span>

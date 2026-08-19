@@ -169,6 +169,29 @@
                           class="field resize-none"></textarea>
             </label>
 
+            @* تێبینی — the note on the WORD, the same field the word editor on وشەکان writes.
+
+               It was reachable only from that editor, which meant the one person actually reading
+               the word closely — whoever is standing at the station — had to leave the walk, find
+               the word in a 2,967-row grid and open a dialog to write down a doubt about it. So it
+               was not written down.
+
+               The label says «لەسەر وشەکە» because the two fields above it are per-SENSE and this
+               one is not: on a word with three senses the same note shows on all three, and editing
+               it here changes it everywhere. Left unsaid, that reads as a bug the first time
+               somebody notices their note on a sense they never opened. *@
+            <label class="mt-3 block">
+                <span class="field-label">
+                    تێبینی
+                    <span class="text-ink-3">
+                        — لەسەر وشەکە خۆی، نەک تەنها ئەم مانایە@(_sense.SenseCount > 1 ? $" ({Ku.N(_sense.SenseCount)} مانای هەیە)" : "")
+                    </span>
+                </span>
+                <textarea @bind="_wordNote" rows="2" maxlength="1000"
+                          placeholder="گومانێک، سەرچاوەیەک، زاراوەیەک — هەرچی دەربارەی وشەکە تۆمارکردنی دەوێت…"
+                          class="field resize-none"></textarea>
+            </label>
+
             <div class="mt-3">
                 <span class="field-label">بەشی ئاخاوتن</span>
                 <div class="flex flex-wrap gap-1.5">
@@ -299,6 +322,9 @@
 
     string _definition = "";
     string _example = "";
+
+    /// <summary>تێبینی, on the WORD. Loaded with the sense, sent with every save from this page.</summary>
+    string _wordNote = "";
 
     bool _loading = true;
     bool _saving;
@@ -478,6 +504,7 @@
 
             _definition = _sense.Definition;
             _example = _sense.ExampleUsage;
+            _wordNote = _sense.WordNote ?? "";
 
             // Presence and the claim are one fact — entering the sense sets both.
             if (_userId is { } uid && _sense.HeldBy is null)
@@ -512,6 +539,7 @@
             DomainId = _sense.DomainId,
             Definition = _definition,
             ExampleUsage = _example,
+            WordNote = _wordNote,
         });
 
         // Submitting is what moves the workflow on; a Senior publishes, a Contributor queues.
@@ -566,6 +594,7 @@
             DomainId = _sense.DomainId,
             Definition = _definition,
             ExampleUsage = _example,
+            WordNote = _wordNote,
         });
 
         if (updated is not null) _sense = updated;

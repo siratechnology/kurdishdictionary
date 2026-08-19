@@ -118,11 +118,13 @@
 <TelerikDialog Visible="@(_editing is not null)"
                VisibleChanged="@(v => { if (!v) CloseModal(); })"
                Title="@(_isNew ? "بەکارهێنەری نوێ" : $"دەستکاری {_editing?.UserName}")"
-               ButtonsLayout="@DialogButtonsLayout.End" Width="460px">
+               ButtonsLayout="@DialogButtonsLayout.End" Width="min(460px, 92vw)">
     <DialogContent>
         @if (_editing is not null)
         {
-            <div class="space-y-4 text-start">
+            @* Capped HERE rather than on .k-dialog, so Kendo still measures its own box: the dialog
+               is as tall as its content, and it is this div that stops growing and scrolls. *@
+            <div class="max-h-[68vh] space-y-4 overflow-y-auto pe-1 text-start">
 
                 @if (!_isNew)
                 {
@@ -227,7 +229,7 @@
 @* ── Delete confirmation ──────────────────────────────────────────────── *@
 <TelerikDialog Visible="@(_deleting is not null)" Title="@($"سڕینەوەی {_deleting?.UserName}؟")"
                VisibleChanged="@(v => { if (!v) _deleting = null; })"
-               ButtonsLayout="@DialogButtonsLayout.End" Width="420px">
+               ButtonsLayout="@DialogButtonsLayout.End" Width="min(420px, 92vw)">
     <DialogContent>
         <p class="text-sm leading-relaxed text-ink-2">
             وشەکانی ناسڕدرێنەوە — تەنها بێ خاوەن دەبن. ئەم کردارە ناگەڕێتەوە.

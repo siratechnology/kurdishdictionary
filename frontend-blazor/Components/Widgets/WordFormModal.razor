@@ -29,7 +29,7 @@
    itself, IsVisible stays true, and it will not reopen because nothing changed. Routing the
    change back through OnClose makes the X, the پاشگەزبوونەوە button and Esc all do one thing. *@
 <TelerikDialog @ref="_dialog"
-               Visible="@IsVisible" VisibleChanged="@OnVisibleChanged" Width="820px"
+               Visible="@IsVisible" VisibleChanged="@OnVisibleChanged" Width="min(820px, 92vw)"
                Title="@(EditingWord is null ? "وشەی نوێ" : $"دەستکاری {EditingWord.Kurdish}")"
                ButtonsLayout="@DialogButtonsLayout.End">
     <DialogContent>

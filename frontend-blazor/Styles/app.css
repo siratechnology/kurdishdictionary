@@ -437,12 +437,13 @@ input, select, textarea, button { font: inherit; }
 /* ── Form controls ──────────────────────────────────────────────────────── */
 
 /*
- * ONE height for every single-line control in the admin.
+ * ONE height for every single-line control WE draw.
  *
- * Our own `.field` and Telerik's pickers were sized by two unrelated rules — .field by its
- * padding (42px), Kendo by its theme (~32px) — so a text box and a dropdown standing next to
- * each other in the same filter row were visibly different heights. Nobody reads that as two
- * component libraries; they read it as a mistake, and it is one on every screen that mixes them.
+ * It used to be one height for Telerik's pickers too, forced on with `.k-picker { min-height }`.
+ * That is gone — see "Dialogs, dropdowns, comboboxes" below — because re-sizing a picker from CSS
+ * after Kendo has measured its popup against the theme height is what put dropdowns off the edge
+ * of an Android screen. A picker beside a `.field` is now a few pixels shorter, which is the price
+ * of the pickers working on a phone.
  *
  * min-height rather than height, because `.field` is also worn by textareas (Station.razor),
  * which are legitimately taller and must stay free to grow.
@@ -699,86 +700,28 @@ input::-ms-reveal {
   border-radius: 999px;
 }
 
-/* Dialogs ------------------------------------------------------------- */
-.k-dialog,
-.k-window {
-  border-radius: 18px;
-  border-color: var(--border);
+/* Dialogs, dropdowns, comboboxes — DELIBERATELY UNSTYLED ----------------
+   Nothing here skins .k-dialog, .k-window, .k-input or .k-picker, and nothing may be added.
 
-  /* Every dialog in the app carries a fixed pixel Width — 420px through 820px — because that is
-     what reads well on a desktop and Telerik offers no responsive alternative. On a 390px phone
-     all eleven of them hang off the screen.
+   They used to be skinned like everything else — our radius, our border, our control height, and a
+   max-width/max-height cap meant to make a fixed-pixel dialog fit a phone. On Android that cap is
+   what broke: Kendo measures and positions the dialog and its popups itself, and re-sizing the box
+   underneath it from CSS left them measured against one width and painted at another — the dialog
+   and the dropdowns inside it hanging off the edge of the screen, which is the opposite of what the
+   cap was for. The pickers were the same story: forcing min-height onto .k-picker and zeroing the
+   inner padding fights the height Kendo has already measured its popup against.
 
-     Capped here rather than on each one: max-width only bites when the viewport is narrower, so
-     the desktop sizes stay exactly as designed, and the next dialog somebody adds is responsive
-     without having to remember. */
-  max-width: calc(100vw - 24px);
-  max-height: calc(100vh - 24px);
-  max-height: calc(100dvh - 24px);   /* dvh excludes the phone's address bar; vh above is the fallback */
-}
+   So these components wear their own theme. It is not our palette, and that is the trade: a control
+   that looks slightly foreign but works on a phone beats one that matches and cannot be used.
 
-/* When a dialog runs out of height it is the CONTENT that should scroll, not the page behind it —
-   which on a phone is what happens otherwise: the dialog is clipped and the body scrolls under it,
-   so the save button is somewhere nobody can reach. */
-.k-dialog-content,
-.k-window-content {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
+   Dialog WIDTH is still ours to set — through the component's own Width parameter, e.g.
+   Width="min(820px, 92vw)". That is Kendo's supported sizing input, so it is measured along with
+   everything else instead of being applied over the top of it. Height is capped on OUR content div
+   inside DialogContent (max-h-[68vh] overflow-y-auto), for the same reason.
 
-/* Kendo lays the action row out as a nowrap flex row. Two Kurdish labels plus a destructive
-   button do not fit in 366px, and the last one goes off the end rather than onto a second line. */
-.k-dialog-actions,
-.k-window-actions {
-  flex-wrap: wrap;
-}
-
-/* A long title and the close button compete for one line; without this the title wins and pushes
-   the × out of the dialog. */
-.k-dialog-titlebar,
-.k-window-titlebar {
-  gap: 8px;
-}
-.k-dialog-title,
-.k-window-title {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.k-dialog-titlebar,
-.k-window-titlebar {
-  background: var(--card);
-  color: var(--text-1);
-  border-bottom: 1px solid var(--border);
-  font-weight: 500;
-}
-.k-overlay { background: var(--overlay); }
-
-/* Inputs -------------------------------------------------------------- */
-.k-input,
-.k-picker {
-  border-radius: 10px;
-  border-color: var(--border);
-  background: var(--card);
-  color: var(--text-1);
-
-  /* Matches `.field`. See --control-h above for why the two have to agree. */
-  min-height: var(--control-h);
-}
-
-/* Kendo centres the inner input with flex, so the extra height lands evenly above and below the
-   text on its own — but the inner element carries its own vertical padding, which would add to
-   ours and make the picker the taller control instead of the shorter one. */
-.k-input > .k-input-inner,
-.k-picker > .k-input-inner {
-  padding-block: 0;
-  font-size: 0.875rem;
-}
-.k-input:focus-within,
-.k-picker:focus-within {
-  border-color: var(--green);
-  box-shadow: 0 0 0 1px var(--green);
-}
+   The one thing kept is font-family, in the block at the top of this section: a font cannot change
+   a box's size or position, and without it every Kurdish dropdown item renders in Kendo's Latin
+   stack. */
 
 /* FileSelect ---------------------------------------------------------- */
 /* The picture picker on هەژمارەکەم and in the user dialog.

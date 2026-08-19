@@ -12,6 +12,18 @@ public class StationSenseDto
     public string Definition { get; set; } = string.Empty;
     public string ExampleUsage { get; set; } = string.Empty;
 
+    /// <summary>
+    /// تێبینی — the free note on the WORD (Word.Description), the same field the word editor on
+    /// وشەکان writes.
+    ///
+    /// It belongs to the word, not to this sense, so a word with three senses shows the one note on
+    /// all three and editing it from any of them changes the same row. That is the point: the note
+    /// is where a lexicographer records something about the headword — a doubt, a source, a dialect
+    /// — and it was invisible in the station, which is where the person who has just read the word
+    /// closely actually is.
+    /// </summary>
+    public string? WordNote { get; set; }
+
     public int? PartOfSpeechId { get; set; }
     public int? DomainId { get; set; }
     public string? DomainName { get; set; }
@@ -172,4 +184,13 @@ public class SaveStationSenseDto
     public int? DomainId { get; set; }
     public string ExampleUsage { get; set; } = string.Empty;
     public string Definition { get; set; } = string.Empty;
+
+    /// <summary>
+    /// تێبینی on the WORD. Null means NOT SENT and leaves the stored note untouched; empty string is
+    /// a real edit that clears it.
+    ///
+    /// The distinction is what lets a caller that does not own the field — anything posting this DTO
+    /// to change only a part of speech or a domain — save without wiping a note it never showed.
+    /// </summary>
+    public string? WordNote { get; set; }
 }

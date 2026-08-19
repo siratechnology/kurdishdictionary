@@ -393,7 +393,7 @@
     }
 
     @* ── «چەند بژاردە دەکرێت هەڵبژێردرێت؟» ───────────────────────────────── *@
-    <TelerikDialog @bind-Visible="_selectionOpen" Title="چەند بژاردە دەکرێت هەڵبژێردرێت؟" Width="520px">
+    <TelerikDialog @bind-Visible="_selectionOpen" Title="چەند بژاردە دەکرێت هەڵبژێردرێت؟" Width="min(520px, 92vw)">
         <DialogContent>
             @if (_selectionAxis is { } axis)
             {
@@ -468,7 +468,7 @@
        dropdowns side by side, which looks almost right and is completely wrong. Once a part of
        speech already has a question, adding a second one asks which was meant, and shows both
        outcomes rather than describing them. *@
-    <TelerikDialog @bind-Visible="_addRootOpen" Title="پرسیاری نوێ یان نرخی نوێ؟" Width="620px">
+    <TelerikDialog @bind-Visible="_addRootOpen" Title="پرسیاری نوێ یان نرخی نوێ؟" Width="min(620px, 92vw)">
         <DialogContent>
             <label class="mb-4 block">
                 <span class="field-label">ناوەکە</span>
@@ -531,7 +531,7 @@
     </TelerikDialog>
 
     @* ── Add a child group under a value ─────────────────────────────────── *@
-    <TelerikDialog @bind-Visible="_addGroupOpen" Title="بژاردەی زیاتر" Width="460px">
+    <TelerikDialog @bind-Visible="_addGroupOpen" Title="بژاردەی زیاتر" Width="min(460px, 92vw)">
         <DialogContent>
             @if (_addGroupParent is { } parent)
             {
@@ -560,9 +560,11 @@
        part of speech and the target does not ask the same questions. That number is shown before
        the button that does it, never after. *@
     <TelerikDialog @bind-Visible="_reassignOpen"
-                   Title="@($"هێنانی مانا بۆ «{_tree?.PartOfSpeechName}»")" Width="600px">
+                   Title="@($"هێنانی مانا بۆ «{_tree?.PartOfSpeechName}»")" Width="min(600px, 92vw)">
         <DialogContent>
-            <div class="space-y-4 text-start">
+            @* Capped HERE rather than on .k-dialog — see Users.razor. The preview is a list and
+               there is no bound on how long it gets. *@
+            <div class="max-h-[68vh] space-y-4 overflow-y-auto pe-1 text-start">
 
                 <p class="text-sm text-ink-2">
                     هەموو مانایەکی بەشێکی ئاخاوتنی هەڵبژێردراو دەگوازرێتەوە بۆ
