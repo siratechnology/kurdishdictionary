@@ -3,7 +3,26 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @* minimum-scale=1.0 is not decoration — it is what keeps every Telerik dropdown usable on an
+       Android phone. Kendo measures a popup before it shows it: it drops the .k-animation-container
+       into the page at `left: -10000px`, reads its size, and only then moves it under its anchor.
+       That container is an ordinary absolutely-positioned element in the document, so for one frame
+       the document is ten thousand pixels wide.
+
+       iPhone shrugs that off. Chrome on Android answers a document far wider than the screen by
+       zooming out to its minimum page scale, and at 0.25 the LAYOUT viewport of a 360px phone
+       becomes 1440×2960. Everything else follows from that one number: the lg:/xl: breakpoints
+       light up so the desktop sidebar appears, and the dialog re-centres itself in the middle of a
+       viewport four times the screen and lands off it — leaving nothing on screen but the modal's
+       grey overlay. Kendo then places the popup against that wrong geometry (left: -1080px), which
+       keeps the document over-wide, so the browser never zooms back: the screen stays broken until
+       something closes the popup, and a tap anywhere lands on the overlay, which is exactly what
+       closes it.
+
+       Pinning the minimum scale at 1 removes the zoom-out, so the measurement pass costs one
+       invisible frame and nothing else. Zooming IN is untouched — no maximum-scale, no
+       user-scalable=no — so this takes nothing away from anyone who needs to magnify the page. *@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <base href="/" />
     <link rel="preload" href="/fonts/NRT-Reg.ttf" as="font" type="font/truetype" crossorigin />
     @* Telerik's theme first, so our own tokens in app.css win every collision. *@
