@@ -440,10 +440,11 @@ input, select, textarea, button { font: inherit; }
  * ONE height for every single-line control WE draw.
  *
  * It used to be one height for Telerik's pickers too, forced on with `.k-picker { min-height }`.
- * That is gone — see "Dialogs, dropdowns, comboboxes" below — because re-sizing a picker from CSS
- * after Kendo has measured its popup against the theme height is what put dropdowns off the edge
- * of an Android screen. A picker beside a `.field` is now a few pixels shorter, which is the price
- * of the pickers working on a phone.
+ * That is gone — see "Dialogs and pickers" below. It stopped mattering when the dropdowns became
+ * plain <select>s (Widgets/Dropdown.razor): a <select> wears this class like every other control,
+ * so the one height is back to being genuinely one height. The remaining Telerik pickers — the
+ * multiselect on ڕێکخستنی پۆلەکان and the grid's own chrome — sit a few pixels shorter, which is
+ * the price of not re-measuring a Kendo control from CSS.
  *
  * min-height rather than height, because `.field` is also worn by textareas (Station.razor),
  * which are legitimately taller and must stay free to grow.
@@ -700,8 +701,12 @@ input::-ms-reveal {
   border-radius: 999px;
 }
 
-/* Dialogs, dropdowns, comboboxes — DELIBERATELY UNSTYLED ----------------
+/* Dialogs and pickers — DELIBERATELY UNSTYLED ---------------------------
    Nothing here skins .k-dialog, .k-window, .k-input or .k-picker, and nothing may be added.
+
+   Far fewer things wear these classes than when this was written: every dropdown on the admin is
+   now a plain <select> in our own `.field` (Widgets/Dropdown.razor), so what is left to Kendo is
+   the dialogs, the grid, and the one multiselect on ڕێکخستنی پۆلەکان. The rule stands for those.
 
    They used to be skinned like everything else — our radius, our border, our control height, and a
    max-width/max-height cap meant to make a fixed-pixel dialog fit a phone. On Android that cap is

@@ -148,10 +148,12 @@
                                dialog and its written reason. *@
                             @if (UnassignedAxes.Count > 0)
                             {
-                                <TelerikDropDownList Data="@UnassignedAxes" @bind-Value="_attachAxisId"
-                                                     TextField="@nameof(TaxonomyAxisDto.NameKu)"
-                                                     ValueField="@nameof(TaxonomyAxisDto.Id)"
-                                                     DefaultText="تەوەرێکی ئامادە" Width="180px" />
+                                <Dropdown TItem="TaxonomyAxisDto" TValue="int"
+                                          Data="@UnassignedAxes"
+                                          TextOf="@(a => a.NameKu)" ValueOf="@(a => a.Id)"
+                                          @bind-Value="_attachAxisId"
+                                          Placeholder="تەوەرێکی ئامادە"
+                                          Class="!w-[180px]" />
                                 <TelerikButton OnClick="@AttachAxis" Icon="@SvgIcon.Plus"
                                                Enabled="@(_attachAxisId > 0)">
                                     بەستنەوە
@@ -367,10 +369,11 @@
                     «<span class="font-medium">@src.NameKu</span>» دەچێتە ناو…
                 </p>
 
-                <TelerikDropDownList Data="@MergeTargets" @bind-Value="_mergeTargetId"
-                                     TextField="@nameof(TaxonomyValueDto.NameKu)"
-                                     ValueField="@nameof(TaxonomyValueDto.Id)"
-                                     DefaultText="نرخێک هەڵبژێرە" Width="100%" />
+                <Dropdown TItem="TaxonomyValueDto" TValue="int"
+                          Data="@MergeTargets"
+                          TextOf="@(v => v.NameKu)" ValueOf="@(v => v.Id)"
+                          @bind-Value="_mergeTargetId"
+                          Placeholder="نرخێک هەڵبژێرە" />
             }
         </DialogContent>
         <DialogButtons>

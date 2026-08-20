@@ -77,11 +77,14 @@
     @* One dropdown, whatever the axis's configured cap. Choosing replaces, and choosing a value
        that opens a further group makes the next dropdown appear directly beneath this one.
 
-       A native <select> rather than the Telerik dropdown the rest of the admin uses, for one
-       reason: the station is keyboard-first. Digits ١-٩ pick a value without the mouse, which
-       is what makes four thousand senses finishable, and the digit handler on the page needs
-       the keystroke to reach it rather than being swallowed by a rich control's own key
-       handling. The digit is printed in each option so the shortcut stays discoverable. *@
+       A native <select>, written here first and for its own reason: the station is keyboard-first.
+       Digits ١-٩ pick a value without the mouse, which is what makes four thousand senses
+       finishable, and the digit handler on the page needs the keystroke to reach it rather than
+       being swallowed by a rich control's own key handling. The digit is printed in each option so
+       the shortcut stays discoverable.
+
+       The rest of the admin has since arrived at the same control by a different road — see
+       Widgets/Dropdown.razor — so this is no longer the exception it was written as. *@
     <div class="flex flex-wrap items-center gap-2">
         <select value="@(Axis.SelectedValueId?.ToString() ?? "")"
                 @onchange="OnSelectChanged"

@@ -1,0 +1,95 @@
+@typeparam TItem
+@typeparam TValue
+
+@* A dropdown. A plain HTML <select>, and that is the whole point of it.
+
+   Every dropdown in this admin used to be a TelerikDropDownList, and on an Android phone none of
+   them worked. Kendo measures a popup before it shows it — it drops the list into the page at
+   `left: -10000px`, reads its size, then moves it under its field. That measuring element is an
+   ordinary absolutely-positioned div, so for one frame the document is ten thousand pixels wide,
+   and Chrome on Android answers a document that wide by zooming the page out to its minimum
+   scale. On a 360px phone the layout viewport becomes 1440×2960: the desktop breakpoints light
+   up, the dialog re-centres itself in a viewport four times the screen and lands off it, and all
+   that is left is the modal's grey overlay — which is what any tap then lands on, closing the
+   dropdown. iPhone never did this, which is why it looked like a Galaxy bug rather than a
+   Kendo one.
+
+   Pinning the viewport's minimum-scale fixed it in Chrome's Android emulator and not on the real
+   phone, so the popup is gone instead. A <select> has no popup to position: the list is drawn by
+   the operating system, outside the page, and cannot move the document or the layout. It is also
+   the control a phone already knows how to show — a full-height native wheel with big touch
+   targets — which is better on a phone than anything drawn in the page.
+
+   The station has been doing exactly this since it was written (see AxisField). This is that
+   decision applied everywhere else.
+
+   WHAT IS GIVEN UP: the filter box Kendo put at the top of a long list. Nothing else — no styling
+   (`.field` is the same class every text box wears), no keyboard behaviour (a <select> types
+   ahead natively), no placeholder.
+
+   Values travel as strings, because that is the only thing an <option> can hold. TextOf and
+   ValueOf are passed as functions rather than as Kendo's "TextField"/"ValueField" strings, so a
+   renamed DTO property breaks the build instead of quietly emptying a list at runtime. *@
+
+<select class="field @Class" value="@Key(Value)" @onchange="Pick">
+
+    @* The placeholder, and it is SELECTABLE — picking it is how a filter is cleared, which is what
+       Kendo's DefaultText did too.
+
+       `selected` is decided by "does anything in the list match the value held", not by comparing
+       against a blank. That one test covers all four ways of holding nothing that the call sites
+       actually use — null, "", 0, and a stale id whose option is no longer in the list — instead
+       of each of them needing to be spelled out here. *@
+    @if (Placeholder is not null)
+    {
+        <option value="" selected="@(!HasMatch)">@Placeholder</option>
+    }
+
+    @foreach (var item in Data)
+    {
+        var key = Key(ValueOf(item));
+        <option value="@key" selected="@(key == Key(Value))">@TextOf(item)</option>
+    }
+</select>
+
+@code {
+    [Parameter, EditorRequired] public IEnumerable<TItem> Data { get; set; } = Array.Empty<TItem>();
+
+    /// <summary>What the reader sees on a row.</summary>
+    [Parameter, EditorRequired] public Func<TItem, string> TextOf { get; set; } = default!;
+
+    /// <summary>What picking that row is worth.</summary>
+    [Parameter, EditorRequired] public Func<TItem, TValue?> ValueOf { get; set; } = default!;
+
+    [Parameter] public TValue? Value { get; set; }
+    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
+
+    /// <summary>The first entry, shown while nothing is chosen. Omit it and the list has no way back to empty.</summary>
+    [Parameter] public string? Placeholder { get; set; }
+
+    [Parameter] public string? Class { get; set; }
+
+    static string Key(TValue? value) => value?.ToString() ?? "";
+
+    bool HasMatch => Data.Any(item => Key(ValueOf(item)) == Key(Value));
+
+    /// <summary>
+    /// The chosen row, found by matching the option's string back against the list rather than by
+    /// converting it to TValue. TValue is an int here and a string there, and a generic parse would
+    /// be a pile of type tests to arrive at a value the list is already holding.
+    /// </summary>
+    async Task Pick(ChangeEventArgs e)
+    {
+        var raw = e.Value?.ToString() ?? "";
+
+        foreach (var item in Data)
+        {
+            if (Key(ValueOf(item)) != raw) continue;
+            await ValueChanged.InvokeAsync(ValueOf(item));
+            return;
+        }
+
+        // The placeholder, or an option that has since left the list. Either way: nothing is held.
+        await ValueChanged.InvokeAsync(default);
+    }
+}

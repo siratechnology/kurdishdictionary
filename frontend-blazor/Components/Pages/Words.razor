@@ -61,10 +61,12 @@
     </div>
 
     <div class="min-w-0 grow basis-full sm:basis-44">
-        <TelerikDropDownList Data="@GapOptions" @bind-Value="_missing"
-                             TextField="Label" ValueField="Key"
-                             DefaultText="هەموو وشەکان" Width="100%"
-                             OnChange="@(_ => Rebind())" />
+        <Dropdown TItem="Gap" TValue="string"
+                  Data="@GapOptions"
+                  TextOf="@(g => g.Label)" ValueOf="@(g => g.Key)"
+                  Value="@_missing"
+                  ValueChanged="@((string? v) => { _missing = v ?? ""; Rebind(); })"
+                  Placeholder="هەموو وشەکان" />
     </div>
 
     @* ── The cascade: بەشی ئاخاوتن → تەوەر → نرخ → تەوەر → … ───────────────────
@@ -83,11 +85,12 @@
     @if (_partsOfSpeech.Any())
     {
         <div class="min-w-0 grow basis-full sm:basis-44">
-            <TelerikDropDownList Data="@_partsOfSpeech" @bind-Value="_partOfSpeech"
-                                 TextField="@nameof(TaxonomyPartOfSpeechDto.NameKu)"
-                                 ValueField="@nameof(TaxonomyPartOfSpeechDto.Id)"
-                                 DefaultText="بەشی ئاخاوتن" Width="100%"
-                                 OnChange="@(_ => OnPartOfSpeechChanged())" />
+            <Dropdown TItem="TaxonomyPartOfSpeechDto" TValue="int"
+                      Data="@_partsOfSpeech"
+                      TextOf="@(p => p.NameKu)" ValueOf="@(p => p.Id)"
+                      Value="@_partOfSpeech"
+                      ValueChanged="@(async (int v) => { _partOfSpeech = v; await OnPartOfSpeechChanged(); })"
+                      Placeholder="بەشی ئاخاوتن" />
         </div>
 
         @* Depth-first: every axis is immediately followed by the groups its answer opened, so one
@@ -107,12 +110,12 @@
                 }
                 @* The technical label, not Ask. The entry form prints the teacher's question
                    («کارەکە چ جۆرێکە؟») because it is asking; a filter bar is naming a column. *@
-                <TelerikDropDownList Data="@ax.Values" TItem="StationValueDto" TValue="int"
-                                     Value="@PickedOn(ax.AxisId)"
-                                     ValueChanged="@((int v) => OnValuePicked(ax.AxisId, v))"
-                                     TextField="@nameof(StationValueDto.Name)"
-                                     ValueField="@nameof(StationValueDto.ValueId)"
-                                     DefaultText="@ax.Name" Width="100%" />
+                <Dropdown TItem="StationValueDto" TValue="int"
+                          Data="@ax.Values"
+                          TextOf="@(v => v.Name)" ValueOf="@(v => v.ValueId)"
+                          Value="@PickedOn(ax.AxisId)"
+                          ValueChanged="@((int v) => OnValuePicked(ax.AxisId, v))"
+                          Placeholder="@ax.Name" />
             </div>
         }
     }
@@ -172,6 +175,14 @@
 
 <TelerikGrid @ref="_grid" TItem="WordDto" OnRead="@OnGridRead"
              Pageable="true" PageSize="20" Sortable="false">
+    @* Adaptive="false" keeps the numbered page buttons on a narrow screen. Left on, the pager
+       collapses them into a Kendo dropdown below 768px — and a Kendo dropdown is the one thing
+       this page no longer has, for the reason written in Widgets/Dropdown.razor. It was the last
+       one on the words screen; turning the pager's own off is what actually removes it. *@
+    <GridSettings>
+        <GridPagerSettings Adaptive="false" />
+    </GridSettings>
+
     <GridColumns>
         <GridColumn Field="@nameof(WordDto.Kurdish)" Title="وشە" Width="260px">
             <Template>

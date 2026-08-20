@@ -22,8 +22,10 @@
    set this", and the honest answer — that question is not asked of this word — is better said by
    the control not being there.
 
-   Everything is Telerik: dialog, dropdowns, textboxes, buttons. The one multiselect that was here
-   — پۆل — is a dropdown now, and so is every تەوەر. *@
+   The dialog, the textboxes and the buttons are Telerik. The DROPDOWNS ARE NOT — every one of
+   them is a plain <select>, because Kendo's could not be opened on an Android phone without the
+   page falling apart. See Widgets/Dropdown.razor for what went wrong and why a <select> cannot
+   do it. The one multiselect that was here — پۆل — is a dropdown now, and so is every تەوەر. *@
 
 @* VisibleChanged is not optional here. Visible is passed one-way from the parent, so when
    Telerik's own X sets its internal flag the parent never hears about it — the dialog closes
@@ -56,8 +58,8 @@
                    how words end up filed under whatever heading was already on the list. *@
                 <label class="block">
                     <span class="field-label">بەشی فەرهەنگ <span class="text-danger">*</span></span>
-                    @* A DropDownList rather than a ComboBox, at the team's instruction.
-                       Picking and typing are two controls now instead of one: a ComboBox is an
+                    @* A list rather than a combo box, at the team's instruction.
+                       Picking and typing are two controls now instead of one: a combo box is an
                        editable text box, so it cannot be a plain list, and the ability to enter a
                        بەشی فەرهەنگ that does not exist yet had to keep working. The «+» flips the
                        field into a text box and back. *@
@@ -84,13 +86,12 @@
                     else
                     {
                         <span class="flex items-center gap-2">
-                            <TelerikDropDownList Data="@_sections" Value="@SectionName"
-                                                 ValueChanged="@((string v) => OnSectionChanged(v))"
-                                                 ValueExpression="@(() => SectionName)"
-                                                 TextField="@nameof(DictionarySectionDto.NameKu)"
-                                                 ValueField="@nameof(DictionarySectionDto.NameKu)"
-                                                 Filterable="true"
-                                                 DefaultText="بەشی فەرهەنگ هەڵبژێرە…" Width="100%" />
+                            <Dropdown TItem="DictionarySectionDto" TValue="string"
+                                      Data="@_sections"
+                                      TextOf="@(s => s.NameKu)" ValueOf="@(s => s.NameKu)"
+                                      Value="@SectionName"
+                                      ValueChanged="@((string? v) => OnSectionChanged(v ?? ""))"
+                                      Placeholder="بەشی فەرهەنگ هەڵبژێرە…" />
 
                             <button type="button" @onclick="StartTypingSection"
                                     class="btn-secondary shrink-0 px-2.5 py-1.5 text-11"
@@ -120,9 +121,11 @@
                        joins a word to many — the API takes a list and this sends a list of one —
                        but this form no longer offers the second, and saving a word that already
                        had two keeps only the one showing here. *@
-                    <TelerikDropDownList Data="@_allCategories" @bind-Value="SelectedCategoryId"
-                                         TextField="@nameof(CategoryDto.Name)" ValueField="@nameof(CategoryDto.Id)"
-                                         Filterable="true" DefaultText="پۆل هەڵبژێرە…" Width="100%" />
+                    <Dropdown TItem="CategoryDto" TValue="int?"
+                              Data="@_allCategories"
+                              TextOf="@(c => c.Name)" ValueOf="@(c => (int?)c.Id)"
+                              @bind-Value="SelectedCategoryId"
+                              Placeholder="پۆل هەڵبژێرە…" />
 
                     @if (Classification.PartOfSpeechId is not null && SelectedCategoryId is null)
                     {
@@ -152,12 +155,12 @@
 
                 <label class="block md:w-1/2">
                     <span class="field-label">بەشی ئاخاوتن</span>
-                    <TelerikDropDownList Data="@_partsOfSpeech" Value="@Classification.PartOfSpeechId"
-                                         ValueChanged="@((int? v) => OnPartOfSpeechChanged(v))"
-                                         ValueExpression="@(() => Classification.PartOfSpeechId)"
-                                         TextField="@nameof(TaxonomyPartOfSpeechDto.NameKu)"
-                                         ValueField="@nameof(TaxonomyPartOfSpeechDto.Id)"
-                                         DefaultText="هێشتا دیاری نەکراوە" Width="100%" />
+                    <Dropdown TItem="TaxonomyPartOfSpeechDto" TValue="int?"
+                              Data="@_partsOfSpeech"
+                              TextOf="@(p => p.NameKu)" ValueOf="@(p => (int?)p.Id)"
+                              Value="@Classification.PartOfSpeechId"
+                              ValueChanged="@((int? v) => OnPartOfSpeechChanged(v))"
+                              Placeholder="هێشتا دیاری نەکراوە" />
                 </label>
 
                 @if (Classification.PartOfSpeechId is null)
@@ -250,14 +253,23 @@
                                        the database, and anything typed in this form since it opened
                                        — because a closed vocabulary would block a language nobody
                                        has entered yet, and a list that forgets what you typed a
-                                       moment ago makes you retype it on the next row. *@
-                                    <TelerikComboBox Data="@LocateOptions"
-                                                     Value="@meaning.Locate"
-                                                     ValueChanged="@((string v) => SetLocate(meaning, v))"
-                                                     ValueExpression="@(() => meaning.Locate)"
-                                                     AllowCustom="true" Filterable="true"
-                                                     ClearButton="true"
-                                                     Placeholder="شوێن" Width="100%" />
+                                       moment ago makes you retype it on the next row.
+
+                                       A text box with a <datalist> rather than a Kendo combo box,
+                                       for the reason every dropdown on this form is a <select>:
+                                       Kendo's popup takes an Android phone's layout apart. A
+                                       datalist is drawn by the browser, so there is no popup in the
+                                       page to misplace — and it keeps both halves of what a combo
+                                       box was for, since the suggestions are offered but anything
+                                       may be typed over them.
+
+                                       @onchange, not @oninput: the value is taken when the field is
+                                       left or a suggestion is picked, so SetLocate remembers whole
+                                       labels rather than every prefix on the way to one. *@
+                                    <input class="field" list="@_locateListId"
+                                           value="@meaning.Locate"
+                                           @onchange="@((ChangeEventArgs e) => SetLocate(meaning, e.Value?.ToString()))"
+                                           placeholder="شوێن" />
                                 </div>
 
                                 <TelerikButton OnClick="@(() => RemoveMeaning(meaning))"
@@ -269,6 +281,15 @@
                         }
                     </div>
                 }
+
+                @* One list for every row, rendered once. Each شوێن field points at it by id, so a
+                   label typed into row one is offered to row two the moment it is remembered. *@
+                <datalist id="@_locateListId">
+                    @foreach (var locate in LocateOptions)
+                    {
+                        <option value="@locate"></option>
+                    }
+                </datalist>
             </div>
         </div>
     </DialogContent>
@@ -335,6 +356,12 @@
     /// dialog kept showing the markup it had. Refresh() is Telerik's answer to exactly this.
     /// </summary>
     TelerikDialog? _dialog;
+
+    /// <summary>
+    /// The id the شوێن fields point their `list` at. Per instance rather than a constant, because a
+    /// duplicated id on a page is a datalist that silently feeds the wrong field.
+    /// </summary>
+    readonly string _locateListId = $"locate-{Guid.NewGuid():N}";
 
     bool _saving;
     bool _submitted;
